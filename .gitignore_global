@@ -10,6 +10,9 @@
 *.ilk
 *.lib
 *.pdb
+*.opensdf
+*.sdf
+*.v12.suo
 
 # Packages # 
 ############ 
