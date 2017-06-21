@@ -8,19 +8,13 @@
 
 using namespace std;
 
-class test_singleton
-	: public utility::singleton<test_singleton> {
-private:
-	test_singleton() {}
-	virtual ~test_singleton() {}
-
-	friend class utility::singleton<test_singleton>;
-
+class test_singleton {
+    SINGLETON_ONCE(test_singleton);
 public:
 	void test()
 	{
 		cout << "this is singleton_test" << endl;
 	}
 };
-
+SINGLETON_GET(test_singleton);
 #endif

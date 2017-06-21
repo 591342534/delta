@@ -13,42 +13,13 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{c9869df0-149b-4f42-a69c-5aaa6d05234b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Bank.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Meta.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Type.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Risk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Trade.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Manager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\国泰君安\636riskapi\v6.3.6_20160803_api\v6.3.6_20160803_api\v6.3.6_20160803_api_riskuserapi_linux64\FtdcRiskUserApi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\国泰君安\636riskapi\v6.3.6_20160803_api\v6.3.6_20160803_api\v6.3.6_20160803_api_riskuserapi_linux64\FtdcRiskUserApiDataType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\国泰君安\636riskapi\v6.3.6_20160803_api\v6.3.6_20160803_api\v6.3.6_20160803_api_riskuserapi_linux64\FtdcRiskUserApiStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

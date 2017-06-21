@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
 {
     cout << "hello world" << endl;
 
-	getchar();
-	return 0;
+    getchar();
+    return 0;
 }
-
-

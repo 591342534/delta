@@ -151,18 +151,6 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol.h" />
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Bank.h" />
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Manager.h" />
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Meta.h" />
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Risk.h" />
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Trade.h" />
-    <ClInclude Include="..\..\..\..\esunny\工具类及部分协议\工具类及部分协议\协议例子\TapProtocol_Type.h" />
-    <ClInclude Include="..\..\..\..\国泰君安\636riskapi\v6.3.6_20160803_api\v6.3.6_20160803_api\v6.3.6_20160803_api_riskuserapi_linux64\FtdcRiskUserApi.h" />
-    <ClInclude Include="..\..\..\..\国泰君安\636riskapi\v6.3.6_20160803_api\v6.3.6_20160803_api\v6.3.6_20160803_api_riskuserapi_linux64\FtdcRiskUserApiDataType.h" />
-    <ClInclude Include="..\..\..\..\国泰君安\636riskapi\v6.3.6_20160803_api\v6.3.6_20160803_api\v6.3.6_20160803_api_riskuserapi_linux64\FtdcRiskUserApiStruct.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

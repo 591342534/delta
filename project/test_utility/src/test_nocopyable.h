@@ -9,16 +9,16 @@
 using namespace std;
 
 class test_nocopyable 
-	: public utility::nocopyable {
+    : public utility::nocopyable {
 public:
     test_nocopyable() {}
     ~test_nocopyable() {}
 
 public:
-	void test()
-	{
-		cout << "this is test_nocopyable" << endl;
-	}
+    void test()
+    {
+        cout << "this is test_nocopyable" << endl;
+    }
 };
 
 #endif
