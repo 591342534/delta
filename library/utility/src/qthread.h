@@ -60,11 +60,9 @@ namespace utility
 #endif
     };
 
-    class COMMON_API thread_manager 
-		: public singleton<thread_manager>
+    class COMMON_API thread_manager
 	{
-	private:
-		friend class singleton<thread_manager>;
+        SINGLETON_ONCE(thread_manager);
 
     public:
 		static unsigned int create_thread(thread_runner & t_obj);
@@ -79,5 +77,6 @@ namespace utility
         static void* thread_func(void* arg);
 #endif
     };
+    SINGLETON_GET(thread_manager);
 }
 #endif

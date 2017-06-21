@@ -25,14 +25,8 @@ ericsheng     2016.1.13   1.0     Create
 namespace utility {
 
 	class COMMON_API applog 
-		: public singleton<applog>
 	{
-	private:
-		applog(){};
-		virtual ~applog(){};
-
-		friend class singleton<applog>;
-
+        SINGLETON_ONCE(applog);
 	public:
 		enum level{
 			LOG_TEST = 1,
@@ -52,6 +46,7 @@ namespace utility {
 		static int log_level;
 		static mutex m_mutex;
 	};
+    SINGLETON_GET(applog);
 
 	class COMMON_API applog_input
 	{    
@@ -94,7 +89,7 @@ namespace utility {
 	public:
 		void operator=(applog_input& input)
 		{
-			applog::get_instance()->log(input.m_elevel, input.info.str(), 
+			get_applog().log(input.m_elevel, input.info.str(), 
 				input.message_stream.str());
 		};
 	};
