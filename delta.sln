@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asio", "library\asio\asio.v
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mysql_api", "library\mysql_api\mysql_api.vcxproj", "{E613D2F0-54EB-42CE-8E2E-9715B053043C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_utility", "project\test_utility\test_utility.vcxproj", "{D51B08D6-458C-45EA-B4B1-D13E931F8079}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -123,11 +125,26 @@ Global
 		{E613D2F0-54EB-42CE-8E2E-9715B053043C}.Release|x64.Build.0 = Release|x64
 		{E613D2F0-54EB-42CE-8E2E-9715B053043C}.Release|x86.ActiveCfg = Release|Win32
 		{E613D2F0-54EB-42CE-8E2E-9715B053043C}.Release|x86.Build.0 = Release|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Debug|Win32.Build.0 = Debug|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Debug|x64.ActiveCfg = Debug|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Debug|x86.ActiveCfg = Debug|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Debug|x86.Build.0 = Debug|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|Win32.ActiveCfg = Release|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|Win32.Build.0 = Release|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|x64.ActiveCfg = Release|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|x86.ActiveCfg = Release|Win32
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{24D23809-111C-4C2A-AD15-001D205093F0} = {F092697B-E095-4C2C-89AB-87873495252B}
+		{D51B08D6-458C-45EA-B4B1-D13E931F8079} = {F092697B-E095-4C2C-89AB-87873495252B}
 	EndGlobalSection
 EndGlobal
