@@ -4,6 +4,7 @@ bin/*
 temp/*
 lib/*
 include/*
+project/riskapidemo/*
 
 
  # Compiled source # 
@@ -21,3 +22,4 @@ include/*
 *.opensdf
 *.sdf
 *.v12.suo
+*.log
