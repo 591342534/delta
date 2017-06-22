@@ -2,11 +2,11 @@
 <manager_server>
     <db>
         <type note="数据库类型">mysql</type>
-        <host note="MYSQL服务地址">192.168.181.130</host>
+        <host note="MYSQL服务地址">192.168.4.55</host>
         <port note="MYSQL服务端口">3306</port>
         <user note="MYSQL服务用户名">risk</user>
         <pwd note="MYSQL服务密码">risk</pwd>
-        <dbname note="MYSQL服务名称">furture_risk</dbname>
+        <dbname note="MYSQL服务名称">future_risk</dbname>
         <charset note="MYSQL字符集">utf8</charset>
     </db>
     
@@ -16,7 +16,11 @@
         <account note="执行人信息表">account_config</account>
         <securities note="证券代码表">securities</securities>
         <product note="product table">product</product>
-        <instrument note="instrument table">contract</instrument>
+        <instrument note="instrument table">t_instrument</instrument>
+        <insmrgnrate note="insmrgnrate table">t_insmrgnrate</insmrgnrate>
+        <dcepair note="dcepair table">t_dcepair_inscom</dcepair>
+        <calendar note="calendar table">t_calendar</calendar>
+        <calcdeposit note="calc deposit table">t_cash_deposit</calcdeposit>
     </table_config>
     
     <system>

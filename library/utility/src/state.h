@@ -17,7 +17,7 @@ ericsheng     2016.1.13   1.0     Create
 
 namespace utility { 
 
-    class COMMON_API state
+    class state
     {
     public:
         // object state flag.

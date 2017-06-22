@@ -1,3 +1,14 @@
+/******************************************************************************
+Copyright (c) 2016. All Rights Reserved.
+
+FileName: message_dispatcher.h
+Version: 1.0
+Date: 2016.1.13
+
+History:
+ericsheng     2016.4.13   1.0     Create
+******************************************************************************/
+
 #ifndef __MESSAGE_DISPATCHER_H__
 #define __MESSAGE_DISPATCHER_H__
 #include <unordered_map>
@@ -7,7 +18,6 @@
 #include "parse.h"
 namespace serverframe{;
 
-////////////////////////////////////////////////////////////////////////////////
 template<typename message_t>
 class dispatcher
 {
@@ -20,7 +30,6 @@ protected:
     typedef typename handler_map::const_iterator const_iterator;
 
 public:
-    /*@ constructor.*/
     dispatcher()
     {}
 
@@ -80,6 +89,5 @@ public:
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////
 }// serverframe
 #endif

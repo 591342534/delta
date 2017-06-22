@@ -1,16 +1,24 @@
-﻿
+﻿/******************************************************************************
+Copyright (c) 2016. All Rights Reserved.
+
+FileName: server.h
+Version: 1.0
+Date: 2016.1.13
+
+History:
+ericsheng     2016.4.13   1.0     Create
+******************************************************************************/
 #ifndef __SERVER_H__
 #define __SERVER_H__
 #include <string>
 #include "tcp_engine.h"
 #include "tcp_server_notify.h"
 #include "tcpserver_hub.h"
-#include "memory"
-
+#include "protocal.h"
 namespace serverframe{;
 
-////////////////////////////////////////////////////////////////////////////////
 typedef tcpserver_hub::tcp_context context;
+typedef std::shared_ptr<context> context_ptr;
 typedef tcpserver_hub::message_dispatcher message_dispather;
 
 class request_handler
@@ -18,7 +26,6 @@ class request_handler
     virtual void on_request(context& context) = 0;
 };
 
-////////////////////////////////////////////////////////////////////////////////
 class server
 {
 public:
@@ -48,6 +55,7 @@ public:
     {
         return m_hub;
     }
+
 ////////////////////////////////////////////////////////////////////////////////
 private:
     // 消息处理

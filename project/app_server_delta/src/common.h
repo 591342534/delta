@@ -1,9 +1,13 @@
-/*
- * common.h
- *
- *  Created on: 2017年4月13日
- *      Author: shengkaishan
- */
+/******************************************************************************
+Copyright (c) 2016. All Rights Reserved.
+
+FileName: common.h
+Version: 1.0
+Date: 2016.1.13
+
+History:
+ericsheng     2016.4.13   1.0     Create
+******************************************************************************/
 
 #ifndef __COMMON_H__
 #define __COMMON_H__
@@ -17,17 +21,15 @@ enum MANAGER_ERROR
 {
     MANAGER_E_CONFIGFILE_INVALID = 301001,
     MANAGER_E_CONFIG_INVALID = 301002,
-    MANAGER_E_PRODUCT_INVALID = 301003,
-    MANAGER_E_DBCONNECT_INVALID = 301004,
-    MANAGER_E_TRADE_DATE_INVALID = 301005,
-    MANAGER_E_TRADE_TIME_INVALID = 301006,
-    MANAGER_E_DBOPERATE_INVALID = 301007,
-    MANAGER_E_ACCOUNT_INVALID = 301008,
-    MANAGER_E_HTTP_INVALID = 301009,
-    MANAGER_E_DB_FAILED = 301010,
-    MANAGER_E_ORDER_TIMEOUT = 301011,
-    MANAGER_E_ORDER_STATE_EXCEPTION = 301012,
+    MANAGER_E_DBCONNECT_INVALID = 301003,
+    MANAGER_E_DB_FAILED = 301004,
+    MANAGER_E_SERVER_NOTIFY_DATA_INVALID = 301005,
 };
+
+//expireinst_flag
+const char EXPIREINST_FLAG_ALL = '0';
+const char EXPIREINST_FLAG_SHFE = '1';
+const char EXPIREINST_FLAG_CFFEX = '2';
 
 const char *const MODULE_NAME = "manager_server";
 const int MANAGER_S_OK = 0;
@@ -62,7 +64,7 @@ if(!dbconn->_conn->rollback()){ \
 
 }
 
-#endif /* TRUNK_MODULES_SIGMA_STOCKS_SOURCE_HTTP_MANAGER_SRC_COMMON_H_ */
+#endif
 
 
 

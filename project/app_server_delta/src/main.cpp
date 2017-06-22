@@ -1,3 +1,13 @@
+/******************************************************************************
+Copyright (c) 2016. All Rights Reserved.
+
+FileName: main.cpp
+Version: 1.0
+Date: 2016.1.13
+
+History:
+ericsheng     2016.4.13   1.0     Create
+******************************************************************************/
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -27,6 +37,44 @@ using namespace std;
 #ifndef WIN32
 #include <sys/ipc.h>
 #include <sys/shm.h>
+
+bool check_single_instance()
+{
+    // 打开或创建一个文件
+    std::string file_path = "./pid.lck";
+    int fd = open(file_path.c_str(), O_RDWR | O_CREAT, 0666);
+    if (fd < 0)  {
+        printf("Open file failed, error : %s", strerror(errno));
+        exit(1);
+    }
+
+    // 将该文件锁定
+    // 锁定后的文件将不能够再次锁定
+    int ret = lockf(fd, F_TLOCK, 0);
+    if (ret < 0) {
+        if (errno == EACCES || errno == EAGAIN) {
+            printf("%s already locked, error: %s\n", file_path.c_str(), strerror(errno));
+            close(fd);
+            return false;
+        }
+    }
+
+    // 锁定文件后，将该进程的pid写入文件
+    char buf[16] = {0};
+    sprintf(buf, "%d", getpid());
+    ftruncate(fd, 0);
+    ret = write(fd, buf, strlen(buf));
+    if (ret < 0) {
+        printf("Write file failed, file: %s, error: %s\n", file_path.c_str(), strerror(errno));
+        close(fd);
+        exit(1);
+    }
+
+    // 函数返回时不需要调用close(fd)
+    // 不然文件锁将失效
+    // 程序退出后kernel会自动close
+    return true;
+}
 
 //Bit-mask values for 'flags' argument of become_daemon()
 #define BD_NO_CHDIR           01    //Don't chdir("/")
@@ -111,22 +159,23 @@ void usage(const char *bin)
 
 static int proc_main(std::string& param)
 {
-    project_server::create_instance();
-    project_server::get_instance()->start(param);
-    project_server::get_instance()->join();
-    project_server::destory_instance();
+#ifndef  WIN32
+    if (!check_single_instance()) return -1;
+#endif // ! WIN32
+    get_project_server().start(param);
+    get_project_server().join();
     return 0;
 }
 
 int main(int argc, char **argv)
 {
     std::string curr_path = argv[0];
-    int pos = curr_path.rfind("\\");
+    int pos = curr_path.rfind("/");
     curr_path = curr_path.substr(0, pos);
 
     std::string config_file = curr_path + 
-        "/config/manager-server-config.xml";
-    std::string log_config_file = curr_path + "/config/log-config.xml";
+        "/config/manager_server_config.xml";
+    std::string log_config_file = curr_path + "/config/log_config.xml";
     const char * binary_name = strrchr(argv[0], '/');
 
     bool run_as_deamon = false;
@@ -150,13 +199,20 @@ int main(int argc, char **argv)
             return 0;
         case 'l':
             config_file = curr_path + 
-                "/config/managerserver-config.xml";
+                "/config/manager_server_config.xml";
             break;
         default:
             break;
         }
     }
-
+    if (run_as_deamon) {
+        /* run as deamon */
+        become_daemon(BD_NO_CHDIR);
+    } else {
+        /* ignore broken pipe signal */
+        signal(SIGPIPE, SIG_IGN);
+    }
+#endif
     /* bind trace base log config file */
     if (!base::default_log_binder::bind_trace(log_config_file.c_str())) {
         cout << "trade_simulation server bind trace failed" << endl;
@@ -164,14 +220,7 @@ int main(int argc, char **argv)
     base::trace::enable_std_output(output_log_to_console);
 
     TRACE_SYSTEM(MODULE_NAME,"main function to be running %d:%s", 110, "hello manager_server");
-    if (run_as_deamon) {
-        /* run as deamon */
-        become_daemon(BD_NO_CHDIR);
-    } else {
-        /* ignore broken pipe signal */
-        signal(SIGPIPE, SIG_IGN);    
-    }
-#endif
+
     proc_main(config_file);
 
     return 0;

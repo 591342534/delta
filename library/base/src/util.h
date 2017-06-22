@@ -118,6 +118,16 @@ public:
 	 * 将yyyy-mm-dd和yyyy-mm-dd hh:mm:ss的格式的时间转换为时间戳
 	 */
 	static long string_to_datestamp(char* str);
+
+    /*
+    * 加密
+    */
+    static void encode(char *pstr);
+
+    /*
+    * 解密
+    */
+    static void decode(char *pstr);
 };
 
 }

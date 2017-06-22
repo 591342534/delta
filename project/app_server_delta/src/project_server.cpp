@@ -1,7 +1,19 @@
+/******************************************************************************
+Copyright (c) 2016. All Rights Reserved.
+
+FileName: project_server.cpp
+Version: 1.0
+Date: 2016.1.13
+
+History:
+ericsheng     2016.4.13   1.0     Create
+******************************************************************************/
+
 #include "project_server.h"
 #include "database/dbscope.h"
 #include "base/pugixml.hpp"
 #include "common.h"
+#include "base/util.h"
 using namespace database;
 
 namespace serverframe {
@@ -91,6 +103,7 @@ int project_server::load_config(const char* config_file)
         ASSIGN_AND_CHECK_LABEL(ret, MANAGER_E_CONFIG_INVALID,
                 end);
     }
+    base::util::encode(const_cast<char*>(tmp.c_str()));
     params_.dbinfo_.dbparam.password = tmp;
 
     tmp = xdb.child("dbname").text().as_string();
@@ -117,11 +130,47 @@ int project_server::load_config(const char* config_file)
     tmp = xtableconfig.child("instrument").text().as_string();
     if (tmp.empty()) {
         TRACE_ERROR(MODULE_NAME, MANAGER_E_CONFIG_INVALID,
-                "manager_server config: instrument of the instrument_table_str_ should be specified");
+                "manager_server config: instrument_table should be specified");
         ASSIGN_AND_CHECK_LABEL(ret, MANAGER_E_CONFIG_INVALID,
                 end);
     }
     params_.instrument_table_str_ = tmp;
+
+    tmp = xtableconfig.child("insmrgnrate").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(MODULE_NAME, MANAGER_E_CONFIG_INVALID,
+                "manager_server config: insmrgnrate_table should be specified");
+        ASSIGN_AND_CHECK_LABEL(ret, MANAGER_E_CONFIG_INVALID,
+                end);
+    }
+    params_.insmrgnrate_table_str_ = tmp;
+
+    tmp = xtableconfig.child("dcepair").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(MODULE_NAME, MANAGER_E_CONFIG_INVALID,
+                "manager_server config: dcepair_table should be specified");
+        ASSIGN_AND_CHECK_LABEL(ret, MANAGER_E_CONFIG_INVALID,
+                end);
+    }
+    params_.dcepair_inscom_table_str_ = tmp;
+
+    tmp = xtableconfig.child("calendar").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(MODULE_NAME, MANAGER_E_CONFIG_INVALID,
+                "manager_server config: calendar_table should be specified");
+        ASSIGN_AND_CHECK_LABEL(ret, MANAGER_E_CONFIG_INVALID,
+                end);
+    }
+    params_.calendar_table_str_ = tmp;
+
+    tmp = xtableconfig.child("calcdeposit").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(MODULE_NAME, MANAGER_E_CONFIG_INVALID,
+                "manager_server config: calcdeposit_table should be specified");
+        ASSIGN_AND_CHECK_LABEL(ret, MANAGER_E_CONFIG_INVALID,
+                end);
+    }
+    params_.calcdeposit_table_str_ = tmp;
 
     //update_time
     tmp = xupdatetime.child("am_time").text().as_string();

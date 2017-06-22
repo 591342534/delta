@@ -663,4 +663,18 @@ long util::string_to_datestamp(char* str)
 
 #endif
 
+void util::encode(char *pstr)
+{
+    int len = strlen(pstr);
+    for (int i = 0; i < len; i++)
+        *(pstr + i) = *(pstr + i) ^ i;
+}
+
+void util::decode(char *pstr)
+{
+    int len = strlen(pstr);
+    for (int i = 0; i < len; i++)
+        *(pstr + i) = *(pstr + i) ^ i;
+}
+
 }

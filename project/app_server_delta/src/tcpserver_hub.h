@@ -1,12 +1,20 @@
+/******************************************************************************
+Copyright (c) 2016. All Rights Reserved.
+
+FileName: tcpserver_hub.h
+Version: 1.0
+Date: 2016.1.13
+
+History:
+ericsheng     2016.4.13   1.0     Create
+******************************************************************************/
 #ifndef __TCPSERVER_HUB_H__
 #define __TCPSERVER_HUB_H__
 
-
-////////////////////////////////////////////////////////////////////////////////
 #include "dispatch_server.h"
 
 namespace serverframe{;
-////////////////////////////////////////////////////////////////////////////////
+
 class tcpserver_hub
 {
 public:
@@ -17,7 +25,6 @@ public:
     typedef dispatch_server_alias::message_dispatcher message_dispatcher;
     typedef dispatch_server_alias::register_func register_func;
 
-////////////////////////////////////////////////////////////////////////////////
 public:
     /*@constructor. */
     tcpserver_hub()
@@ -49,7 +56,6 @@ public:
         m_dispatch_server.stop();
     }
 
-////////////////////////////////////////////////////////////////////////////////
 public:
     /*@ receive data from exist connection. */
     inline void on_read(std::string& data)
@@ -64,12 +70,10 @@ public:
         }
     }
 
-////////////////////////////////////////////////////////////////////////////////
 protected:
     // request queue server.
     dispatch_server_alias m_dispatch_server;
 };
 
 }//serverframe
-////////////////////////////////////////////////////////////////////////////////
 #endif
