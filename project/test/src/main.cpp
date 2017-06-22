@@ -22,9 +22,25 @@
 
 using namespace std;
 
+class test {
+public:
+    test(int i = default_num) 
+        : num(i){}
+
+private:
+    static int default_num;
+public:
+    int num;
+};
+
+int test::default_num = 100;
+
 int main(int argc, char *argv[])
 {
-    cout << "hello world" << endl;
+    test one;
+    cout << one.num << endl;
+    test two(200);
+    cout << two.num << endl;
 
     getchar();
     return 0;

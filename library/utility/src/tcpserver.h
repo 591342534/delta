@@ -33,10 +33,8 @@ public:
 	// Max datagrame size [64*1024]
 	static unsigned int MaxDatagramSize;
 
-	tcpserver(const string& hostname, const string& port);
-
 	tcpserver(const string& hostname, const string& port,
-			  unsigned int max_client);
+        unsigned int max_client = DefaultMaxClient);
 
 	serversocket* get_serversocket() const { return server_socket_; }
 

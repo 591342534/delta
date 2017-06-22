@@ -23,16 +23,6 @@ namespace utility
 	// Max datagrame size [64*1024]
 	unsigned int tcpserver::MaxDatagramSize = 64 * 1024;
 
-	tcpserver::tcpserver(const string& hostname, const string& port)
-		: hostname_(hostname), 
-		port_(port),
-		max_client_(DefaultMaxClient),
-		is_run_(false)
-	{
-		//windows used
-		qsocket::start();
-	}
-
 	tcpserver::tcpserver(const string& hostname, const string& port,
 		unsigned int max_client) 
 		: hostname_(hostname),
