@@ -24,20 +24,16 @@ using namespace std;
 
 class test {
 public:
-    test(int i = default_num) 
+    explicit test(int i) 
         : num(i){}
 
-private:
-    static int default_num;
 public:
     int num;
 };
 
-int test::default_num = 100;
-
 int main(int argc, char *argv[])
 {
-    test one;
+    test one = test(100);
     cout << one.num << endl;
     test two(200);
     cout << two.num << endl;

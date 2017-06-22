@@ -13,135 +13,138 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{c1a8bc9f-49b8-4337-af5e-037666e9cf11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\address.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\applog.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\clientsocket.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\condition.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\directory.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\mutex.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\properties.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\qthread.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\semaphore.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\serversocket.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\session.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\session_id.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\socket.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\spinlock.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\ssemaphore.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\tcpserver.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\thread.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\address.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\applog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\clientsocket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\condition.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\datetime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\mutex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\nocopyable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\properties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\qthread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\semaphore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\serversocket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\session.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\session_id.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shareptr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\singleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\socket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\spendtime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\spinlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ssemaphore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tcpserver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\thread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\utility.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\callonce.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\clientsocket.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\condition.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\datetime.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\directory.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mutex.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nocopyable.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\properties.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\qthread.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\semaphore.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\serversocket.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\session.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\session_id.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shareptr.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\singleton.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\socket.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spendtime.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spinlock.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ssemaphore.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\state.h">
-      <Filter>Header Files</Filter>
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tcpserver.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

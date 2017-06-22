@@ -18,6 +18,52 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\address.cpp" />
+    <ClCompile Include="src\applog.cpp" />
+    <ClCompile Include="src\clientsocket.cpp" />
+    <ClCompile Include="src\condition.cpp" />
+    <ClCompile Include="src\directory.cpp" />
+    <ClCompile Include="src\mutex.cpp" />
+    <ClCompile Include="src\properties.cpp" />
+    <ClCompile Include="src\qthread.cpp" />
+    <ClCompile Include="src\semaphore.cpp" />
+    <ClCompile Include="src\serversocket.cpp" />
+    <ClCompile Include="src\session.cpp" />
+    <ClCompile Include="src\session_id.cpp" />
+    <ClCompile Include="src\socket.cpp" />
+    <ClCompile Include="src\spinlock.cpp" />
+    <ClCompile Include="src\ssemaphore.cpp" />
+    <ClCompile Include="src\tcpserver.cpp" />
+    <ClCompile Include="src\thread.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\address.h" />
+    <ClInclude Include="src\applog.h" />
+    <ClInclude Include="src\callonce.h" />
+    <ClInclude Include="src\clientsocket.h" />
+    <ClInclude Include="src\condition.h" />
+    <ClInclude Include="src\datetime.h" />
+    <ClInclude Include="src\directory.h" />
+    <ClInclude Include="src\mutex.h" />
+    <ClInclude Include="src\nocopyable.h" />
+    <ClInclude Include="src\properties.h" />
+    <ClInclude Include="src\qthread.h" />
+    <ClInclude Include="src\semaphore.h" />
+    <ClInclude Include="src\serversocket.h" />
+    <ClInclude Include="src\session.h" />
+    <ClInclude Include="src\session_id.h" />
+    <ClInclude Include="src\shareptr.h" />
+    <ClInclude Include="src\singleton.h" />
+    <ClInclude Include="src\socket.h" />
+    <ClInclude Include="src\spendtime.h" />
+    <ClInclude Include="src\spinlock.h" />
+    <ClInclude Include="src\ssemaphore.h" />
+    <ClInclude Include="src\state.h" />
+    <ClInclude Include="src\tcpserver.h" />
+    <ClInclude Include="src\thread.h" />
+    <ClInclude Include="src\utility.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{80078CBF-33A9-409C-A0BD-FC71F52B5AE2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -152,52 +198,6 @@ copy $(ProjectDir)src\*.h  $(SolutionDir)include\$(TargetName)</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\address.cpp" />
-    <ClCompile Include="src\applog.cpp" />
-    <ClCompile Include="src\clientsocket.cpp" />
-    <ClCompile Include="src\condition.cpp" />
-    <ClCompile Include="src\directory.cpp" />
-    <ClCompile Include="src\mutex.cpp" />
-    <ClCompile Include="src\properties.cpp" />
-    <ClCompile Include="src\qthread.cpp" />
-    <ClCompile Include="src\semaphore.cpp" />
-    <ClCompile Include="src\serversocket.cpp" />
-    <ClCompile Include="src\session.cpp" />
-    <ClCompile Include="src\session_id.cpp" />
-    <ClCompile Include="src\socket.cpp" />
-    <ClCompile Include="src\spinlock.cpp" />
-    <ClCompile Include="src\ssemaphore.cpp" />
-    <ClCompile Include="src\tcpserver.cpp" />
-    <ClCompile Include="src\thread.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\address.h" />
-    <ClInclude Include="src\applog.h" />
-    <ClInclude Include="src\callonce.h" />
-    <ClInclude Include="src\clientsocket.h" />
-    <ClInclude Include="src\condition.h" />
-    <ClInclude Include="src\datetime.h" />
-    <ClInclude Include="src\directory.h" />
-    <ClInclude Include="src\mutex.h" />
-    <ClInclude Include="src\nocopyable.h" />
-    <ClInclude Include="src\properties.h" />
-    <ClInclude Include="src\qthread.h" />
-    <ClInclude Include="src\semaphore.h" />
-    <ClInclude Include="src\serversocket.h" />
-    <ClInclude Include="src\session.h" />
-    <ClInclude Include="src\session_id.h" />
-    <ClInclude Include="src\shareptr.h" />
-    <ClInclude Include="src\singleton.h" />
-    <ClInclude Include="src\socket.h" />
-    <ClInclude Include="src\spendtime.h" />
-    <ClInclude Include="src\spinlock.h" />
-    <ClInclude Include="src\ssemaphore.h" />
-    <ClInclude Include="src\state.h" />
-    <ClInclude Include="src\tcpserver.h" />
-    <ClInclude Include="src\thread.h" />
-    <ClInclude Include="src\utility.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -21,8 +21,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_utility", "project\tes
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "app_server_delta", "project\app_server_delta\app_server_delta.vcxproj", "{31519246-B270-4510-9FCF-BDA83C01C2BA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRiskApi", "project\riskapidemo\testRiskApi.vcxproj", "{1AE80AA5-5393-41D4-99BF-E3523F64B926}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -157,20 +155,6 @@ Global
 		{31519246-B270-4510-9FCF-BDA83C01C2BA}.Release|x64.ActiveCfg = Release|Win32
 		{31519246-B270-4510-9FCF-BDA83C01C2BA}.Release|x86.ActiveCfg = Release|Win32
 		{31519246-B270-4510-9FCF-BDA83C01C2BA}.Release|x86.Build.0 = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Win32.Build.0 = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|x64.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|x86.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|x86.Build.0 = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Win32.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Win32.Build.0 = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|x64.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|x86.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

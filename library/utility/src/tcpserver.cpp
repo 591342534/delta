@@ -125,7 +125,7 @@ namespace utility
 		thread_manager::create_thread(*session_ptr);
 		//client->send_data(string("Connection Successful|"));
 
-		q_sleep(1000);
+		//q_sleep(1000);
 		accept_connection();
 	}
 }
