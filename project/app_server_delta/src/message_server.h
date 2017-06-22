@@ -1,17 +1,27 @@
+/******************************************************************************
+Copyright (c) 2016. All Rights Reserved.
+
+FileName: message_server.h
+Version: 1.0
+Date: 2016.1.13
+
+History:
+ericsheng     2016.4.13   1.0     Create
+******************************************************************************/
+
 #ifndef __MESSAGE_SERVER_H__
 #define __MESSAGE_SERVER_H__
 
-////////////////////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <memory>
 
-#include "nocopyable.h"
-#include "state.h"
 #include "message_queue.h"
+#include "utility/nocopyable.h"
+#include "utility/state.h"
 #include "thread_manager.h"
 #include "message_dispatcher.h"
 namespace serverframe{;
-////////////////////////////////////////////////////////////////////////////////
+
 template<typename message_t>
 class dispatch_handler
 {
@@ -28,14 +38,13 @@ public:
     message_dispatcher_alias m_dispatcher;
 };
 
-
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 template<typename message_t>
-class message_server : public nocopyable
+class message_server : public utility::nocopyable
 {
 public:
     typedef message_queue< std::shared_ptr<message_t> > message_queue_alias;
-////////////////////////////////////////////////////////////////////////////////
+
 public:
     inline message_server(){}
 
@@ -45,18 +54,18 @@ public:
     }
 
     /*@ start message server: start dispatch message and process it.
-    * @ para.thread_size: how many threads to start, if equal to "0", message 
-    server will run in a synchronous mode, else it will start number of threads 
+    * @ para.thread_size: how many threads to start, if equal to "0", message
+    server will run in a synchronous mode, else it will start number of threads
     (decicated by "thread_size")and message server run in a asynchronous mode.
     */
     void run(const size_t thread_size)
     {
         // update server state.
-        m_state.run();
+        m_state.ok();
 
-        // start work thread, if "thread_size"==0, this server will run in a 
+        // start work thread, if "thread_size"==0, this server will run in a
         // synchronous mode and message queue will not be init.
-        if (thread_size != 0) {    // asynchronous mode    
+        if (thread_size != 0) {    // asynchronous mode
             m_message_queue.reset(new message_queue_alias());
 
             m_thread_manager.reset(new thread_manager);
@@ -69,15 +78,14 @@ public:
     void stop()
     {
         // update server state to notify work thread.
-        m_state.stop();
+        m_state.none();
 
         // close message queue.
         if (m_message_queue != nullptr) {
             m_message_queue->close();
         }
 
-        // wait server stop.
-        join();
+        join();    // wait server stop.
     }
 
     /*@ wait server stop.*/
@@ -96,7 +104,7 @@ public:
     */
     inline void post(std::shared_ptr<message_t>& msg)
     {
-        if (m_state.is_stoped()) {
+        if (m_state.isnone()) {
             throw std::logic_error("message server is stopped.");
         }
 
@@ -114,12 +122,11 @@ public:
         return m_message_handler;
     }
 
-////////////////////////////////////////////////////////////////////////////////
 protected:
     /*@ work thread method.    */
     virtual void work()
     {
-        while (m_state.is_running()) {
+        while (m_state.isok()) {
             std::shared_ptr<message_t> msg;
             if (m_message_queue->take(msg)) {
                 handle(msg);
@@ -140,7 +147,6 @@ protected:
         }
     }
 
-////////////////////////////////////////////////////////////////////////////////
 protected:
     // thread pool.
     std::shared_ptr<thread_manager> m_thread_manager;
@@ -151,10 +157,8 @@ protected:
     dispatch_handler<message_t> m_message_handler;
 
     // message server state.
-    state m_state;
+    utility::state m_state;
 };
 
-
-////////////////////////////////////////////////////////////////////////////////
 }// serverframe
 #endif

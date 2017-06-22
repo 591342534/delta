@@ -27,18 +27,23 @@
     <ClInclude Include="src\qry_instrument_handler.h" />
     <ClInclude Include="src\request_adapter.h" />
     <ClInclude Include="src\server.h" />
-    <ClInclude Include="src\state.h" />
     <ClInclude Include="src\tcpserver_hub.h" />
     <ClInclude Include="src\tcp_engine.h" />
     <ClInclude Include="src\tcp_server_notify.h" />
     <ClInclude Include="src\thread_manager.h" />
+    <ClInclude Include="src\utility.h" />
     <ClInclude Include="src\version.h" />
     <ClInclude Include="src\wait.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\db_deposit_handler.cpp" />
     <ClCompile Include="src\default_handler.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\project_server.cpp" />
+    <ClCompile Include="src\qry_dcepair_handler.cpp" />
+    <ClCompile Include="src\qry_expireinst_handler.cpp" />
+    <ClCompile Include="src\qry_insmrgnrate_handler.cpp" />
+    <ClCompile Include="src\qry_instrument_handler.cpp" />
     <ClCompile Include="src\server.cpp" />
     <ClCompile Include="src\tcp_engine.cpp" />
     <ClCompile Include="src\tcp_server_notify.cpp" />
@@ -97,6 +102,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\boost\lib_vc120;$(SolutionDir)lib\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>utility.lib;database.lib;asio.lib;base.lib;ws2_32.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>
       </ImportLibrary>
     </Link>

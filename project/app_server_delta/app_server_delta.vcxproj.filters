@@ -21,16 +21,61 @@
     <ClInclude Include="src\common.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\nocopyable.h">
+    <ClInclude Include="src\db_deposit_handler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\default_handler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dispatch_server.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\message_dispatcher.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\message_queue.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\message_server.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\parse.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\singleton.h">
+    <ClInclude Include="src\project_server.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\state.h">
+    <ClInclude Include="src\qry_dcepair_handler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\qry_expireinst_handler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\qry_insmrgnrate_handler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\qry_instrument_handler.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\request_adapter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\server.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tcp_engine.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tcp_server_notify.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tcpserver_hub.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thread_manager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\version.h">
@@ -42,60 +87,33 @@
     <ClInclude Include="src\protocal.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\project_server.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\server.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tcpserver_hub.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dispatch_server.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\message_dispatcher.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\default_handler.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\message_queue.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\message_server.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\qry_order_handler.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\request_adapter.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tcp_engine.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tcp_server_notify.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\thread_manager.h">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\db_deposit_handler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\default_handler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\project_server.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\qry_dcepair_handler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\qry_expireinst_handler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\qry_insmrgnrate_handler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\qry_instrument_handler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\server.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\default_handler.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\qry_order_handler.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\tcp_engine.cpp">
