@@ -23,16 +23,23 @@ namespace utility
 	// Max datagrame size [64*1024]
 	unsigned int tcpserver::MaxDatagramSize = 64 * 1024;
 
-	tcpserver::tcpserver(const string& hostname, const string& port,
+    tcpserver::tcpserver(const string& hostname, const string& port, tcp_notify& notify,
 		unsigned int max_client) 
 		: hostname_(hostname),
 		port_(port),
+        m_notify(notify),
 		max_client_(max_client),
 		is_run_(false)
 	{
 		//windows used
 		qsocket::start();
 	}
+
+    tcpserver::~tcpserver()
+    {
+        stop();
+        //thread_runner::after_terminate();
+    }
 
 	void tcpserver::start() {
 		if (is_run_) {
@@ -100,6 +107,14 @@ namespace utility
 		session->send_data(datagrame);
 	}
 
+    void tcpserver::send_data(unsigned int clientid, const string& datagrame) {
+        session_id key(clientid);
+        auto it = session_map_.find(key);
+        if (it != session_map_.end()) {
+            session_map_[key]->send_data(datagrame);
+        }
+    }
+
 	void tcpserver::accept_connection() {
 		if (!is_run_) return;
 
@@ -118,7 +133,7 @@ namespace utility
 
 		client->set_buffer(false, 10240000);
 		client->set_buffer(true, 102400);
-		session* session_ptr = new session(client, this);
+		session* session_ptr = new session(client, this, m_notify);
 		session_map_[session_ptr->get_sessionid()] = session_ptr;
 		++client_count_;
 

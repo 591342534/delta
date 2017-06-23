@@ -84,7 +84,7 @@ void qry_instrument_handler::on_request(context& context)
 //                        i*sizeof(manager_server_instrument_rsp),
 //                       &sp, sizeof(manager_server_instrument_rsp) );
                 reply.append(reinterpret_cast<char*>(&sp), sizeof(common::manager_server_instrument_rsp));
-                //get_tcp_engine().get_tcpserver()->SendData(clientid, reply.c_str(), len);
+                get_tcp_engine().get_tcpserver()->send_data(clientid, reply);
 
             }
             string reply;
@@ -92,7 +92,7 @@ void qry_instrument_handler::on_request(context& context)
             manager_server_instrument_rsp sp = {0};
             sp.IsLast = 1;
             reply.append(reinterpret_cast<char*>(&sp), sizeof(common::manager_server_instrument_rsp));
-            //get_tcp_engine().get_tcpserver()->SendData(clientid, reply.c_str(), len);
+            get_tcp_engine().get_tcpserver()->send_data(clientid, reply);
 
             cout << "instrument counter: " << affected_rows << endl;
 //            delete[] reply;

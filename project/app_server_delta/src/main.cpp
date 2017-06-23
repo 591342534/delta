@@ -170,16 +170,16 @@ static int proc_main(std::string& param)
 int main(int argc, char **argv)
 {
     std::string curr_path = argv[0];
-    int pos = curr_path.rfind("/");
+    int pos = curr_path.rfind("\\");
     curr_path = curr_path.substr(0, pos);
 
-    std::string config_file = curr_path + 
+    std::string config_file = curr_path +
         "/config/manager_server_config.xml";
     std::string log_config_file = curr_path + "/config/log_config.xml";
     const char * binary_name = strrchr(argv[0], '/');
 
     bool run_as_deamon = false;
-    bool output_log_to_console = false;
+    bool output_log_to_console = true;
 #ifndef WIN32
     char c;
     while ((c = getopt(argc, argv, "lvdhos")) != -1) {
@@ -212,7 +212,7 @@ int main(int argc, char **argv)
         /* ignore broken pipe signal */
         signal(SIGPIPE, SIG_IGN);
     }
-#endif
+
     /* bind trace base log config file */
     if (!base::default_log_binder::bind_trace(log_config_file.c_str())) {
         cout << "trade_simulation server bind trace failed" << endl;
@@ -220,7 +220,7 @@ int main(int argc, char **argv)
     base::trace::enable_std_output(output_log_to_console);
 
     TRACE_SYSTEM(MODULE_NAME,"main function to be running %d:%s", 110, "hello manager_server");
-
+#endif
     proc_main(config_file);
 
     return 0;

@@ -341,7 +341,7 @@ namespace utility {
 				target_len = atoi(rev_buf);
 				first_recv = false;
 			} else {
-				output_str.append(rev_buf);
+				output_str.append(rev_buf, n);
 			}
 
 			have_recv_len = have_recv_len + n;

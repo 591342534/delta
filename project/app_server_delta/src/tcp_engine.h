@@ -11,8 +11,8 @@ ericsheng     2016.4.13   1.0     Create
 
 #ifndef __TCP_ENGINE_H__
 #define __TCP_ENGINE_H__
-#include "asio/asio_library.h"
 #include "utility/singleton.h"
+#include "utility/tcpserver.h"
 #include <iostream>
 
 namespace serverframe
@@ -27,12 +27,12 @@ namespace serverframe
 
     public:
         // 初始化消息队列
-        void init(const char *ip, int port, asio::asio_message_notify& ptrNotify);
+        void init(const char* ip, int port, utility::tcp_notify& notify);
         void stop();
 
-        asio::asio_server_api* get_tcpserver();
+        utility::tcpserver* get_tcpserver();
     private:
-        asio::asio_server_api* m_tcpserver;
+        utility::tcpserver* m_tcpserver;
         // 客户端
         //base::TTcpClient*    m_tcpclient;
     };

@@ -33,8 +33,9 @@ public:
 	// Max datagrame size [64*1024]
 	static unsigned int MaxDatagramSize;
 
-	tcpserver(const string& hostname, const string& port,
+    tcpserver(const string& hostname, const string& port, tcp_notify& notify,
         unsigned int max_client = DefaultMaxClient);
+    virtual ~tcpserver();
 
 	serversocket* get_serversocket() const { return server_socket_; }
 
@@ -50,6 +51,7 @@ public:
 
 	virtual void send_all_client(const string& datagrame);
 	virtual void send_data(session* session, const string& datagrame);
+    virtual void send_data(unsigned int clientid, const string& datagrame);
 	virtual void run() { start(); }
 
 private:
@@ -64,6 +66,8 @@ private:
 	map<session_id, session*> session_map_;
 	mutex mutex_;
 	bool is_run_;
+
+    tcp_notify& m_notify;
 };
 
 typedef shareptr<tcpserver> tcpserver_ptr;

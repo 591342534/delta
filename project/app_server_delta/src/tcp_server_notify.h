@@ -13,7 +13,7 @@ ericsheng     2016.4.13   1.0     Create
 #define __TCP_NOTIFY_H__
 #include <string>
 #include "protocal.h"
-#include "asio/asio_library.h"
+#include "utility/session.h"
 #include "tcpserver_hub.h"
 
 namespace serverframe{
@@ -21,14 +21,14 @@ namespace serverframe{
 
     //////////////////////////////////////////////////////////////////////////////
     //消息回报
-    class tcpserver_message_notify : public asio::asio_message_notify
+    class tcpserver_message_notify : public utility::tcp_notify
     {
     public:
         tcpserver_message_notify(tcpserver_hub& hdl);
 
         ////////////////////////////////////////////////////////
     protected:
-        virtual void on_message_stream(const std::string& stream);
+        virtual size_t on_recv_data(const unsigned int clientid, const string& buf);
 
     private:
         tcpserver_hub& m_hub;

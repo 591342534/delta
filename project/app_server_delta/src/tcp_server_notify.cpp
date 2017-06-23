@@ -25,10 +25,14 @@ namespace serverframe
     {
     }
 
-    void tcpserver_message_notify::on_message_stream(const std::string& stream)
+    size_t tcpserver_message_notify::on_recv_data(const unsigned int clientid, const string& buf)
     {
         try {
-            m_hub.on_read(const_cast<std::string&>(stream));
+            std::string buff;
+            encode(clientid, buf.c_str(), buf.size(), buff);
+            m_hub.on_read(const_cast<std::string&>(buff));
+
+            return buf.size();
         }
         catch (std::exception& err) {
             std::cout << "tcpserver_message_notify error: " << err.what();

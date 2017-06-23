@@ -29,11 +29,11 @@ namespace serverframe
 
     ////////////////////////////////////////////////////////////////////////////////
     void tcp_engine::init(const char *ip, int port,
-        asio::asio_message_notify& ptrNotify)
+        utility::tcp_notify& notify)
     {
         // 服务端   
-        m_tcpserver = asio::create_asio_server(port, &ptrNotify);
-        m_tcpserver->start_up();
+        m_tcpserver = new utility::tcpserver("127.0.0.1", std::to_string(port), notify);
+        utility::get_thread_manager().create_thread(*m_tcpserver);
 
         std::cout << "tcp_engine starting" << std::endl;
     }
@@ -42,12 +42,13 @@ namespace serverframe
     ////////////////////////////////////////////////////////////////////////////////
     void tcp_engine::stop()
     {
-        if (m_tcpserver != NULL)  {
-            asio::delete_asio_server(m_tcpserver);
+        if (m_tcpserver != nullptr) {
+            delete m_tcpserver;
+            m_tcpserver = nullptr;
         }
     }
 
-    asio::asio_server_api* tcp_engine::get_tcpserver()
+    utility::tcpserver* tcp_engine::get_tcpserver()
     {
         if (m_tcpserver == NULL) {
             std::cout << "m_tcpserver is null ptr." << std::endl;

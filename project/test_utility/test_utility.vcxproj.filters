@@ -29,6 +29,12 @@
     <ClInclude Include="src\test_singleton.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\test_tcpserver.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test_tcpclient.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

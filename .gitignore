@@ -5,7 +5,8 @@ temp/*
 lib/*
 include/*
 project/riskapidemo/*
-
+ipch/*
+project/log/*
 
  # Compiled source # 
 ################### 
@@ -23,3 +24,4 @@ project/riskapidemo/*
 *.sdf
 *.v12.suo
 *.log
+*.bak

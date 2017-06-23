@@ -28,7 +28,7 @@ logger::logger(struct log4config& config)
 	string abs_path = config.locset.log_path + string("/") + config.locset.log_date;
 #if defined(_MSC_VER)
 	int pos = 0;
-	abs_path += "\\";
+	//abs_path += "\\";
 	while ((pos = abs_path.find("/", pos)) != std::string::npos)
 	{
 		abs_path.replace(pos, strlen("/"), "\\");
