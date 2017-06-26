@@ -16,19 +16,9 @@ base     2016.1.13   1.0     Create
 namespace base
 {
 
-void dispatch(void* obj, dispatch_callback cb, void* param, int delay)
+void dispatch(void* obj, dispatch_callback cb, void* param)
 {
-	dispatch_scheduler::shared_instance()->dispatch(obj, cb, param, delay);
-}
-
-void dispatch_sync(void* obj, dispatch_callback cb, void* param)
-{
-	dispatch_scheduler::shared_instance()->dispatch_sync(obj, cb, param);
-}
-
-void dispatch_cancel(void* obj)
-{
-	dispatch_scheduler::shared_instance()->dispatch_cancel(obj);
+	dispatch_scheduler::shared_instance()->dispatch(obj, cb, param);
 }
 
 dispatch_scheduler* dispatch_scheduler::instance_ = NULL;
@@ -74,61 +64,24 @@ void dispatch_scheduler::release_instance()
 	}
 }
 
-void dispatch_scheduler::dispatch(void* obj, dispatch_callback cb, void* param, int delay)
+void dispatch_scheduler::dispatch(void* obj, dispatch_callback cb, void* param)
 {
 	assert(cb != NULL);
 
-	if (delay == 0) {
-		dispatch_op op;
-		op.cb = cb;
-		op.obj = obj;
-		op.param = param;
-		op_queue_->post_msg_mul(op);
-		op_event_->set();
-	}
-	else {
-		attach_dispatch(obj, cb, param, delay);
-	}
+    dispatch_op op;
+    op.cb = cb;
+    op.obj = obj;
+    op.param = param;
+    op_queue_->post_msg_mul(op);
+    op_event_->set();
 }
 
-void dispatch_scheduler::dispatch_sync(void* obj, dispatch_callback cb, void* param)
-{
-	assert(cb != NULL);
-
-	dispatch_op op;
-	event e;
-	op.cb = cb;
-	op.obj = obj;
-	op.param = param;
-	op.op_event = &e;
-
-	op_queue_->post_msg_mul(op);
-	e.wait();
-
-	op_event_->set();
-}
-
-void dispatch_scheduler::dispatch_cancel(void* obj)
-{
-	mutex_scope ms(&mutex_);
-
-	std::vector<tdispatch_info>::iterator it = dispatchs_.begin();
-	for ( ; it != dispatchs_.end(); ) {
-		if ((*it).op.obj == obj) {
-			it = dispatchs_.erase(it);
-		}
-		else {
-			++it;
-		}
-	}
-}
 
 void dispatch_scheduler::run()
 {
 	while (is_running_)
 	{
 		int ret = check_timers();
-		ret += check_dispatchs();
 		if (ret == 0) {
 			schedule_event_->reset();
 			schedule_event_->wait(20);
@@ -207,25 +160,10 @@ void dispatch_scheduler::detach_timer(timer* t)
 
 void dispatch_scheduler::fire_timer(timer* t)
 {
-	mutex_scope ms(&mutex_);
+    mutex_scope ms(&mutex_);
 
-	this->dispatch(t->obj_, t->cb_, t->param_);
-	t->next_fire_time_ = util::clock() + t->timeout_;
-}
-
-void dispatch_scheduler::attach_dispatch(void* obj, dispatch_callback cb, void* param, int delay)
-{
-	mutex_scope ms(&mutex_);
-
-	tdispatch_info tdi;
-	tdi.op.obj = obj;
-	tdi.op.cb = cb;
-	tdi.op.param = param;
-	tdi.fire_time = util::clock() + delay;
-	tdi.timeout = delay;
-
-	dispatchs_.push_back(tdi);
-	schedule_event_->set();
+    this->dispatch(t->obj_, t->cb_, t->param_);
+    t->next_fire_time_ = util::clock() + t->timeout_;
 }
 
 int dispatch_scheduler::check_timers()
@@ -252,23 +190,6 @@ int dispatch_scheduler::check_timers()
 	return (int)timers_.size();
 }
 
-int dispatch_scheduler::check_dispatchs()
-{
-	mutex_scope ms(&mutex_);
-
-	for (int i = 0; i < (int)dispatchs_.size(); ) {
-		tdispatch_info& tdi = dispatchs_[i];
-		if (tdi.fire_time > 0 && tdi.fire_time < util::clock()) {
-			this->dispatch(tdi.op.obj, tdi.op.cb, tdi.op.param);
-			dispatchs_.erase(dispatchs_.begin() + i);
-		}
-		else {
-			i++;
-		}
-	}
-	return (int)dispatchs_.size();
-}
-
 #if defined(PLATFORM_WINDOWS)
 DWORD WINAPI dispatch_scheduler::message_process_thread(void* param)
 #else
@@ -289,9 +210,6 @@ void dispatch_scheduler::process_message()
 	while (!stop_process_threads_) {
 		 if (op_queue_->get_msg_mul(dop)) {
 			 dop.cb(dop.obj, dop.param);
-			 if (dop.op_event != NULL) {
-				 dop.op_event->set();
-			 }
 		 }
 		 else {
 			 op_event_->reset();

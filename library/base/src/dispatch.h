@@ -29,19 +29,8 @@ typedef timer_callback dispatch_callback;
  * @param param the param that will be passed back to the function
  * @param delay the delay time before calling the function, in milliseconds.
  */
-void dispatch(void* obj, dispatch_callback cb, void* param, int delay = 0);
-/*
- * dispatch operation to the process thread, and wait until it's done
- * @param obj the obj that will be passed back to the function
- * @param cb target callback function
- * @param param the param that will be passed back to the function
- */
-void dispatch_sync(void* obj, dispatch_callback cb, void* param);
-/*
- * cancel all the unfired dispatched operation about obj
- * @param obj
- */
-void dispatch_cancel(void* obj);
+void dispatch(void* obj, dispatch_callback cb, void* param);
+
 
 /****************************************************************************/
 
@@ -50,25 +39,11 @@ struct dispatch_op
 	void* obj;
 	dispatch_callback cb;
 	void* param;
-	event* op_event;
 
 	dispatch_op()
 		: obj(NULL)
 		, cb(NULL)
 		, param(NULL)
-		, op_event(NULL)
-	{}
-};
-
-struct tdispatch_info
-{
-	dispatch_op op;
-	int timeout;
-	long fire_time;
-
-	tdispatch_info()
-		: timeout(0)
-		, fire_time(0)
 	{}
 };
 
@@ -84,9 +59,7 @@ public:
 	static void release_instance();
 
 public:
-	void dispatch(void* obj, dispatch_callback cb, void* param, int delay = 0);
-	void dispatch_sync(void* obj, dispatch_callback cb, void* param);
-	void dispatch_cancel(void* obj);
+	void dispatch(void* obj, dispatch_callback cb, void* param);
 
 public:
 	virtual void run();
@@ -96,13 +69,10 @@ public:
 public:
 	void attach_timer(timer* t);
 	void detach_timer(timer* t);
-	void fire_timer(timer* t);
-
-	void attach_dispatch(void* obj, dispatch_callback cb, void* param, int delay);
+    void fire_timer(timer* t);
 
 protected:
 	int check_timers();
-	int check_dispatchs();
 
 private:
 #if defined(PLATFORM_WINDOWS)
@@ -120,7 +90,6 @@ private:
 
 	mutex mutex_;
 	std::vector<timer*> timers_;
-	std::vector<tdispatch_info> dispatchs_;
 	event* schedule_event_;
 
 	static dispatch_scheduler* instance_;
