@@ -33,10 +33,11 @@ public:
 
 int main(int argc, char *argv[])
 {
-    test one = test(100);
-    cout << one.num << endl;
-    test two(200);
-    cout << two.num << endl;
+    char *s = "abcde";
+    s += 2;
+    printf("%d", s);
+
+
 
     getchar();
     return 0;

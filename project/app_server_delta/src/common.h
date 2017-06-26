@@ -31,7 +31,7 @@ const char EXPIREINST_FLAG_ALL = '0';
 const char EXPIREINST_FLAG_SHFE = '1';
 const char EXPIREINST_FLAG_CFFEX = '2';
 
-const char *const MODULE_NAME = "manager_server";
+const char *const MODULE_NAME = "app_server_delta";
 const int MANAGER_S_OK = 0;
 
 #define CHECK_IF_DBCONN_NULL(dbconn) \
