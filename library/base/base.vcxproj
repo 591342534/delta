@@ -91,13 +91,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>COMMON_EXPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL;BASE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\contrib\ssl\include;$(SolutionDir)..\contrib;</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>utility.lib;libeay32.lib;ssleay32.lib;zdll.lib;log4cplusD.lib;lib_json.lib;Ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\ssl\lib\win;$(SolutionDir)..\contrib\zlib-1.2.8\lib\win;$(SolutionDir)..\contrib\log4cplus\lib_vc140;$(SolutionDir)..\contrib\jsoncpp\lib_vc120</AdditionalLibraryDirectories>
+      <AdditionalDependencies>log4cplusSD.lib;utility.lib;libeay32.lib;ssleay32.lib;zdll.lib;lib_json.lib;Ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\ssl\lib\win;$(SolutionDir)..\contrib\zlib-1.2.8\lib\win;$(SolutionDir)..\contrib\log4cplus\lib_vc120;$(SolutionDir)..\contrib\jsoncpp\lib_vc120</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST $(SolutionDir)lib\$(Configuration) md $(SolutionDir)lib\$(Configuration)

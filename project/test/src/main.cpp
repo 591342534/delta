@@ -20,6 +20,15 @@
 #include <chrono>
 #include <mutex>
 
+#include <iomanip>
+#include <log4cplus/logger.h>
+#include <log4cplus/consoleappender.h>
+#include <log4cplus/layout.h>
+#include <log4cplus/loggingmacros.h>
+#include <log4cplus/fileappender.h>
+using namespace log4cplus;
+using namespace log4cplus::helpers;
+
 using namespace std;
 
 class test {
@@ -31,13 +40,9 @@ public:
     int num;
 };
 
+
 int main(int argc, char *argv[])
 {
-    char *s = "abcde";
-    s += 2;
-    printf("%d", s);
-
-
 
     getchar();
     return 0;

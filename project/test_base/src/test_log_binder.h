@@ -20,10 +20,31 @@ ericsheng     2016.1.13   1.0     Create
 #include <log4cplus/layout.h>
 #include <log4cplus/loggingmacros.h>
 #include <log4cplus/fileappender.h>
-
+#include "base/trace.h"
 #include "base/log_binder.h"
 
 using namespace log4cplus;
 using namespace log4cplus::helpers;
+
+class test_log_binder
+{
+public:
+    test_log_binder(){};
+    ~test_log_binder(){}; 
+
+public:
+    void test()
+    {
+        if (!base::default_log_binder::bind_trace("./config/log_config.xml")) {
+            std::cout << "log bind_trace failed" << std::endl;
+            return;
+        }
+        base::trace::enable_std_output(true);
+        base::trace::set_trace_level_filter(base::TRACE_LEVEL_SYSTEM);
+
+        TRACE_ERROR("test_log_binder", 10000, "%s", "this is log4cplus packet");
+        TRACE_SYSTEM("test_log_binder", "test_log_binder (%s:%d)\n", "hello", 10001);
+    }
+};
 
 #endif

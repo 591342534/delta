@@ -33,9 +33,6 @@
     <ClCompile Include="src\test_dictionary.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\test_log4cplus.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\test_rsa.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\test_timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\test_log4cplus.h">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

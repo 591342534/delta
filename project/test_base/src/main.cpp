@@ -11,7 +11,6 @@ ericsheng     2016.11.25   1.0     Create
 #include <map>
 #include <stdio.h>
 
-#include "base/trace.h"
 #include "base/util.h"
 #include "test_sigslot.h"
 #include "test_dictionary.h"
@@ -22,6 +21,7 @@ ericsheng     2016.11.25   1.0     Create
 #include "test_rsa.h"
 #include "test_timer.h"
 #include "base/pugixml.hpp"
+#include "test_log4cplus.h"
 
 using namespace std;
 void test_timer1(int argc, char* argv[])
@@ -51,17 +51,10 @@ void test_zlib(int argc, char* argv[])
     t.test_flate(argc, argv);
 }
 
-void test_log_binder(int argc, char* argv[])
+void test_log_binder1(int argc, char* argv[])
 {
-    if (!base::default_log_binder::bind_trace("log_config.xml")) {
-        std::cout << "log bind_trace failed" << std::endl;
-        return;
-    }
-    base::trace::enable_std_output(true);
-    base::trace::set_trace_level_filter(base::TRACE_LEVEL_SYSTEM);
-
-    TRACE_ERROR("test_log_binder", 10000, "%s", "this is log4cplus packet");
-    TRACE_SYSTEM("test_log_binder", "test_log_binder (%s:%d)\n", "hello", 10001);
+    test_log_binder t;
+    t.test();
 }
 
 void test_sigslot(int argc, char* argv[])
@@ -114,6 +107,12 @@ void test_pugixml(int argc, char* argv[])
     doc.save_file(position_config.c_str());
 }
 
+void test_log4cplus1(int argc, char* argv[])
+{
+    test_log4cplus tmp;
+    tmp.test_console_appender();
+}
+
 int main(int argc, char* argv[])
 {
     int ch = '1';
@@ -122,7 +121,7 @@ int main(int argc, char* argv[])
         printf("0: exit \n");
         printf("1: test base::timer \n");
         printf("2: test base::dispatch \n");
-        printf("3: test base::log \n");
+        printf("3: test base::log_binder \n");
         printf("4: test base::event \n");
         printf("5: test base::tqueue \n");
         printf("6: test base::alarm \n");
@@ -134,6 +133,7 @@ int main(int argc, char* argv[])
         printf("c: test base::sigslot\n");
         printf("d: test base::zlib\n");
         printf("e: test base::xml\n");
+        printf("f: test log4cplus\n");
         printf("please select your decide: ");
         ch = getchar();
         switch (ch) {
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
             test_timer1(argc, argv);
             break;
         case '3':
-            test_log_binder(argc, argv);
+            test_log_binder1(argc, argv);
             break;
         case '6':
             test_alarm1(argc, argv);
@@ -166,6 +166,9 @@ int main(int argc, char* argv[])
             break;
         case 'e':
             test_pugixml(argc, argv);
+            break;
+        case 'f':
+            test_log4cplus1(argc, argv);
             break;
         default:
             printf("please input right decide~~\n");
