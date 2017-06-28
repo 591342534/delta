@@ -86,19 +86,23 @@
     <ClCompile Include="src\test_alarm.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\test_dictionary.cpp" />
+    <ClCompile Include="src\test_dispatch.cpp" />
     <ClCompile Include="src\test_log4cplus.h" />
     <ClCompile Include="src\test_log_binder.h" />
     <ClCompile Include="src\test_rsa.cpp" />
     <ClCompile Include="src\test_sigslot.h" />
     <ClCompile Include="src\test_timer.cpp" />
+    <ClCompile Include="src\test_tqueue.cpp" />
     <ClCompile Include="src\test_zip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\test_aes.h" />
     <ClInclude Include="src\test_alarm.h" />
     <ClInclude Include="src\test_dictionary.h" />
+    <ClInclude Include="src\test_dispatch.h" />
     <ClInclude Include="src\test_rsa.h" />
     <ClInclude Include="src\test_timer.h" />
+    <ClInclude Include="src\test_tqueue.h" />
     <ClInclude Include="src\test_zip.h" />
   </ItemGroup>
   <ItemGroup>

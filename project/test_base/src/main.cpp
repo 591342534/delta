@@ -20,6 +20,8 @@ ericsheng     2016.11.25   1.0     Create
 #include "test_aes.h"
 #include "test_rsa.h"
 #include "test_timer.h"
+#include "test_dispatch.h"
+#include "test_tqueue.h"
 #include "base/pugixml.hpp"
 #include "test_log4cplus.h"
 
@@ -32,6 +34,13 @@ void test_timer1(int argc, char* argv[])
     getchar(); //»»ÐÐ·û
     getchar(); //µÈ´ý³¬Ê±
 }
+
+void test_dispatch1(int argc, char* argv[])
+{
+    test_dispatch t;
+    t.test_timer();
+}
+
 
 void test_rsa1(int argc, char* argv[])
 {
@@ -67,6 +76,12 @@ void test_sigslot(int argc, char* argv[])
         base::util::sleep(1000);
     }
     alarm_clock.tick.disconnect(&midschool_stu);
+}
+
+void test_tqueue1(int argc, char* argv[])
+{
+    test_tqueue t;
+    t.mult_thread_test();
 }
 
 void test_alarm1(int argc, char* argv[])
@@ -143,8 +158,14 @@ int main(int argc, char* argv[])
         case '1':
             test_timer1(argc, argv);
             break;
+        case '2':
+            test_dispatch1(argc, argv);
+            break;
         case '3':
             test_log_binder1(argc, argv);
+            break;
+        case '5':
+            test_tqueue1(argc, argv);
             break;
         case '6':
             test_alarm1(argc, argv);

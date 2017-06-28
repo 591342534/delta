@@ -48,6 +48,12 @@
     <ClCompile Include="src\test_log4cplus.h">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\test_dispatch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\test_tqueue.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\test_aes.h">
@@ -66,6 +72,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\test_timer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test_dispatch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test_tqueue.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

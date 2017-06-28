@@ -70,7 +70,7 @@ int zip::deflate_data(char *dest, long *dest_len, const char *source, long sourc
 	defstrm_.next_in = src;
 	defstrm_.avail_out = *dest_len;
 	defstrm_.next_out = (Bytef *)dest;
-	ret = deflate(&defstrm_, Z_PARTIAL_FLUSH);
+    ret = deflate(&defstrm_, Z_FINISH);
 	*dest_len -= defstrm_.avail_out;
 	return ret;
 }
@@ -83,9 +83,19 @@ int zip::inflate_data(char *dest, long *dest_len, const char *source, long sourc
 	infstrm_.next_in = src;
 	infstrm_.avail_out = *dest_len;
 	infstrm_.next_out = (Bytef*)dest;
-	ret = inflate(&infstrm_, Z_PARTIAL_FLUSH);
+    ret = inflate(&infstrm_, Z_FINISH);
 	*dest_len -= infstrm_.avail_out;
 	return ret;
+}
+
+int zip::zcompress(char *dest, long *dest_len, const char *source, long source_len)
+{
+	return compress((Bytef*)dest, (uLongf*)dest_len, (const Bytef*)source, source_len);
+}
+
+int zip::unzcompress(char *dest, long *dest_len, const char *source, long source_len)
+{
+	return uncompress((Bytef*)dest, (uLongf*)dest_len, (const Bytef*)source, source_len);
 }
 
 int zip::zcompress(FILE *source, FILE *dest, int level)
@@ -117,14 +127,14 @@ int zip::zcompress(FILE *source, FILE *dest, int level)
         strm.next_in = in;
 
         /* run deflate() on input until output buffer not full, finish
-           compression if all of source has been read in */
+        compression if all of source has been read in */
         do {
             strm.avail_out = CHUNK;
             strm.next_out = out;
             ret = deflate(&strm, flush);    /* no bad return value */
-            if(ret == Z_STREAM_ERROR) {
-            	zerr(ret);
-            	return ret;
+            if (ret == Z_STREAM_ERROR) {
+                zerr(ret);
+                return ret;
             }
             have = CHUNK - strm.avail_out;
             if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
@@ -134,17 +144,17 @@ int zip::zcompress(FILE *source, FILE *dest, int level)
             }
         } while (strm.avail_out == 0);
 
-        if(strm.avail_in != 0) {
-        	zerr(Z_ERRNO);
-        	return Z_ERRNO;
+        if (strm.avail_in != 0) {
+            zerr(Z_ERRNO);
+            return Z_ERRNO;
         }
 
         /* done when last data in file processed */
     } while (flush != Z_FINISH);
 
-    if(ret != Z_STREAM_END) {
-    	zerr(ret);
-    	return ret;
+    if (ret != Z_STREAM_END) {
+        zerr(ret);
+        return ret;
     }
 
     /* clean up and return */
@@ -152,15 +162,6 @@ int zip::zcompress(FILE *source, FILE *dest, int level)
     return Z_OK;
 }
 
-int zip::zcompress(char *dest, long *dest_len, const char *source, long source_len)
-{
-	return compress((Bytef*)dest, (uLongf*)dest_len, (const Bytef*)source, source_len);
-}
-
-int zip::unzcompress(char *dest, long *dest_len, const char *source, long source_len)
-{
-	return uncompress((Bytef*)dest, (uLongf*)dest_len, (const Bytef*)source, source_len);
-}
 
 int zip::unzcompress(FILE *source, FILE *dest)
 {

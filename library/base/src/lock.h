@@ -47,7 +47,7 @@ protected:
 	bool initialized_;
 };
 
-class mutex_scope
+class COMMON_API mutex_scope
 {
 public:
 	mutex_scope(mutex* m);

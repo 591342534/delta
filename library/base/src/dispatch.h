@@ -29,7 +29,7 @@ typedef timer_callback dispatch_callback;
  * @param param the param that will be passed back to the function
  * @param delay the delay time before calling the function, in milliseconds.
  */
-void dispatch(void* obj, dispatch_callback cb, void* param);
+void COMMON_API dispatch(void* obj, dispatch_callback cb, void* param);
 
 
 /****************************************************************************/
