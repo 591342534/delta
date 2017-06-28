@@ -50,8 +50,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{31519246-B270-4510-9FCF-BDA83C01C2BA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>app_server_delta</RootNamespace>
-    <ProjectName>app_server_delta</ProjectName>
+    <RootNamespace>delta</RootNamespace>
+    <ProjectName>delta</ProjectName>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
