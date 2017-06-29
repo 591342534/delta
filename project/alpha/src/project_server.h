@@ -14,13 +14,14 @@ ericsheng     2016.4.13   1.0     Create
 
 #include <iostream>
 #include <string>
-
+#include <memory>
 #include "utility/singleton.h"
 #include "database/unidbpool.h"
 #include "base/log_binder.h"
 #include "query_processor.h"
 #include "deals_processor.h"
 #include "processor_base.h"
+#include "http_processor.h"
 namespace serverframe {
 struct db_info {
     //dbtype eg:mysql
@@ -90,6 +91,7 @@ private:
 
     deals_processor* m_deal_pro_;
     std::vector<query_processor*> m_query_pro_vec_;
+    std::shared_ptr<http_processor> m_http_pro_;
 
     bool started_;
 };

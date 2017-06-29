@@ -14,16 +14,6 @@ History: cwm     2015.10.26   1.0     Create
 namespace serverframe
 {
 
-product_business_deal::product_business_deal()
-{
-    
-}
-
-product_business_deal::~product_business_deal()
-{
-    
-}
-
 int product_business_deal::check_deal_is_exist(base::dictionary &dict)
 {
     int ret = NAUT_S_OK;

@@ -176,7 +176,7 @@ int main(int argc, char **argv)
     curr_path = curr_path.substr(0, pos);
 
     std::string config_file = curr_path +
-        "/config/manager_server_config.xml";
+        "/config/alpha_config.xml";
     std::string log_config_file = curr_path + "/config/log_config.xml";
     const char * binary_name = strrchr(argv[0], '/');
 

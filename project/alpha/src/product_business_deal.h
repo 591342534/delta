@@ -9,6 +9,7 @@ History: cwm     2015.10.26   1.0     Create
 #ifndef _PRODUCT_BUSINESS_DEAL_H_
 #define _PRODUCT_BUSINESS_DEAL_H_
 
+#include "utility/nocopyable.h"
 #include "common.h"
 #include "processor_base.h"
 #include "base/dictionary.h"
@@ -62,16 +63,13 @@ enum TRADE_ORDER_STATUS
     TRADE_ORDER_STATUS_FAILED = 7,            /* 订单失败 */
 };
 
-class product_business_deal
+class product_business_deal 
+    : public utility::nocopyable
 {
 public:
-    product_business_deal();
-    ~product_business_deal();
-
-public:
-    int check_deal_is_exist(base::dictionary &dict);
-    int get_stocker_attr(base::dictionary &d,const std::string &user_name);
-    int add_deal(base::dictionary &dict, database::db_instance* pconn = NULL);
+    static int check_deal_is_exist(base::dictionary &dict);
+    static int get_stocker_attr(base::dictionary &d, const std::string &user_name);
+    static int add_deal(base::dictionary &dict, database::db_instance* pconn = NULL);
 };
 
 }

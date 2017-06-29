@@ -60,8 +60,6 @@ private:
     std::string server_name_;
     base::event* msg_event_;
     bool started_;
-
-    product_business_deal busi_deal_;
 };
 
 }

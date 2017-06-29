@@ -15,7 +15,7 @@ base     2016.1.13   1.0     Create
 #include <string.h>
 #include <assert.h>
 #include <string>
-
+#include <atomic>
 #ifdef WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

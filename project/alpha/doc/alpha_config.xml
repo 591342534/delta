@@ -34,7 +34,7 @@
     
     <server_info>
         <ip note="ip">127.0.0.1</ip>
-        <port note="port">7779</port>
+        <port note="port">7070</port>
     </server_info>
     
     <quote_gateway_info>

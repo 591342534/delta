@@ -90,14 +90,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>COMMON_EXPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL;BASE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib\ssl\include;$(SolutionDir)..\contrib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib\ssl\include;$(SolutionDir)..\contrib;$(SolutionDir)..\contrib\libevent\include\win</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>log4cplusSD.lib;utility.lib;libeay32.lib;ssleay32.lib;zdll.lib;lib_json.lib;Ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\ssl\lib\win;$(SolutionDir)..\contrib\zlib-1.2.8\lib\win;$(SolutionDir)..\contrib\log4cplus\lib_vc120;$(SolutionDir)..\contrib\jsoncpp\lib_vc120</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;wsock32.lib;libevent.lib;libevent_core.lib;libevent_extras.lib;log4cplusSD.lib;utility.lib;libeay32.lib;ssleay32.lib;zdll.lib;lib_json.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libevent\lib\win;$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\ssl\lib\win;$(SolutionDir)..\contrib\zlib-1.2.8\lib\win;$(SolutionDir)..\contrib\log4cplus\lib_vc120;$(SolutionDir)..\contrib\jsoncpp\lib_vc120</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST $(SolutionDir)lib\$(Configuration) md $(SolutionDir)lib\$(Configuration)
@@ -164,6 +164,7 @@ copy $(ProjectDir)src\*.h*  $(SolutionDir)include\$(TargetName)</Command>
     <ClCompile Include="src\dtrans.cpp" />
     <ClCompile Include="src\event.cpp" />
     <ClCompile Include="src\file.cpp" />
+    <ClCompile Include="src\httpserver.cpp" />
     <ClCompile Include="src\lock.cpp" />
     <ClCompile Include="src\logger.cpp" />
     <ClCompile Include="src\log_binder.cpp" />
@@ -187,6 +188,7 @@ copy $(ProjectDir)src\*.h*  $(SolutionDir)include\$(TargetName)</Command>
     <ClInclude Include="src\dtrans.h" />
     <ClInclude Include="src\event.h" />
     <ClInclude Include="src\file.h" />
+    <ClInclude Include="src\httpserver.h" />
     <ClInclude Include="src\lock.h" />
     <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\log_binder.h" />

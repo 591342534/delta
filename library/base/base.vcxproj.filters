@@ -78,6 +78,9 @@
     <ClCompile Include="src\zip.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\httpserver.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\aes.h">
@@ -153,6 +156,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\zip.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\httpserver.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

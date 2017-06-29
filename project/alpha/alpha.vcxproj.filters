@@ -45,6 +45,9 @@
     <ClInclude Include="src\wait.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\http_processor.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\deals_processor.cpp">
@@ -60,6 +63,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\query_processor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\http_processor.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

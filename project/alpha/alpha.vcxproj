@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\deals_processor.h" />
+    <ClInclude Include="src\http_processor.h" />
     <ClInclude Include="src\processor_base.h" />
     <ClInclude Include="src\product_business_deal.h" />
     <ClInclude Include="src\project_server.h" />
@@ -23,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\deals_processor.cpp" />
+    <ClCompile Include="src\http_processor.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\product_business_deal.cpp" />
     <ClCompile Include="src\project_server.cpp" />
@@ -78,14 +80,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib;$(SolutionDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib;$(SolutionDir)include;$(SolutionDir)..\contrib\libevent\include\win</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\boost\lib_vc120;$(SolutionDir)lib\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>utility.lib;database.lib;base.lib;ws2_32.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libevent\lib\win;$(SolutionDir)..\contrib\boost\lib_vc120;$(SolutionDir)lib\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;wsock32.lib;libevent.lib;libevent_core.lib;libevent_extras.lib;utility.lib;database.lib;base.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>
       </ImportLibrary>
     </Link>

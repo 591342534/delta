@@ -18,7 +18,8 @@ using namespace database;
 
 namespace serverframe {
     project_server::project_server()
-        : m_deal_pro_(NULL)
+        : m_deal_pro_(nullptr)
+        , m_http_pro_(nullptr)
         , started_(false)
     {
     }
@@ -86,6 +87,8 @@ namespace serverframe {
             CHECK_LABEL(ret, end);
         }
 
+        m_http_pro_ = std::make_shared<http_processor>();
+        m_http_pro_->start();
         LABEL_SCOPE_END;
     end:
         return ret;
