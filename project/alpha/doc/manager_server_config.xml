@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<manager_server>
+    <db>
+        <type note="数据库类型">mysql</type>
+        <host note="MYSQL服务地址">192.168.4.55</host>
+        <port note="MYSQL服务端口">3306</port>
+        <user note="MYSQL服务用户名">risk</user>
+        <pwd note="MYSQL服务密码">risk</pwd>
+        <dbname note="MYSQL服务名称">future_risk</dbname>
+        <charset note="MYSQL字符集">utf8</charset>
+    </db>
+    
+    <table_config>
+        <statutory_holidays note="国家法定节假日配置表">statutory_holidays</statutory_holidays>
+        <trade_times note="交易时间段配置表">trade_times</trade_times>
+        <account note="执行人信息表">account_config</account>
+        <securities note="证券代码表">securities</securities>
+        <product note="product table">product</product>
+        <instrument note="instrument table">t_instrument</instrument>
+        <insmrgnrate note="insmrgnrate table">t_insmrgnrate</insmrgnrate>
+        <dcepair note="dcepair table">t_dcepair_inscom</dcepair>
+        <calendar note="calendar table">t_calendar</calendar>
+        <calcdeposit note="calc deposit table">t_cash_deposit</calcdeposit>
+    </table_config>
+    
+    <system>
+        <holiday_check note="节假日校验">1</holiday_check>
+        <trade_time_check note="交易时间校验">1</trade_time_check>
+    </system>
+    
+    <update_time>
+        <am_time>8::50:00</am_time>
+    </update_time>
+    
+    <server_info>
+        <ip note="ip">127.0.0.1</ip>
+        <port note="port">7779</port>
+    </server_info>
+    
+    <quote_gateway_info>
+        <ip note="ip">192.168.4.22</ip>
+        <port note="port">6000</port>
+    </quote_gateway_info>
+</manager_server>
