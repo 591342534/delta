@@ -33,9 +33,9 @@
 #endif // !WIN32
 
 #include "thread.h"
+#include <thread>
+#include <memory>
 #include <vector>
-
-using namespace std;
 
 namespace base
 {
@@ -48,18 +48,43 @@ class COMMON_API httpserver
 public:
 	httpserver();
 	~httpserver();
-	int init(string sip, int nport, http_call_back p_func, string &msg, int ntimeout=60);
+	int init(std::string sip, int nport, http_call_back p_func, std::string &msg, int ntimeout=60);
 	virtual void run();
 	void stop();
 public:
-	string m_ip;
+	std::string m_ip;
 	int m_nport;
 	struct event_base *m_httpbase;
 	http_call_back m_p_func_call_back;
 	int m_ntimeout;
 };
 
+class COMMON_API multi_thread_httpserver
+{
+public:
+    multi_thread_httpserver();
+    ~multi_thread_httpserver();
+protected:
+    int httpserver_bindsocket(int port, int backlog);
+    int httpserver_start(int port, int nthreads, int backlog);
+    static void* httpserver_dispatch(void *arg);
+    static void httpserver_handler(struct evhttp_request* req, void *arg);
+    static void httpserver_processrequest(struct evhttp_request *req);
+public:
+    int init(std::string sip, int nport, http_call_back p_func, std::string &msg, int ntimeout = 60, int nthreads = 5);
+    int run();
+    void stop();
 
+private:
+    std::string m_ip;
+    int m_nport;
+    static http_call_back m_p_func_call_back;
+    int m_ntimeout;
+    int m_nthreads;
+    std::vector< std::shared_ptr<std::thread> > m_vec_ths;
+    std::vector<struct evhttp*> m_vec_httpd;
+
+};
 }
 
 #endif //_HTTP_SERVER_H_

@@ -30,7 +30,7 @@ public:
     int stop();
 
 public:
-    static base::httpserver* http_;
+    static base::multi_thread_httpserver* http_;
 };
 
 }

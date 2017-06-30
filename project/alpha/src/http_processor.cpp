@@ -98,7 +98,7 @@ void send_document_cb(struct evhttp_request* req, void* arg)
         }
     }
     else {
-        check_fail_handler("param error");
+        check_fail_handler("error opt");
         goto deal_error;
     }
 
@@ -116,7 +116,7 @@ done:
         evbuffer_free(evb);
     }
 }
-base::httpserver* http_processor::http_ = NULL;
+base::multi_thread_httpserver* http_processor::http_ = NULL;
 
 http_processor::http_processor() {
 
@@ -129,7 +129,7 @@ http_processor::~http_processor() {
 int http_processor::start() {
     int ret = NAUT_S_OK;
     string msg = "";
-    http_ = new base::httpserver();
+    http_ = new base::multi_thread_httpserver();
     ret = http_->init(get_project_server().get_process_param().serverinfo_.ip, 
         get_project_server().get_process_param().serverinfo_.port, send_document_cb, msg);
     if (ret != 0) {
