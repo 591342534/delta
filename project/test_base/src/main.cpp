@@ -23,6 +23,7 @@ ericsheng     2016.11.25   1.0     Create
 #include "test_dispatch.h"
 #include "test_tqueue.h"
 #include "base/pugixml.hpp"
+#include "test_util.h"
 #include "test_log4cplus.h"
 
 using namespace std;
@@ -128,6 +129,12 @@ void test_log4cplus1(int argc, char* argv[])
     tmp.test_console_appender();
 }
 
+void test_util1(int argc, char* argv[])
+{
+    test_util tmp;
+    tmp.test();
+}
+
 int main(int argc, char* argv[])
 {
     int ch = '1';
@@ -149,6 +156,7 @@ int main(int argc, char* argv[])
         printf("d: test base::zlib\n");
         printf("e: test base::xml\n");
         printf("f: test log4cplus\n");
+        printf("g: test base::util\n");
         printf("please select your decide: ");
         ch = getchar();
         switch (ch) {
@@ -190,6 +198,9 @@ int main(int argc, char* argv[])
             break;
         case 'f':
             test_log4cplus1(argc, argv);
+            break;
+        case 'g':
+            test_util1(argc, argv);
             break;
         default:
             printf("please input right decide~~\n");

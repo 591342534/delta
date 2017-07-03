@@ -93,6 +93,7 @@
     <ClCompile Include="src\test_sigslot.h" />
     <ClCompile Include="src\test_timer.cpp" />
     <ClCompile Include="src\test_tqueue.cpp" />
+    <ClCompile Include="src\test_util.cpp" />
     <ClCompile Include="src\test_zip.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +104,7 @@
     <ClInclude Include="src\test_rsa.h" />
     <ClInclude Include="src\test_timer.h" />
     <ClInclude Include="src\test_tqueue.h" />
+    <ClInclude Include="src\test_util.h" />
     <ClInclude Include="src\test_zip.h" />
   </ItemGroup>
   <ItemGroup>

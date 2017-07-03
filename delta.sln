@@ -19,8 +19,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mysql_api", "library\mysql_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_utility", "project\test_utility\test_utility.vcxproj", "{D51B08D6-458C-45EA-B4B1-D13E931F8079}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRiskApi", "project\riskapidemo\testRiskApi.vcxproj", "{1AE80AA5-5393-41D4-99BF-E3523F64B926}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_base", "project\test_base\test_base.vcxproj", "{DE8A9F45-6CEE-4BFC-9C65-0C55935D9A16}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BE6698AA-0BF2-4609-B315-F5376994EB1D}"
@@ -152,20 +150,6 @@ Global
 		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|x64.ActiveCfg = Release|Win32
 		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|x86.ActiveCfg = Release|Win32
 		{D51B08D6-458C-45EA-B4B1-D13E931F8079}.Release|x86.Build.0 = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|Win32.Build.0 = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|x64.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|x86.ActiveCfg = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Debug|x86.Build.0 = Debug|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Win32.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|Win32.Build.0 = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|x64.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|x86.ActiveCfg = Release|Win32
-		{1AE80AA5-5393-41D4-99BF-E3523F64B926}.Release|x86.Build.0 = Release|Win32
 		{DE8A9F45-6CEE-4BFC-9C65-0C55935D9A16}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{DE8A9F45-6CEE-4BFC-9C65-0C55935D9A16}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{DE8A9F45-6CEE-4BFC-9C65-0C55935D9A16}.Debug|Win32.ActiveCfg = Debug|Win32

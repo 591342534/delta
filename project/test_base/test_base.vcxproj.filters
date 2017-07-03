@@ -54,6 +54,9 @@
     <ClCompile Include="src\test_tqueue.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\test_util.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\test_aes.h">
@@ -78,6 +81,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\test_tqueue.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test_util.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
