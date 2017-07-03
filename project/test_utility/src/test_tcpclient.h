@@ -9,7 +9,7 @@
 #include "utility/clientsocket.h"
 #include "utility/address.h"
 #include "utility/state.h"
-#include "../../app_server_delta/src/protocal.h"
+#include "../../delta/src/protocal.h"
 using namespace std;
 using namespace utility;
 

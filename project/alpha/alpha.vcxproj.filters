@@ -27,9 +27,6 @@
     <ClInclude Include="src\processor_base.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\product_business_deal.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\project_server.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -48,15 +45,24 @@
     <ClInclude Include="src\http_processor.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\http_deal.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sqlmake.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\product_business_deal.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\errordef.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\deals_processor.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\product_business_deal.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\project_server.cpp">
@@ -66,6 +72,18 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\http_processor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\http_deal.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sqlmake.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\product_business_deal.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\errordef.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

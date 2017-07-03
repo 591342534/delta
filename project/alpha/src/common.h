@@ -26,6 +26,7 @@ enum MANAGER_ERROR
     MANAGER_E_DBCONNECT_INVALID = 301003,
     MANAGER_E_DB_FAILED = 301004,
     MANAGER_E_SERVER_NOTIFY_DATA_INVALID = 301005,
+    MANAGER_E_FAILED = 301006,
 };
 
 enum ATP_MESSAGE_TYPE
@@ -48,10 +49,6 @@ const char* const ATPM_CMD_RSP_DEAL = "rsp_deal";
 const char* const ATPM_CMD_QRY_ENTRUST = "qry_entrust";
 const char* const ATPM_CMD_RSP_ENTRUST = "rsp_entrust";
 
-//expireinst_flag
-const char EXPIREINST_FLAG_ALL = '0';
-const char EXPIREINST_FLAG_SHFE = '1';
-const char EXPIREINST_FLAG_CFFEX = '2';
 
 const char *const MODULE_NAME = "alpha";
 const int NAUT_S_OK = 0;
@@ -85,6 +82,66 @@ if(!dbconn->_conn->rollback()){ \
 } \
 
 typedef base::ref_adapter<base::dictionary> ref_dictionary;
+
+///////////////////////////////////////////////////////////////////////////////
+#define MIN_COUNT_ACCOUNT			1
+#define MIN_COUNT_DATE				10
+#define MIN_COUNT_SQL				6
+#define MAX_RECORD_COUNT			200
+#define AVAIL_FLAG_FALSE			0
+
+#define set_response_code(r) \
+{ char buf[30]; sprintf(buf, "%d", r); evhttp_add_header(output_Headers, "code", buf); }
+
+#define set_response_result(r) \
+    evhttp_add_header(output_Headers, "result", r)
+
+#define set_response_msg(r) \
+    evhttp_add_header(output_Headers, "msg", r)
+
+#define get_param(p1, p2, p3) \
+    ((p1 == NULL) || (sscanf(p1, p2, p3) != 1))
+
+#define PARAM_ERROR(nerrno)	\
+{	\
+    evbuffer_add_printf(evb, "%s", errno_transfer(nerrno));	\
+    set_response_code(nerrno);	\
+    set_response_result("N");	\
+    set_response_msg(errno_transfer(nerrno));	\
+    return MANAGER_E_FAILED;	\
+}
+
+#define SET_RESPONSE	\
+    set_response_code(ret);	\
+if (ret == NAUT_S_OK)	\
+{	\
+    evbuffer_add_printf(evb, "%s", base::djson::dict2str(outdict).c_str());	\
+    set_response_result("Y");	\
+    set_response_msg("success");	\
+}	\
+else \
+{	\
+    evbuffer_add_printf(evb, "%s", base::djson::dict2str(outdict).c_str());	\
+    set_response_result("N");	\
+    set_response_msg(errno_transfer(ret));	\
+    return MANAGER_E_FAILED;	\
+}
+
+#define COPY_FIELD_STRING(field_name)	\
+if (!(*ptr_dict)[field_name].is_null())	\
+{	\
+    indict.add_object(field_name, (*ptr_dict)[field_name].string_value());	\
+}
+
+#define ADD_FIELD_DB_STRING(dict,field_name)	\
+    dict.add_object(field_name, dbconn->_conn->get_string(field_name))
+
+#define ADD_FIELD_DB_LONG(dict,field_name)	\
+    dict.add_object(field_name, dbconn->_conn->get_long(field_name))
+
+#define ADD_FIELD_DB_DOUBLE(dict,field_name)	\
+    dict.add_object(field_name, dbconn->_conn->get_double(field_name))
+
 }
 
 #endif
