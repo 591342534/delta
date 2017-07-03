@@ -42,12 +42,12 @@ namespace base
 	
 typedef void(*http_call_back)(struct evhttp_request *req, void *arg);
 	
-class COMMON_API httpserver 
+class COMMON_API http_server
     : public process_thread
 {
 public:
-	httpserver();
-	~httpserver();
+    http_server();
+    ~http_server();
 	int init(std::string sip, int nport, http_call_back p_func, std::string &msg, int ntimeout=60);
 	virtual void run();
 	void stop();

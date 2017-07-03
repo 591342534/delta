@@ -78,7 +78,10 @@
     <ClCompile Include="src\zip.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\httpserver.cpp">
+    <ClCompile Include="src\http_client.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\http_server.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -158,7 +161,10 @@
     <ClInclude Include="src\zip.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\httpserver.h">
+    <ClInclude Include="src\http_client.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\http_server.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

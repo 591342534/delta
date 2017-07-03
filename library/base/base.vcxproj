@@ -164,7 +164,8 @@ copy $(ProjectDir)src\*.h*  $(SolutionDir)include\$(TargetName)</Command>
     <ClCompile Include="src\dtrans.cpp" />
     <ClCompile Include="src\event.cpp" />
     <ClCompile Include="src\file.cpp" />
-    <ClCompile Include="src\httpserver.cpp" />
+    <ClCompile Include="src\http_server.cpp" />
+    <ClCompile Include="src\http_client.cpp" />
     <ClCompile Include="src\lock.cpp" />
     <ClCompile Include="src\logger.cpp" />
     <ClCompile Include="src\log_binder.cpp" />
@@ -188,7 +189,8 @@ copy $(ProjectDir)src\*.h*  $(SolutionDir)include\$(TargetName)</Command>
     <ClInclude Include="src\dtrans.h" />
     <ClInclude Include="src\event.h" />
     <ClInclude Include="src\file.h" />
-    <ClInclude Include="src\httpserver.h" />
+    <ClInclude Include="src\http_server.h" />
+    <ClInclude Include="src\http_client.h" />
     <ClInclude Include="src\lock.h" />
     <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\log_binder.h" />
