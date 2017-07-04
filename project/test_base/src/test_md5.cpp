@@ -9,31 +9,26 @@ History:
 ericsheng     2016.1.13   1.0     Create
 ******************************************************************************/
 
-#include "test_aes.h"
+#include "test_md5.h"
 #include <stdio.h>
-#include "base/aes.h"
+#include "base/md5.h"
 
 using namespace base;
 
-test_aes::test_aes()
+test_md5::test_md5()
 {
 
 }
 
-test_aes::~test_aes()
+test_md5::~test_md5()
 {
 
 }
 
-void test_aes::test_single_aes()
+void test_md5::test_single_md5()
 {
-	base::aes a;
-	//a.set_encrypt_key("jkfd0987654321po", 128);
-	//a.set_decrypt_key("jkfd0987654321po", 128);
-	std::string eostr = "123456";
-	std::string ecipher = a.encrypt_as_base64(eostr.c_str(), eostr.length());
-	std::string eplain = a.decrypt_base64(ecipher.c_str(), ecipher.length());
+	std::string eostr = "123456abcdEFG";
+	std::string ecipher = md5(eostr.c_str());
 	printf("eostr:   %s, %d\n", eostr.c_str(), eostr.length());
 	printf("ecipher: %s, %d\n", ecipher.c_str(), ecipher.length());
-	printf("eplain:  %s, %d, %d\n", eplain.c_str(), eplain.size(), eplain.at(1));
 }

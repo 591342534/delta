@@ -30,16 +30,16 @@ void test_rsa::test_single_rsa()
 	base::rsa r;
 	r.init_key(256);
 
-	const char* plain = "123456";
+	const char* plain = "1234567ABCabc";
 	std::string cipher = "bc2f64e9d709cd30140b0e4e835bfe99421b8d036b4a87c6217c7696f8d4188a";
 	std::string cipher1;
 	std::string oplain;
 	std::string oplain1;
 
-//	r.encrypt(plain, cipher);
-//	r.encrypt(plain, cipher1);
+	r.encrypt(plain, cipher);
+	r.encrypt(plain, cipher1);
 	r.decrypt(cipher.c_str(), oplain);
-//	r.decrypt(cipher1.c_str(), oplain1);
+	r.decrypt(cipher1.c_str(), oplain1);
 
 	std::string public_key;
 	r.export_public_key(public_key);

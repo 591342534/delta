@@ -57,6 +57,9 @@
     <ClCompile Include="src\test_util.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\test_md5.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\test_aes.h">
@@ -84,6 +87,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\test_util.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test_md5.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

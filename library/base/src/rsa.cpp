@@ -185,6 +185,7 @@ bool rsa::decrypt(const char* cipher, std::string& plain)
 	else {
 		return false;
 	}
+    plain = plain.substr(0, num);
 	return true;
 }
 

@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "delta", "project\delta\delt
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "alpha", "project\alpha\alpha.vcxproj", "{74B7A9E6-3999-4E25-8EA3-CB0277A76780}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_database", "project\test_database\test_database.vcxproj", "{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -192,6 +194,20 @@ Global
 		{74B7A9E6-3999-4E25-8EA3-CB0277A76780}.Release|x64.ActiveCfg = Release|Win32
 		{74B7A9E6-3999-4E25-8EA3-CB0277A76780}.Release|x86.ActiveCfg = Release|Win32
 		{74B7A9E6-3999-4E25-8EA3-CB0277A76780}.Release|x86.Build.0 = Release|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Debug|Win32.Build.0 = Debug|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Debug|x64.ActiveCfg = Debug|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Debug|x86.ActiveCfg = Debug|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Debug|x86.Build.0 = Debug|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Release|Win32.ActiveCfg = Release|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Release|Win32.Build.0 = Release|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Release|x64.ActiveCfg = Release|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Release|x86.ActiveCfg = Release|Win32
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -200,5 +216,6 @@ Global
 		{24D23809-111C-4C2A-AD15-001D205093F0} = {F092697B-E095-4C2C-89AB-87873495252B}
 		{D51B08D6-458C-45EA-B4B1-D13E931F8079} = {F092697B-E095-4C2C-89AB-87873495252B}
 		{DE8A9F45-6CEE-4BFC-9C65-0C55935D9A16} = {F092697B-E095-4C2C-89AB-87873495252B}
+		{5971E01B-E2FF-4E1B-90B5-3EED4C4B9218} = {F092697B-E095-4C2C-89AB-87873495252B}
 	EndGlobalSection
 EndGlobal

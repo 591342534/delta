@@ -25,7 +25,7 @@ ericsheng     2016.11.25   1.0     Create
 #include "base/pugixml.hpp"
 #include "test_util.h"
 #include "test_log4cplus.h"
-
+#include "test_md5.h"
 using namespace std;
 void test_timer1(int argc, char* argv[])
 {
@@ -53,6 +53,12 @@ void test_aes1(int argc, char* argv[])
 {
     test_aes t;
     t.test_single_aes();
+}
+
+void test_md51(int argc, char* argv[])
+{
+    test_md5 t;
+    t.test_single_md5();
 }
 
 void test_zlib(int argc, char* argv[])
@@ -157,6 +163,7 @@ int main(int argc, char* argv[])
         printf("e: test base::xml\n");
         printf("f: test log4cplus\n");
         printf("g: test base::util\n");
+        printf("h: test base::md5\n");
         printf("please select your decide: ");
         ch = getchar();
         switch (ch) {
@@ -201,6 +208,9 @@ int main(int argc, char* argv[])
             break;
         case 'g':
             test_util1(argc, argv);
+            break;
+        case 'h':
+            test_md51(argc, argv);
             break;
         default:
             printf("please input right decide~~\n");
