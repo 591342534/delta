@@ -57,6 +57,9 @@
     <ClInclude Include="src\errordef.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\http_unit.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\deals_processor.cpp">
@@ -84,6 +87,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\errordef.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\http_unit.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

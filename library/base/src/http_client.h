@@ -62,7 +62,7 @@ struct http_request_post {
 
 typedef void (*return_body_cb)(char* des, size_t size);
 
-class http_client
+class COMMON_API http_client
 {
 public:
     http_client();

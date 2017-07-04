@@ -34,8 +34,9 @@ enum ATP_MESSAGE_TYPE
     ATP_MESSAGE_TYPE_INVALID = -1,
     ATP_MESSAGE_TYPE_QUERY_REQ = 1,
     ATP_MESSAGE_TYPE_TRADE_RSP = 2,
+    HTTP_CLIENT_MSG_TYPE_POST = 12,                 /* post a message */
+    HTTP_CLIENT_MSG_TYPE_GET = 13,                  /* get a message */
 };
-
 
 /* atp message command defines */
 const char* const ATPM_CMD_ERROR = "cmd_error";

@@ -20,6 +20,7 @@ namespace serverframe {
     project_server::project_server()
         : m_deal_pro_(nullptr)
         , m_http_pro_(nullptr)
+        , m_http_unit_sptr_(nullptr)
         , started_(false)
     {
     }
@@ -88,7 +89,13 @@ namespace serverframe {
         }
 
         m_http_pro_ = std::make_shared<http_processor>();
-        m_http_pro_->start();
+        ret = m_http_pro_->start();
+        CHECK_LABEL(ret, end);
+
+        m_http_unit_sptr_ = std::make_shared<http_unit>();
+        ret = m_http_unit_sptr_->start("1");
+        CHECK_LABEL(ret, end);
+
         LABEL_SCOPE_END;
     end:
         return ret;

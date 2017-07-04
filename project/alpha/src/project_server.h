@@ -22,6 +22,7 @@ ericsheng     2016.4.13   1.0     Create
 #include "deals_processor.h"
 #include "processor_base.h"
 #include "http_processor.h"
+#include "http_unit.h"
 namespace serverframe {
 struct db_info {
     //dbtype eg:mysql
@@ -92,7 +93,7 @@ private:
     deals_processor* m_deal_pro_;
     std::vector<query_processor*> m_query_pro_vec_;
     std::shared_ptr<http_processor> m_http_pro_;
-
+    std::shared_ptr<http_unit> m_http_unit_sptr_;
     bool started_;
 };
 SINGLETON_GET(project_server);

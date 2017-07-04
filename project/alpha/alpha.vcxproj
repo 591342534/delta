@@ -16,6 +16,7 @@
     <ClInclude Include="src\errordef.h" />
     <ClInclude Include="src\http_deal.h" />
     <ClInclude Include="src\http_processor.h" />
+    <ClInclude Include="src\http_unit.h" />
     <ClInclude Include="src\processor_base.h" />
     <ClInclude Include="src\product_business_deal.h" />
     <ClInclude Include="src\project_server.h" />
@@ -30,6 +31,7 @@
     <ClCompile Include="src\errordef.cpp" />
     <ClCompile Include="src\http_deal.cpp" />
     <ClCompile Include="src\http_processor.cpp" />
+    <ClCompile Include="src\http_unit.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\product_business_deal.cpp" />
     <ClCompile Include="src\project_server.cpp" />
