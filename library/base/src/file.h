@@ -17,7 +17,7 @@ base     2016.1.13   1.0     Create
 #else
 #endif
 #include <string>
-
+#include "base.h"
 namespace base {
 
 enum FILE_FLAG
@@ -37,7 +37,7 @@ enum FILE_SEEK_TYPE
 typedef unsigned char byte;
 #endif
 
-class file
+class COMMON_API file
 {
 public:
 	file();

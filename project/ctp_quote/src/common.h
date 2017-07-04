@@ -1,0 +1,64 @@
+/*****************************************************************************
+ Nautilus Module ctp_quote Copyright (c) 2015. All Rights Reserved.
+
+ FileName: common.h
+ Version: 1.0
+ Date: 2015.10.8
+
+ History:
+ jeffguo     2015.10.8   1.0     Create
+ ******************************************************************************/
+
+#ifndef __CTP_QUOTE_COMMON_H__
+#define __CTP_QUOTE_COMMON_H__
+
+namespace ctp
+{
+    enum COMM_ERROR
+    {
+        NAUT_S_OK = 0,
+
+        /* error codes of module 'comm' */
+        NAUT_COMM_E_INVALID_JSON_STRING = 1000,
+        NAUT_COMM_E_STORE_DATA_DB_ERROR = 1001,
+        NAUT_COMM_E_CREATE_TABLE_ERROR = 1002,
+        NAUT_COMM_E_INITIALIZED_INVALID = 1003,
+        NAUT_COMM_E_INIT_CONN_ERROR = 1004,
+        NAUT_COMM_E_DB_QUERY_FAILED = 1005,
+
+        NAUT_COMM_E_CONNECT_TO_MO_AGENT_FAILED = 1050,
+        NAUT_COMM_E_INIT_MODULE_SYSTEM_MONITOR_FAILED = 1051,
+        NAUT_COMM_E_MOA_CONFIG_FILE_INVALID = 1052,
+        NAUT_COMM_E_MOA_CONFIG_INVALID = 1053,
+        NAUT_COMM_E_MOA_DISABLED = 1054,
+        NAUT_COMM_E_HTTP_CLIENT_ERROR = 1055,
+
+        NAUT_COMM_E_PARSE_JSON_QUOTE_ERROR = 1056,
+    };
+
+    enum CTPQUOTE_ERROR
+    {
+        NAUT_CTPQUOTE_E_CONNECT_MQ_FAILED = 25001,
+        NAUT_CTPQUOTE_E_CTP_DISCONNECTED = 25002,
+        NAUT_CTPQUOTE_E_CTP_ERROR = 25003,
+
+        NAUT_CTPQUOTE_E_CONFIGFILE_INVALID = 25004,
+        NAUT_CTPQUOTE_E_CONFIG_INVALID = 25005,
+
+        NAUT_CTPQUOTE_E_LOGIN_FAILED = 25006,
+        NAUT_CTPQUOTE_E_LOGOUT_FAILED = 25007,
+        NAUT_CTPQUOTE_E_SUBMARKETDATA_FAILED = 25008,
+        NAUT_CTPQUOTE_E_UNSUBMARKETDATA_FAILED = 25009,
+
+        NAUT_CTPQUOTE_E_RSP_USERLOGIN_ERROR = 25011,
+        NAUT_CTPQUOTE_E_RSP_USERLOGOUT_ERROR = 25012,
+        NAUT_CTPQUOTE_E_RSP_SUBMARKETDATA_ERROR = 25013,
+        NAUT_CTPQUOTE_E_RSP_UNSUBMARKETDATA_ERROR = 25014,
+        NAUT_CTPQUOTE_E_RSP_SUBFORQUOTE_ERROR = 25015,
+        NAUT_CTPQUOTE_E_RSP_UNSUBFORQUOTE_ERROR = 25016,
+        NAUT_CTPQUOTE_E_RSP_ERROR = 25017,
+    };
+
+}
+
+#endif
