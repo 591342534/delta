@@ -23,6 +23,9 @@
     <ClCompile Include="src\ctp_quote.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\bin\Debug\config\ctp_quote_config.xml" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{AF649E3A-C161-4526-9F31-02881B003EEC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -72,8 +75,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\20150803_tradeapi_win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>thostmduserapi.lib;utility.lib;base.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libiconv;$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\20150803_tradeapi_win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>iconvD.lib;thostmduserapi.lib;utility.lib;base.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

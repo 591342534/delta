@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string>
 #include <float.h>
+#include "libiconv/iconv.h"
 
 #define CTP_DOUBLE_LIMIT 99999999999999
 #define CHECK_AND_ASSIGN_DOUBLE_VALUE(dst, val) do { \
@@ -35,7 +36,6 @@ ctp_quote::ctp_quote()
 	: ctp_(NULL)
 	, request_id_(0)
 	, started_(false)
-	, auto_restart_times_(0)
 {
 
 }
@@ -74,12 +74,6 @@ int ctp_quote::stop()
 	return stop_internal();
 }
 
-int ctp_quote::restart()
-{
-	auto_restart_times_++;
-	return start_internal(1);
-}
-
 int ctp_quote::start_internal(int flag)
 {
 	stop_internal(flag);
@@ -91,9 +85,8 @@ int ctp_quote::start_internal(int flag)
 	/* initialize ctp server */
 	char addr[256];
 	sprintf(addr, "tcp://%s:%d", params_.ctp_server.c_str(), params_.ctp_port);
-
     base::file::make_sure_directory_exist("./ctp-log");
-	ctp_ = CThostFtdcMdApi::CreateFtdcMdApi("./ctp-log/");
+    ctp_ = CThostFtdcMdApi::CreateFtdcMdApi("./ctp-log");
 	ctp_->RegisterFront(addr);
 	ctp_->RegisterSpi(this);
 	ctp_->Init();
@@ -101,9 +94,6 @@ int ctp_quote::start_internal(int flag)
 	LABEL_SCOPE_END;
 
 end:
-	if (BSUCCEEDED(ret)) {
-		auto_restart_times_ = 0;
-	}
 	return ret;
 }
 
@@ -128,7 +118,7 @@ int ctp_quote::load_config(const char* config_file, ctp_quote_params& params)
 	int ret = NAUT_S_OK;
 
 	LABEL_SCOPE_START;
-
+    std::string tmp;
 	pugi::xml_document doc;
 	if (!doc.load_file(config_file)) {
 		TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIGFILE_INVALID,
@@ -136,100 +126,7 @@ int ctp_quote::load_config(const char* config_file, ctp_quote_params& params)
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIGFILE_INVALID, end);
 	}
 
-	/* config of mqserver */
-	pugi::xml_node xmqserver = doc.child("ctp-quote").child("mqserver");
-	if (xmqserver.empty()) {
-		TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
-				"ctp-quote config: element 'mqserver' is not exist");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
-	}
-
-	std::string tmp;
-	while (!xmqserver.empty())
-	{
-		if (strcmp(xmqserver.attribute("enable").as_string(), "true") != 0) {
-			xmqserver = xmqserver.next_sibling("mqserver");
-			continue;
-		}
-
-		ctp_mqserver_params mqserver_params;
-
-		tmp = xmqserver.child("name").text().as_string();
-		if (tmp.empty()) {
-			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
-					"ctp-quote config: name of the mqserver should be specified");
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
-		}
-		mqserver_params.mq_name = tmp;
-
-		tmp = xmqserver.child("host").text().as_string();
-		if (tmp.empty()) {
-			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
-					"ctp-quote config: host of the mqserver should be specified");
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
-		}
-		mqserver_params.mq_host = tmp;
-
-		tmp = xmqserver.child("port").text().as_string();
-		if (tmp.empty()) {
-			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
-					"ctp-quote config: port of the mqserver should be specified");
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
-		}
-		mqserver_params.mq_port = atoi(tmp.c_str());
-
-		tmp = xmqserver.child("topic").text().as_string();
-		if (!tmp.empty()) {
-			mqserver_params.mq_topic = tmp;
-		}
-
-		/* parse mqserver subscribe contracts */
-		pugi::xml_node xcontracts = xmqserver.child("sub-contracts");
-		if (xcontracts.empty()) {
-			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
-					"ctp-quote config: element 'sub-contracts' of mqserver '%s' is not exist",
-					mqserver_params.mq_name.c_str());
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
-		}
-
-		pugi::xml_node xcontract = xcontracts.child("contract");
-		while (!xcontract.empty()) {
-			tmp = xcontract.text().as_string();
-			if (tmp.empty()) {
-				TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
-						"ctp-quote config: contract value seems empty.");
-				ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
-			}
-			mqserver_params.sub_contracts.push_back(tmp);
-			xcontract = xcontract.next_sibling("contract");
-		}
-
-		/* parse subscribe fields */
-		pugi::xml_node xfields = xmqserver.child("sub-fields");
-		if (!xfields.empty()) {
-			pugi::xml_node xfield = xfields.child("field");
-			while (!xfield.empty()) {
-				tmp = xfield.text().as_string();
-				if (tmp.empty()) {
-					TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
-							"ctp-quote config: field value seems empty.");
-					ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
-				}
-				if (strcmp(xfield.attribute("enable").as_string(), "true") == 0) {
-					mqserver_params.map_sub_fields[tmp] = true;
-				}
-				else {
-					mqserver_params.map_sub_fields[tmp] = false;
-				}
-				xfield = xfield.next_sibling("field");
-			}
-		}
-
-		params.ar_mqserver_params.push_back(mqserver_params);
-		xmqserver = xmqserver.next_sibling("mqserver");
-	}
-
-	/* config of ctp quote */
+    /* config of ctp quote */
 	pugi::xml_node xctp = doc.child("ctp-quote").child("ctp");
 	if (xctp.empty()) {
 		TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
@@ -317,6 +214,98 @@ int ctp_quote::load_config(const char* config_file, ctp_quote_params& params)
 		if (!tmp.empty()) {
 			params.localize_params.root_dir = tmp;
 		}
+	}
+
+	/* config of mqserver */
+	pugi::xml_node xmqserver = doc.child("ctp-quote").child("mqserver");
+	if (xmqserver.empty()) {
+		TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
+				"ctp-quote config: element 'mqserver' is not exist");
+		ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
+	}
+
+	while (!xmqserver.empty())
+	{
+		if (strcmp(xmqserver.attribute("enable").as_string(), "true") != 0) {
+			xmqserver = xmqserver.next_sibling("mqserver");
+			continue;
+		}
+
+		ctp_mqserver_params mqserver_params;
+
+		tmp = xmqserver.child("name").text().as_string();
+		if (tmp.empty()) {
+			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
+					"ctp-quote config: name of the mqserver should be specified");
+			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
+		}
+		mqserver_params.mq_name = tmp;
+
+		tmp = xmqserver.child("host").text().as_string();
+		if (tmp.empty()) {
+			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
+					"ctp-quote config: host of the mqserver should be specified");
+			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
+		}
+		mqserver_params.mq_host = tmp;
+
+		tmp = xmqserver.child("port").text().as_string();
+		if (tmp.empty()) {
+			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
+					"ctp-quote config: port of the mqserver should be specified");
+			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
+		}
+		mqserver_params.mq_port = atoi(tmp.c_str());
+
+		tmp = xmqserver.child("topic").text().as_string();
+		if (!tmp.empty()) {
+			mqserver_params.mq_topic = tmp;
+		}
+
+		/* parse mqserver subscribe contracts */
+		pugi::xml_node xcontracts = xmqserver.child("sub-contracts");
+		if (xcontracts.empty()) {
+			TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
+					"ctp-quote config: element 'sub-contracts' of mqserver '%s' is not exist",
+					mqserver_params.mq_name.c_str());
+			ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
+		}
+
+		pugi::xml_node xcontract = xcontracts.child("contract");
+		while (!xcontract.empty()) {
+			tmp = xcontract.text().as_string();
+			if (tmp.empty()) {
+				TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
+						"ctp-quote config: contract value seems empty.");
+				ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
+			}
+			mqserver_params.sub_contracts.push_back(tmp);
+			xcontract = xcontract.next_sibling("contract");
+		}
+
+		/* parse subscribe fields */
+		pugi::xml_node xfields = xmqserver.child("sub-fields");
+		if (!xfields.empty()) {
+			pugi::xml_node xfield = xfields.child("field");
+			while (!xfield.empty()) {
+				tmp = xfield.text().as_string();
+				if (tmp.empty()) {
+					TRACE_ERROR("ctp-quote", NAUT_CTPQUOTE_E_CONFIG_INVALID,
+							"ctp-quote config: field value seems empty.");
+					ASSIGN_AND_CHECK_LABEL(ret, NAUT_CTPQUOTE_E_CONFIG_INVALID, end);
+				}
+				if (strcmp(xfield.attribute("enable").as_string(), "true") == 0) {
+					mqserver_params.map_sub_fields[tmp] = true;
+				}
+				else {
+					mqserver_params.map_sub_fields[tmp] = false;
+				}
+				xfield = xfield.next_sibling("field");
+			}
+		}
+
+		params.ar_mqserver_params.push_back(mqserver_params);
+		xmqserver = xmqserver.next_sibling("mqserver");
 	}
 
 	LABEL_SCOPE_END;
@@ -435,7 +424,7 @@ std::string ctp_quote::quote_json_string(const CThostFtdcDepthMarketDataField *p
 	if (map_sub_fields["mdate"]) {
         char datebuf[11];
         memset(datebuf, 0, sizeof(datebuf));
-        ChangeDateFormat(datebuf, (char*)pDepthMarketData->ActionDay);
+        change_date_format(datebuf, (char*)pDepthMarketData->ActionDay);
 		sprintf(tmp, "\"mdate\":\"%s\",", datebuf);
 		strcat(json_string, tmp);
 	}
@@ -659,12 +648,6 @@ void ctp_quote::OnFrontConnected()
 void ctp_quote::OnFrontDisconnected(int nReason)
 {
 	TRACE_SYSTEM("ctp-quote", "on front disconnected, reason:%d, ", nReason);
-
-	/*if (started_) {
-		int delay = auto_restart_times_ > 3 ? 4000 : 500;
-		TRACE_SYSTEM("ctp-quote", "will try to restart ctp-quote in %d milliseconds", delay);
-		base::dispatch(this, ctp_quote::on_disconnected_callback, NULL, delay);
-	}*/
 }
 
 void ctp_quote::OnHeartBeatWarning(int nTimeLapse)
@@ -768,31 +751,31 @@ void ctp_quote::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp)
 
 std::string ctp_quote::gbk_to_utf8(const char* text)
 {
-	//iconv_t ih = iconv_open("utf-8", "gbk");
+	iconv_t ih = iconv_open("utf-8", "gbk");
 
-	//size_t in_length = strlen(text);
-	//size_t out_length = 2 * in_length;
-	//char* in_buffer = new char[in_length + 1];
-	//char* out_buffer = new char[out_length + 1];
-	//char* in_buffer2 = in_buffer;
-	//char* out_buffer2 = out_buffer;
-	//out_buffer[0] = 0x00;
+	size_t in_length = strlen(text);
+	size_t out_length = 2 * in_length;
+	char* in_buffer = new char[in_length + 1];
+	char* out_buffer = new char[out_length + 1];
+	char* in_buffer2 = in_buffer;
+	char* out_buffer2 = out_buffer;
+	out_buffer[0] = 0x00;
 
-	//strcpy(in_buffer, text);
-	//iconv(ih, &in_buffer, &in_length, &out_buffer, &out_length);
-	//*out_buffer = 0x00;
-	//std::string ret = out_buffer2;
+	strcpy(in_buffer, text);
+	iconv(ih, &in_buffer, &in_length, &out_buffer, &out_length);
+	*out_buffer = 0x00;
+	std::string ret = out_buffer2;
 
-	//delete[]in_buffer2;
-	//delete[]out_buffer2;
+	delete[]in_buffer2;
+	delete[]out_buffer2;
 
-	//iconv_close(ih);
+	iconv_close(ih);
 
-	//return ret;
+	return ret;
     return "";
 }
 
-char* ctp_quote::ChangeDateFormat(char* outdate, char* inputdate)
+char* ctp_quote::change_date_format(char* outdate, char* inputdate)
 {
     if(outdate == NULL || inputdate == NULL) {
         return NULL;

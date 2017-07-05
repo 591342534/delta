@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ctp-quote>
 	<ctp>
-		<host note="CTP行情服务器IP地址">180.169.40.126</host>
-		<port note="CTP行情服务器端口">21213</port>
-		<user note="CTP行情服务器登录用户名">11809111</user>
-		<password note="CTP行情服务器登录密码">415966</password>
-		<product-info note="产品信息">nautilus</product-info>
+		<host note="CTP行情服务器IP地址">180.168.146.187</host>
+		<port note="CTP行情服务器端口">10010</port>
+		<user note="CTP行情服务器登录用户名">087652</user>
+		<password note="CTP行情服务器登录密码">963852</password>
+		<product-info note="产品信息">ctp_quote</product-info>
 		<sub-contracts>
-			<contract>IF1510</contract>
-			<contract>IF1511</contract>
+			<contract>m1709</contract>
+			<contract>au1802</contract>
 		</sub-contracts>
 	</ctp>
 	<localization enable="true"> 
 		<compress note="是否进行压缩">false</compress>
-		<root-dir note="本地化文件存储目录，按日为单位">/home/</root-dir>
+		<root-dir note="本地化文件存储目录，按日为单位">./</root-dir>
 	</localization>
 	<mqserver enable="true">
 		<name note="MQ服务器名称">行情MQ1</name>

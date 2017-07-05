@@ -98,4 +98,9 @@
       <Filter>src</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\bin\Debug\config\alpha_config.xml">
+      <Filter>资源文件</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>

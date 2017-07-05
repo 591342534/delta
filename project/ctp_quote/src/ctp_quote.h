@@ -97,8 +97,8 @@ struct ctp_quote_params
     std::string ctp_password;
     std::string ctp_product_info;
     std::vector<std::string> ctp_contracts;
-    std::vector<ctp_mqserver_params> ar_mqserver_params;
     ctp_localize_params localize_params;
+    std::vector<ctp_mqserver_params> ar_mqserver_params;
 
     ctp_quote_params()
         : ctp_server("180.169.40.126")
@@ -121,13 +121,15 @@ public:
     int start(const char* config_file);
     int stop();
 
+protected:
+    int load_config(const char* config_file, ctp_quote_params& params);
+    int start_internal(int flag = 0);
+    int stop_internal(int flag = 0);
+
 public:
     const ctp_quote_params& params() const { return params_; }
     int get_request_id() { return request_id_++; }
     bool started() const { return started_; }
-
-protected:
-    int load_config(const char* config_file, ctp_quote_params& params);
 
 protected:
     int login();
@@ -136,17 +138,13 @@ protected:
     int subscribe_quote();
     int unsubscribe_quote();
 
-    int restart();
-    int start_internal(int flag = 0);
-    int stop_internal(int flag = 0);
-
-protected:
+private:
     int on_receive_quote_data(const CThostFtdcDepthMarketDataField *pDepthMarketData);
     std::string quote_json_string(const CThostFtdcDepthMarketDataField *pDepthMarketData,
             VBASE_HASH_MAP<std::string, bool>& map_sub_fields);
-
-    char* ChangeDateFormat(char* outdate, char* inputdate);
+    char* change_date_format(char* outdate, char* inputdate);
     std::string gbk_to_utf8(const char* text);
+
 protected:
     virtual void OnFrontConnected();
     virtual void OnFrontDisconnected(int nReason);
@@ -166,7 +164,6 @@ private:
     CThostFtdcMdApi* ctp_;
     int request_id_;
     bool started_;
-    int auto_restart_times_;
 };
 
 }

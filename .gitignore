@@ -26,3 +26,4 @@ project/test_base/log/*
 *.v12.suo
 *.log
 *.bak
+*.con
