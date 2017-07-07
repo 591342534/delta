@@ -1,0 +1,30 @@
+#########################################
+#
+# make file
+#########################################
+
+include $(NAUT_ROOTDIR)/Make.include
+
+# exe, staticlib, dynamiclib
+TYPE:= exe
+
+#output name
+TARGETNAME:= db_sync
+
+# depends lib dir
+LIBDIRS= -lbase -ldatabase -locilib -llog4cplus -ldl -lrt -lpthread
+
+#src dir
+SRCDIR:= ./src/
+ 
+#CCXXFLAGS= -DDEBUG -g
+GLOBAL_CCXXFLAGS += -std=c++0x
+#OFLAGS= -L$(TARGET_PATH_R)
+ 
+CCXXFLAGS = -fPIC
+#CFLAGS =
+#EXOBJS =
+#EXCLUDESRCS =
+ 
+ 
+include $(NAUT_ROOTDIR)/Make.share

@@ -231,7 +231,7 @@ void test_unidb::start_oracle_db_pool()
     int record_count = 2;
 
     unidb_param param;
-    param.host = "//192.168.4.56/ORCL";
+    param.host = "//192.168.4.57/ORCL";
     param.port = 1521;
     param.user = "system";
     param.password = "oracle";
@@ -244,12 +244,12 @@ void test_unidb::start_oracle_db_pool()
     tradepool.init(param, 2, type);
     dbscope db_scope(tradepool);
     db_instance* dbconn = db_scope.get_db_conn();
-
+#if 0
     /* delete all records */
     if (!dbconn->_conn->execute("delete from \"t_stu\"")) {
         printf("delete from t_stu failed\n");
     }
-#if 1
+
     //conn->set_auto_commit(false);
 
     /* insert records */
@@ -288,7 +288,7 @@ void test_unidb::start_oracle_db_pool()
         dbconn->_conn->execute(buffer);
     }
     dbconn->_conn->commit();
-#endif
+
     for (int i = 0; i < record_count; i++) {
         stringstream name;
         name << "tom" << i;
@@ -296,10 +296,13 @@ void test_unidb::start_oracle_db_pool()
             i + 7900, name.str().c_str());
         dbconn->_conn->execute(buffer);
     }
+#endif
     /* query records */
-    if (dbconn->_conn->query("select * from \"t_stu\"")) {
+    if (dbconn->_conn->query("select * from t_dcepair_inscom")) {
         while (dbconn->_conn->fetch_row()) {
-            printf("id:%ld name:%s\n", dbconn->_conn->get_long("id"), "qwer");
+            printf("COMKIND:%s CONTRACTCODE:%s\n", 
+                dbconn->_conn->get_string("COMKIND"), 
+                dbconn->_conn->get_string("CONTRACTCODE"));
         }
     }
 

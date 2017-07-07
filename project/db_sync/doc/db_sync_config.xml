@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<db_sync>
+    <db_mysql>
+        <type note="数据库类型">mysql</type>
+        <host note="MYSQL服务地址">192.168.4.55</host>
+        <port note="MYSQL服务端口">3306</port>
+        <user note="MYSQL服务用户名">risk</user>
+        <pwd note="MYSQL服务密码">risk</pwd>
+        <dbname note="MYSQL服务名称">future_risk</dbname>
+        <charset note="MYSQL字符集">utf8</charset>
+    </db_mysql>
+    
+    <db_oracle>
+        <type note="数据库类型">oracle</type>
+        <host note="oracle服务地址">//192.168.4.57/ORCL</host>
+        <port note="oracle服务端口">1521</port>
+        <user note="oracle服务用户名">system</user>
+        <pwd note="oracle服务密码">oracle</pwd>
+        <dbname note="oracle服务名称">orcl</dbname>
+        <charset note="oracle字符集">utf8</charset>
+    </db_oracle>
+    
+    <table_config>
+        <product note="product table">t_product</product>
+        <instrument note="instrument table">t_instrument</instrument>
+        <calendar note="calendar table">t_calendar</calendar>
+        <insmrgnrate note="insmrgnrate table">t_insmrgnrate</insmrgnrate>
+        <dcepair_inscom note="dcepair_inscom table">t_dcepair_inscom</dcepair_inscom>
+    </table_config>
+    
+    <oracle_table_config>
+        <product note="product table">trystl.t_product</product>
+        <instrument note="instrument table">trystl.t_instrument</instrument>
+        <calendar note="calendar table">trystl.t_calendar</calendar>
+        <insmrgnrate note="insmrgnrate table">trystl.t_insmrgnrate</insmrgnrate>
+        <dcepair_inscom note="dcepair_inscom table">trystl.t_dcepair_inscom</dcepair_inscom>
+    </oracle_table_config>
+    
+    <system>
+        <holiday_check note="节假日校验">1</holiday_check>
+        <trade_time_check note="交易时间校验">1</trade_time_check>
+    </system>
+    
+    <sync_time>
+        <am_time>8::30:00</am_time>
+    </sync_time>
+    
+</db_sync>
