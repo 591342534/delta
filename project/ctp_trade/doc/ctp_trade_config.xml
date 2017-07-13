@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ctp_trade>
+    <server-name note="服务名称">ctp_trade</server-name>
+    
+    <server-config-database>
+        <type note="数据库类型">mysql</type>
+        <host note="配置数据库服务器IP">192.168.4.55</host>
+        <port note="配置数据库服务器端口">3306</port>
+        <user note="配置数据库登录用户名">risk</user>
+        <password note="配置数据库登录密码">risk</password>
+        <dbname note="MYSQL服务名称">future_risk</dbname>
+        <charset note="MYSQL字符集">utf8</charset>
+    </server-config-database>
+
+    <processor-config>
+        <query-thread-count note="查询处理线程">1</query-thread-count>
+        <trade-thread-count note="委托处理线程">1</trade-thread-count>
+        <unit-thread-count note="委托处理线程">1</unit-thread-count>
+    </processor-config>
+    
+    <blog-root-path note="业务相关日志根目录">./</blog-root-path>
+    <switch-time note="切换时间">03:00:00</switch-time>
+    <check-interval note="异常查询时间间隔单位(s)">120</check-interval>
+
+    <table_config>
+        <account note="资金账户">account</account>
+        <statutory_holidays note="国家法定节假日配置表">statutory_holidays</statutory_holidays>
+        <entrust note="交易委托">contract_entrust</entrust>
+        <deal note="交易成交表">contract_deal</deal>
+    </table_config>
+</ctp_trade>

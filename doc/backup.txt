@@ -1,0 +1,753 @@
+export LC_CTYPE="zh_CN.UTF-8"
+export LC_CTYPE="zh_CN.GB2312"
+export LANG="zh_CN.UTF-8"
+
+svn-------------------------------------------------------------------------------------------------------------------------------
+svn checkout http://code.taobao.org/svn/SolutionSample/
+svn ci -m "注释内容" //提交
+svn commit -m "linux update 20151230" --username=Eirc_IT --password aa963852
+
+
+用svn merge命令来进行回滚。
+svn update
+假设最新版本号是28。
+2、然后找出要回滚的确切版本号：
+svn log
+假设根据svn log日志查出要回滚的版本号是25，此处的something可以是文件、目录或整个项目
+如果想要更详细的了解情况，可以使用svn diff -r 28:25 ""
+3、回滚到版本号25：
+svn merge -r 33068:33080 ""
+为了保险起见，再次确认回滚的结果：
+svn diff ""
+发现正确无误，提交。
+4、提交回滚：
+svn commit -m "Revert revision from r28 to r25,because of ..."
+提交后版本变成了29。
+
+
+mysql-----------------------------------------------------------------------------------------------------------------------------------
+mysql -upz -p456789 -h192.168.1.65 -P3307
+mysql -upz -p123456 -h192.168.1.168 -P3306
+show databases;
+目前数据库连接数
+status
+show processlist；
+
+
+linux 命令----------------------------------------------------------------------------------------------------------------------------
+cat /etc/redhat-release
+netstat -an | grep 2048
+cp -r 复制目录及目录内的所有项目
+
+http://www.man7.org/tlpi/code/online/all_files_by_chapter.html
+动态查看文件
+tail -f filename
+find . -name Makefile | xargs grep "IFTransaction"
+grep -r std=c++ ./fnd_system/
+
+清空文件
+touch filename
+
+sudo yum install tcpdump
+tcpdump -t -N 'port 5555'
+netstat -a --tcp
+
+tar -czvf test.tar.gz test/
+tar -xzvf test.tar.gz
+
+ls -l | grep "^-" | wc -l
+ls -lrt backup | wc -l
+
+whereis ls
+which ls
+echo $PATH
+PATH=$PATH:./
+
+检查端都是否占用
+lsof -i:2030
+netstat -apn | grep 3306
+
+ctrl+z 
+可以将一个正在前台执行的命令放到后台，并且处于暂停状态，不可执行
+jobs -l
+fg
+将后台中的命令调至前台继续运行
+bg
+将一个在后台暂停的命令，变成继续执行 （在后台执行）
+ctrl+z -> bg
+将一个在后台暂停的命令，变成继续执行 （在后台执行）
+
+top
+P：按%CPU使用率排行
+
+PID：进程的ID 
+USER：进程所有者 
+PR：进程的优先级别，越小越优先被执行 
+NInice：值 
+VIRT：进程占用的虚拟内存 
+RES：进程占用的物理内存 
+SHR：进程使用的共享内存 
+S：进程的状态。S表示休眠，R表示正在运行，Z表示僵死状态，N表示该进程优先值为负数 
+%CPU：进程占用CPU的使用率 
+%MEM：进程使用的物理内存和总内存的百分比 
+TIME+：该进程启动后占用的总的CPU时间，即占用CPU使用时间的累加值。 
+COMMAND：进程启动命令名称
+
+yum install svn
+
+ldd x6server.exe
+
+vim
+撤销：u
+取消撤销：ctrl+r 
+:.s/from/to/g ： 在当前行进行替换操作。
+:33s/from/to/g ： 在第33行进行替换操作。
+:%s/from/to/g :	对所有行的内容进行替换。
+
+sudo more /etc/gshadow
+
+Xshell sftp
+get 从服务器下载到本地 /home -> G:/
+put 从本地上传到服务器
+
+查看文件i-node信息 
+ls -li 
+链接
+ln one.txt two.txt
+ln -s one.txt two.txt
+
+安装
+rpm -ivh
+查看软件是否安装
+rpm -qa | grep gcc 
+卸载
+rpm -e subversion
+
+yum install svn
+yum remove svn
+
+vim /etc/sysconfig/iptables
+添加一句：-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+/etc/rc.d/init.d/iptables restart
+/etc/rc.d/init.d/iptables save
+
+find ./ -name *.log | xargs rm -rf
+
+service network restart
+systemctl start iptables.service
+
+vs2010/2013 --------------------------------------------------------------------------------------------------------------------------
+格式化
+ctrl K+F
+
+项目配置
+dll
+general:
+$(ProjectDir)bin\$(Configuration)\
+$(SolutionDir)temp\$(ProjectName)
+$(ProjectName)
+.dll
+
+c/c++
+$(SolutionDir)include;$(SolutionDir)contrib;
+COMMON_EXPORT;WIN32;_DEBUG;DEBUG;_WINDOWS;
+
+linker
+$(SolutionDir)contrib\mysql\lib\;$(SolutionDir)lib\$(Configuration)
+libmysql.lib;base.lib;
+
+build events
+IF NOT EXIST $(SolutionDir)lib\$(Configuration) md $(SolutionDir)lib\$(Configuration)
+IF NOT EXIST $(SolutionDir)bin\$(Configuration) md $(SolutionDir)bin\$(Configuration)
+IF NOT EXIST $(SolutionDir)include\$(TargetName) md $(SolutionDir)include\$(TargetName)
+copy $(OutDir)$(TargetName).lib $(SolutionDir)lib\$(Configuration)
+copy $(OutDir)$(TargetName).dll $(SolutionDir)bin\$(Configuration)
+copy $(ProjectDir)src\*.h $(SolutionDir)include\$(TargetName)
+
+exe
+$(SolutionDir)bin\$(Configuration)\
+$(SolutionDir)temp\$(ProjectName)
+$(ProjectName)
+.exe
+
+c/c++
+$(SolutionDir)include
+WIN32;_DEBUG;_WINDOWS;
+
+linker
+$(SolutionDir)lib\$(Configuration)
+utility.lib;
+
+ 
+
+linux 静态库 -------------------------------------------------------------------------------------------------------------------------
+libhello.c 库文件源文件
+libhello.h 库头文件
+usehello.c 测试程序
+
+gcc -c libhello.c
+生成目标文件： libhello.o
+创建静态库
+ar rcs libhello.a libhello.o
+使用静态库:库文件为当前目录 libhello.a -> hello
+分两步：
+gcc -c usehello.c
+gcc -o usehello_static usehello.o -L./ -lhello 
+仅一步：
+gcc -o usehello_static usehello.c -L./ -lhello
+
+vs2010动态库
+新建Win32项目
+1.修改工程属性中->配置属性->常规中“字符集”选项中默认为“使用UNICODE 字符集”，
+每个工程都需手动修改为“使用多字节字符集”
+2.c/c++/预编译头改为：不使用预编译头
+SimpleDll.h
+#ifndef HEAD_INTERFACE_SIMPLE_
+#define HEAD_INTERFACE_SIMPLE_
+
+#ifndef _WIN32
+#define EXPORT_INTERFACE_CLASS_RC
+#else
+#ifdef SIMPLEDLL2_EXPORTS 
+#define EXPORT_INTERFACE_CLASS_RC _declspec(dllexport)
+#else
+#define EXPORT_INTERFACE_CLASS_RC _declspec(dllimport)
+#endif
+#endif
+
+extern "C"
+{
+EXPORT_INTERFACE_CLASS_RC void printfdll( void );
+}
+#endif
+
+SimpleDll.cpp
+#ifdef _WIN32
+#include "stdafx.h"
+#endif
+
+#include <stdio.h>
+#include "SimpleDLL2.h"
+
+void printfdll( void )
+{
+printf("hello simpledll\n");
+}
+使用说明：http://www.cnblogs.com/coder2012/archive/2013/04/27/3046573.html
+lib/dll: http://www.tuicool.com/articles/VVrMreJ
+
+linux 动态库--------------------------------------------------------------------------------------------------------------------------
+libhello.c 库文件源文件
+libhello.h 库头文件
+usehello.c 测试程序
+
+1.-fPIC 生成与位置无关的代码 -Wall 产生警告 -g 加上调试信息
+gcc -fPIC -Wall -g -c libhello.c
+ls libhello.o
+gcc -g -shared -W1,-soname,libhello.so.1.0 -o libhello.so.1.0 libhello.o -lc //引用C库
+创建连接
+ln -sf libhello.so.1.0 libhello.so
+
+使用动态库
+gcc -Wall -g -c usehello.c
+1.把库文件名的头lib和尾.so去掉就是库名了 libhello.so->hello
+2.在/lib和/usr/lib和/usr/local/lib里的库直接用-l参数就能链接了，但如果库文件没放在这三个目录里，
+使用-L参数，跟着的是库文件所在的目录名
+gcc -g -o usehello_dynamic usehello.o -L./ -lhello
+-Duse_namespace -fPIC -I./libevent/include/
+查看使用哪些动态库
+ldd usehello_dynamic
+
+运行程序，需要指定库的搜索路径：
+拷贝到/lib和/usr/lib和/usr/local/lib
+export LD_LIBRARY_PATH=~/fuanda/pzsystem/lib:$LD_LIBRARY_PATH
+
+shell--------------------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+分号是多个语句之间的分割符号，当只有一个语句的时候，末尾无需分号，最后一个语句后面也无需分号。
+
+echo "What is your name?"
+read PERSON #stdin 获取输入并赋值给 PERSON 变量
+echo "Hello, $PERSON" #双引号可有可无，单引号主要用在原样输出中。
+
+1.变量 大小写敏感 注意空格
+name=100
+name="mozhiyan"
+DATE=`date` #命令赋值
+val=`expr 2 + 2` #表达式和运算符之间要有空格，例如 2+2 是不对的，必须写成 2 + 2
+val=`expr $a \* $b` #乘号(*)前边必须加反斜杠(\)才能实现乘法运算
+echo $name
+变量名和等号之间不能有空格
+
+2.Shell特殊变量
+$0	当前脚本的文件名
+$n	传递给脚本或函数的参数。n 是一个数字，表示第几个参数。例如，第一个参数是$1，第二个参数是$2。
+$#	传递给脚本或函数的参数个数。
+$*	传递给脚本或函数的所有参数。
+$@	传递给脚本或函数的所有参数。被双引号(" ")包含时，与 $* 稍有不同，下面将会讲到。
+$?	上个命令的退出状态，或函数的返回值。
+$$	当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
+
+$* $@ "$@":数组 "$*":字串
+
+3.替换
+echo -e "Value of a is $a \n" #这里 -e 表示对转义字符进行替换。如果不使用 -e 选项，将会原样输出
+双引号里可以有变量
+双引号里可以出现转义字符
+
+${var:-word}	如果变量 var 为空或已被删除(unset)，那么返回 word，但不改变 var 的值。
+${var:=word}	如果变量 var 为空或已被删除(unset)，那么返回 word，并将 var 的值设置为 word。
+
+val=`expr 2 + 2`
+
+if [ $a == $b ] #注意：条件表达式要放在方括号之间，并且要有空格，例如 [$a==$b] 是错误的，必须写成 [ $a == $b ]
+then
+echo "a is equal to b"
+fi
+
+比较ref:
+http://c.biancheng.net/cpp/view/2736.html
+
+字符串
+greeting="hello, "$name
+
+string="abcd"
+echo ${#string} #输出 4
+
+string="alibaba is a great company"
+echo ${string:1:4} #输出liba
+
+string="ababa is a great company"
+echo `expr index "$string" "ib"`
+2 #查找子字符串中任一字符位置
+
+NAME=(value0 value1 value2 value3)
+
+NAME[0]="Zara"
+NAME[1]="Qadir"
+echo "First Index: ${NAME[0]}"
+echo "Second Index: ${NAME[1]}"
+//使用@ 或 * 可以获取数组中的所有元素，例如：
+${array_name[*]}
+${array_name[@]}
+//取得数组元素的个数
+length=${#array_name[@]} 或者 length=${#array_name[*]}
+//取得数组单个元素的长度
+lengthn=${#array_name[1]}
+
+printf "%d %s\n" 1 "abc"
+
+判断语句 if
+if test $[2*3] -eq $[1+5]; then echo 'The two numbers are equal!'; fi;
+The two numbers are equal!
+
+num1=$[2*3]
+num2=$[1+5]
+if test $num1 -eq $num2
+then
+echo 'The two numbers are equal!'
+else
+echo 'The two numbers are not equal!'
+fi
+
+echo 'Input a number between 1 to 4'
+echo 'Your number is:\c'
+read aNum
+case $aNum in
+1) echo 'You select 1'
+;;
+2) echo 'You select 2'
+;;
+3) echo 'You select 3'
+;;
+4) echo 'You select 4'
+;;
+*) echo 'You do not select a number between 1 to 4'
+exit 1 # Command to come out of the program with status 1
+;;
+esac
+
+for loop in 1 2 3 4 5
+do
+echo "The value is: $loop"
+done
+
+a=0
+while [ $a -lt 10 ]
+do
+echo $a
+a=`expr $a + 1`
+done
+
+#until 循环执行一系列命令直至条件为 true 时停止。
+a=0
+until [ ! $a -lt 10 ]
+do
+echo $a
+a=`expr $a + 1`
+done
+
+number_one () {
+echo "Url_1 is http://see.xidian.edu.cn/cpp/shell/"
+number_two
+}
+number_two () {
+echo "Url_2 is http://see.xidian.edu.cn/cpp/u/xitong/"
+}
+number_one
+
+$command > file 2>&1
+
+#将外部脚本的内容合并到当前脚本,被包含脚本不需要有执行权限。
+source filename
+
+Makefile
+=和:=
+x := foo
+y := $(x) bar
+x := later
+其等价于：
+y := foo bar
+x := later
+
+
+目标：$@ 表示规则中的目标文件集。如果有多个目标，那么，"$@"就是匹配于目标中模式定义的集合。
+依赖：$^ 所有的依赖集合。以空格分隔。如果在依赖目标中有多个重复的，那个这个变量会去除重复的依赖目标，只保留一份。
+依赖：$< 依赖第一个名字。如果依赖目标是以模式（即"%"）定义的，那么"$<"将是符合模式的一系列的文件集。注意，其是一个一个取出来的。
+
+变量：在Makefile中的定义的变量，就像是C/C++语言中的宏一样
+objects = program.o foo.o utils.o
+program : $(objects)
+cc -o program $(objects)
+
+Makefile shell注意点
+http://www.blogjava.net/jasmine214--love/archive/2012/01/10/368191.html
+1：尽在Makefile文件的目标项冒号后的另起一行的代码才是shell代码。
+2：Makefile中的shell，每一行是一个进程，不同行之间变量值不能传递。所以，Makefile中的shell不管多长也要写在一行。
+3：Makefile中的变量以$开头， 所以，为了避免和shell的变量冲突，shell的变量以$$开头
+
+
+SOURCES = $(foreach d,$(SRCDIRS),$(wildcard $(addprefix $(d)/*,$(SRCEXTS))))
+OBJS= $(patsubst %.cpp,./obj/%.o,$(notdir $(SOURCES)))
+GCNOS= $(patsubst %.cpp,./obj/%.gcno,$(notdir $(SOURCES)))
+
+
+Makefile文件范例
+注意使用tab键作为命令的开始，行尾不需要空格，尤其是wins->linux会出现问题
+
+#BASE_DIR :=$(shell pwd)
+
+SUBDIRS= fnd_system fnd_pzasset
+
+#@取消命令本身的输出
+#$1 shell第一个参数
+define make_subdir
+@for subdir in $(SUBDIRS); do \
+pwd && echo $$subdir && echo $1 && echo $@ || exit $$?; \
+done;
+endef
+
+#.PHONY 说明 all等等为伪命令
+.PHONY : all install clean
+all :
+@echo $(BASE_DIR)
+$(call make_subdir, all)
+
+install : 
+$(call make_subdir, install)
+
+debug :
+$(call make_subdir, debug)
+
+clean :
+$(call make_subdir, clean)
+
+
+数据库连接方式
+mysql -hrds5fijs7du5j44p1307.mysql.rds.aliyuncs.com -upzuser -ppzuser1 --port=3306 --default-character-set=utf8
+对外 ip： 121.43.73.123
+域名： www.futureandoption.com
+
+gdb 调试
+list : 从第一行开始例出原码。
+break filename:linenum
+break 16/functionname
+info break
+delete breaknum
+next : 下一步
+step : 进入函数体
+finish : 退出函数
+quit : 退出gdb
+run -d
+info thread
+切换线程时需要先在run中设置断点再继续
+thread 1
+
+切换进程
+set follow-fork-mode child
+
+linux fcntl ioctl
+1，通过fcntl设置的都是当前进程如何访问设备或文件的访问控制属性，例如读、写、追加、非阻塞、加锁
+等，但并不设置文件或设备本身的属性，例如文件的读写权限、串口波特率等。
+2，ioctl函数用于设置某些设备本身的属性，例如串口波特率、终端窗口大小，注意区分这两个函数的作用。
+
+
+#include <stdio.h> printf
+#include <stdlib.h>	exit(EXIT_SUCCESS);
+#include <errno.h> errno
+#include <unistd.h>	read close
+#include <unistd.h> sleep(s)
+
+
+目标：升级GCC到4.8.2，以支持C++11。
+获取GCC 4.8.2包：wget http://gcc.skazkaforyou.com/releases/gcc-4.8.2/gcc-4.8.2.tar.gz
+解压缩：tar -xf gcc-4.8.2.tar.gz
+进入到目录gcc-4.8.2，运行：./contrib/download_prerequisites。
+这个神奇的脚本文件会帮我们下载、配置、安装依赖库，可以节约我们大量的时间和精力。
+建立输出目录并到目录里：
+mkdir gcc-build-4.8.2
+cd gcc-build-4.8.2
+../configure --enable-checking=release --enable-languages=c,c++ --disable-multilib
+--enable-languages表示你要让你的gcc支持那些语言，
+--disable-multilib不生成编译为其他平台可执行代码的交叉编译器。
+--disable-checking生成的编译器在编译过程中不做额外检查，也可以使用--enable-checking=xxx来增加一些检查；
+编译：make；注意此步和上一步，比较耗时；
+安装：make install；
+验证：gcc -v；或者g++ -v，如果显示的gcc版本仍是以前的版本，就需要重启系统；
+或者可以查看gcc的安装位置：which gcc；然后在查看版本 /usr/local/bin/gcc -v
+
+
+快期 simnow
+investor_id：039386
+pwd: 963852
+
+github 
+user:kaishansheng@163.com
+pwd:aa963852
+
+kaishan1990
+SSH:https://github.com/kaishan1990/learngit.git
+
+git add . //添加当前目录下所有目录及子目录文件
+git commit -m ""
+
+git push origin master //本地库推送到远程库上
+
+git clone git clone git@github.com:michaelliao/gitskills.git
+
+
+oracle
+在存储过程(PROCEDURE)和函数(FUNCTION)中没有区别；
+在视图(VIEW)中只能用AS不能用IS；
+在游标(CURSOR)中只能用IS不能用AS。
+
+存储过程
+CREATE OR REPLACE PROCEDURE "LIHL"."GET_FND_ENGINE"(VI_ENGINE_CD IN VARCHAR2, FND_ENGINE_CUR OUT PKG_LOAD_FNDDB.CUR_QUERY)
+IS
+BEGIN
+OPEN FND_ENGINE_CUR FOR
+SELECT ENGINE_CD ,CODE_NAME ,DESCRIPTION,ENG_DESCRIPTION ,EFFECTIVE_DATE,EXPIRATION_DATE FROM FND_ENGINE WHERE ENGINE_CD = VI_ENGINE_CD AND STATUS = '0';
+END GET_FND_ENGINE;
+
+程序包
+CREATE OR REPLACE PACKAGE "LIHL"."PKG_LOAD_FNDDB" AS
+TYPE CUR_QUERY IS REF CURSOR;
+END PKG_LOAD_FNDDB;
+
+
+c++11
+http://www.cnblogs.com/qicosmos/
+https://github.com/qicosmos/cosmos/
+
+
+time_t now; //实例化time_t结构 
+struct tm *timenow; //实例化tm结构指针 
+time(&now); 
+//time函数读取现在的时间(国际标准时间非北京时间)，然后传值给now 
+timenow = localtime(&now); 
+//localtime函数把从time取得的时间now换算成你电脑中的时间(就是你设置的地区) 
+printf("[%s]",asctime(timenow));
+
+find ./ -name cap.log | xargs grep -a "CAPABILITY" > CAPABILITY.log
+
+https://gitlab.com/dashboard/projects
+github
+1033221777@qq.com
+aa963852
+
+https://lyzs-fad.slack.com/messages/@slackbot/team/shengkaishan/
+https://lyzs-fad.slack.com/
+shengkaishan@fuanda.co
+963852
+
+LIBS = -L/home/pztest/pzAssetSystem1.5/common/3rd/ -L../../fuanda/pzsystem/lib/ -lactivemq-cpp -lapr-1 -l_dbaccess -lfndcms -lmysql -l_utility
+INFLAGS = -I/home/pztest/pzAssetSystem1.5/common/include/s_dbaccess -I/home/pztest/pzAssetSystem1.5/common/include/s_utility -I/hom e/pztest/pzAssetSystem1.5/common/3rd/mysql/include
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/gcc-4.8.3/lib:/usr/local/gcc-4.8.3/lib64"
+
+另外63和65上在/etc/rc.d/rc.local的启动文件中，增加了如下两行代码，确保守护程序开机就运行
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/gcc-4.8.3/lib:/usr/local/gcc-4.8.3/lib64"
+
+echo '''export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/gcc-4.8.3/lib:/usr/local/gcc-4.8.3/lib64"''' >> /etc/rc.local
+echo "/home/pztest/fuanda_ops/Daemon/damon_server_exe 10053 &" >> /etc/rc.local
+
+
+新浪交易支点-------------------------------------------------------------------------------------
+
+1秒(s) = 1000 毫秒(ms) = 1,000,000 微秒(μs) = 1,000,000,000 纳秒(ns) = 1,000,000,000,000 皮秒(ps)
+
+export LD_LIBRARY_PATH=.:/home/shengkaishan/code/dev/trunk/sdk/linux/release/lib:$LD_LIBRARY_PATH
+export NAUT_MODULESDIR=/home/shengkaishan/code/dev/trunk
+export NAUT_ROOTDIR=/home/shengkaishan/code/nautilus/trunk
+
+SELECT FROM_UNIXTIME(1466390122)
+SELECT UNIX_TIMESTAMP()
+
+eclipse 调试
+F5 进入函数
+F6 单步调试
+F7 跳出函数
+F8 继续执行到下一个断点处
+Ctrl+R运行到光标处
+Ctrl+B编译
+Ctrl+F11编译加运行
+
+(（持仓量*市价 - 手续费） - （成交数量*成交价 + 手续费）) / （成交数量*成交价 + 手续费）
+手续费 = (佣金*2 + 印花税)
+bb_price = （成交数量*成交价 + 手续费）/成交量
+
+
+curl -d "leaderboard_id=7778a8143f111272&score=19&app_key=8d49f16fe034b98b&_test_user=test01" "http://192.168.4.141:7070/order_create"
+curl -d {"req_data":{"one":"123456","operator_type":2,"req_value":[1,2,3]},"hello":2,"defer_days":25} "http://192.168.137.133:2032/?opt=order_create"
+
+star.sh
+#!/bin/sh
+export LD_LIBRARY_PATH=./
+killall -9 x6server_tm.exe
+killall -9 x6server_tm.exe
+./liblink.exe
+./x6server_tm.exe &
+
+export LD_LIBRARY_PATH=~/appsample/lib:$LD_LIBRARY_PATH
+
+create user 'sigma_tm'@'%' IDENTIFIED by 'sigma_tm@123' with grant option;
+create user 'sigma_tm_read'@'%' IDENTIFIED by 'sigma_tm_read@123';
+
+event_dayclose_sync mncg execute_time 15:40:00
+event_stock_bak backup execute_time 5:00:00
+
+
+分红 = 仓位/10*bonus;
+送股 = 仓位/10*bonus_issue;
+送股费用 = 送股 * bonus_issue_rate;
+
+naut::unidb_param dbparam; 
+naut::unidb* db = new naut::unidb("mysql"); 
+db->open(dbparam); 
+naut::unidb_conn* dbconn = new naut::unidb_conn(db); 
+dbconn->init_conn() 
+dbconn->query(sql) 
+dbconn->fetch_row()
+
+
+metaverse--------------------------------------------------------------------
+github
+https://github.com/mvs-live/metaverse
+
+
+windows ---------------------------------------------------------------------
+#ifdef _MSC_VER
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
+#endif
+
+ 
+
+fis--------------------------------------------------------------------------
+\\AP-SHA-DFS01\China\Shanghai\Public\IT
+
+
+sftp://10.243.140.114
+hui.yang
+E5265380
+BfOH1cY4
+
+
+bjam stage link=static runtime-link=shared threading=multi debug release
+
+3、安装iptables防火墙
+执行以下命令安装iptables防火墙：sudo yum install iptables-services
+
+?
+4、配置iptables防火墙，打开指定端口（具体跟以前版本一样，网上介绍很多，这里不多介绍了）
+
+ 
+
+5. 设置iptables防火墙开机启动：sudo systemctl enable iptables
+ 
+ 
+export LD_LIBRARY_PATH=~/app:$LD_LIBRARY_PATH
+
+        params_.dbinfo.dbtype = "mysql";
+        params_.dbinfo.dbparam.host = "192.168.52.133";
+        params_.dbinfo.dbparam.port = 3306;
+        params_.dbinfo.dbparam.user = "risk";
+        params_.dbinfo.dbparam.password = "risk";
+        params_.dbinfo.dbparam.charset = "utf8";
+        params_.dbinfo.dbparam.database_name = "future_risk";
+        params_.dbinfo.dbparam.create_database_if_not_exists = false;
+        params_.dbinfo.dbparam.recreate_database_if_exists = false;
+        db_pool_.init(params_.dbinfo.dbparam, 5, params_.dbinfo.dbtype);
+
+        int record_count = 2;
+        char buffer[1024];
+
+        dbscope db_scope(db_pool_);
+        db_instance* dbconn = db_scope.get_db_conn();
+
+        /* create table */
+        sprintf(buffer, "%s", "CREATE TABLE IF NOT EXISTS `hqetf` ( \
+            `id` bigint(11) NOT NULL AUTO_INCREMENT, \
+            `date` varchar(255) DEFAULT NULL, \
+            `time` varchar(255) DEFAULT NULL, \
+            `date_time` varchar(255) DEFAULT NULL, \
+            `avr_price` double DEFAULT 0, \
+            `price` double DEFAULT 0, \
+            `deal_amount` bigint(11) DEFAULT 0, \
+            `itime` bigint(11) DEFAULT 0, \
+            PRIMARY KEY (`id`) \
+        ) ENGINE=INNODB AUTO_INCREMENT=5525342 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;");
+        if (!dbconn->_conn->execute(buffer)) {
+            printf("create table failed\n");
+        }
+
+        /* delete all records */
+        if (!dbconn->_conn->execute("delete from `hqetf`")) {
+            printf("delete from hqetf failed\n");
+        }
+
+        //conn->set_auto_commit(false);
+
+        /* insert records */
+        for (int i = 0; i < record_count; i++) {
+            sprintf(buffer, "INSERT INTO `hqetf` (`avr_price`,`deal_amount`, `date`) VALUES (%f, %d, '%s');",
+                i + 6600.0, i, "123");
+            dbconn->_conn->execute(buffer);
+        }
+        
+scp ~/code/Risk/gtja/out/lib/debug/manager_server.exe test@192.168.4.10:/home/test/test/risk/gtja/Manager_Server
+        
+        
+export ORACLE_HOME=/usr/local/instantclient_12_2
+export PATH=$ORACLE_HOME:$PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
+
+systemctl start iptables.service
+
+export LD_LIBRARY_PATH=~/app:$LD_LIBRARY_PATH

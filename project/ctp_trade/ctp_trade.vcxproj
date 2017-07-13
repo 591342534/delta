@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -11,61 +11,39 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcMdApi.h" />
+    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcTraderApi.h" />
+    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcUserApiDataType.h" />
+    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcUserApiStruct.h" />
     <ClInclude Include="src\common.h" />
-    <ClInclude Include="src\deals_processor.h" />
-    <ClInclude Include="src\errordef.h" />
-    <ClInclude Include="src\http_deal.h" />
-    <ClInclude Include="src\http_processor.h" />
-    <ClInclude Include="src\http_unit.h" />
-    <ClInclude Include="src\processor_base.h" />
-    <ClInclude Include="src\product_business_deal.h" />
-    <ClInclude Include="src\project_server.h" />
-    <ClInclude Include="src\protocal.h" />
-    <ClInclude Include="src\query_processor.h" />
-    <ClInclude Include="src\sqlmake.h" />
+    <ClInclude Include="src\ctp_quote.h" />
     <ClInclude Include="src\version.h" />
-    <ClInclude Include="src\wait.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\deals_processor.cpp" />
-    <ClCompile Include="src\errordef.cpp" />
-    <ClCompile Include="src\http_deal.cpp" />
-    <ClCompile Include="src\http_processor.cpp" />
-    <ClCompile Include="src\http_unit.cpp" />
+    <ClCompile Include="src\ctp_quote.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\product_business_deal.cpp" />
-    <ClCompile Include="src\project_server.cpp" />
-    <ClCompile Include="src\query_processor.cpp" />
-    <ClCompile Include="src\sqlmake.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="..\..\bin\Debug\config\alpha_config.xml">
-      <SubType>Designer</SubType>
-    </Xml>
+    <Xml Include="..\..\bin\Debug\config\ctp_quote_config.xml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{74B7A9E6-3999-4E25-8EA3-CB0277A76780}</ProjectGuid>
+    <ProjectGuid>{AF649E3A-C161-4526-9F31-02881B003EEC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>alpha</RootNamespace>
-    <ProjectName>alpha</ProjectName>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <RootNamespace>ctp_trade</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -81,7 +59,6 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)temp\$(ProjectName)</IntDir>
-    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -92,26 +69,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib;$(SolutionDir)include;$(SolutionDir)..\contrib\libevent\include\win</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib\20150803_tradeapi_win32;$(SolutionDir)include;$(SolutionDir)..\contrib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libiconv;$(SolutionDir)..\contrib\libevent\lib\win;$(SolutionDir)..\contrib\boost\lib_vc120;$(SolutionDir)lib\$(Configuration)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>iconvD.lib;ws2_32.lib;wsock32.lib;libevent.lib;libevent_core.lib;libevent_extras.lib;utility.lib;database.lib;base.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>
-      </ImportLibrary>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libiconv;$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\20150803_tradeapi_win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>iconvD.lib;thostmduserapi.lib;utility.lib;base.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>IF NOT EXIST $(SolutionDir)bin\$(Configuration) md $(SolutionDir)bin\$(Configuration)
-copy $(ProjectDir)*.conf  $(SolutionDir)bin\$(Configuration)</Command>
-    </PreBuildEvent>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -121,7 +87,7 @@ copy $(ProjectDir)*.conf  $(SolutionDir)bin\$(Configuration)</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
