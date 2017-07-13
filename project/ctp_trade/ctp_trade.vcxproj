@@ -27,7 +27,7 @@
     <Xml Include="..\..\bin\Debug\config\ctp_quote_config.xml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AF649E3A-C161-4526-9F31-02881B003EEC}</ProjectGuid>
+    <ProjectGuid>{09A6A459-D194-4480-87F5-5B1B9E4226D9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ctp_trade</RootNamespace>
   </PropertyGroup>

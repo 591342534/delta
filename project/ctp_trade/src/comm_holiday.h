@@ -8,8 +8,8 @@ Date: 2016.03.26
 History: cwm     2016.03.26   1.0     Create
 ******************************************************************************/
 
-#ifndef TRUNK_MODULES_CTP_SOURCE_COMMON_HOLIDAY_H_
-#define TRUNK_MODULES_CTP_SOURCE_COMMON_HOLIDAY_H_
+#ifndef __COMMON_HOLIDAY_H__
+#define __COMMON_HOLIDAY_H__
 
 #include "base/util.h"
 #include "base/dictionary.h"
@@ -47,6 +47,4 @@ private:
 
 }
 
-
-
-#endif /* TRUNK_MODULES_CTP_SOURCE_COMMON_HOLIDAY_H_ */
+#endif
