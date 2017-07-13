@@ -30,10 +30,28 @@
     <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcUserApiStruct.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\comm_holiday.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\common.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ctp_quote.h">
+    <ClInclude Include="src\processor_base.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query_processor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\trade_processor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\trade_server.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\trade_struct.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\trade_unit.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\version.h">
@@ -41,16 +59,28 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ctp_quote.cpp">
+    <Xml Include="doc\ctp_trade_config.xml">
+      <Filter>资源文件</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\comm_holiday.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="..\..\bin\Debug\config\ctp_quote_config.xml">
-      <Filter>资源文件</Filter>
-    </Xml>
+    <ClCompile Include="src\query_processor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\trade_processor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\trade_server.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\trade_unit.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

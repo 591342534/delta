@@ -12,9 +12,9 @@
 #ifndef __NAUT_CTPTRADE_UNIT_H__
 #define __NAUT_CTPTRADE_UNIT_H__
 
-#include "ctp/ThostFtdcTraderApi.h"
-#include "ctp/ThostFtdcUserApiStruct.h"
-#include "ctp/ThostFtdcUserApiDataType.h"
+#include "ThostFtdcTraderApi.h"
+#include "ThostFtdcUserApiStruct.h"
+#include "ThostFtdcUserApiDataType.h"
 #include "base/thread.h"
 #include "base/reference_base.h"
 #include "base/event.h"

@@ -10,43 +10,31 @@
  ******************************************************************************/
 
 #include "base/aes.h"
-#include "trade_server.h"
-#include "common.h"
-#include "version.h"
 #include "base/pugixml.hpp"
 #include "base/trace.h"
 #include "base/base.h"
 #include "base/util.h"
 #include "base/dictionary.h"
 #include "base/reference_base.h"
-#include "database/unidb.h"
 #include "base/dtrans.h"
-#include "progress_recorder.h"
+#include "database/unidb.h"
+#include "trade_server.h"
+#include "common.h"
+#include "version.h"
 
 namespace ctp
 {
 
 trade_server::trade_server()
-	: trade_db_(NULL)
-	, pub_trade_db_pool_(NULL)
-    , risk_trade_db_pool_(NULL)
-	, squery_processor_(NULL)
-	, order_checker_(NULL)
-	, mqc_(NULL)
+	: pub_trade_db_pool_(NULL)
 	, localno_(time(NULL))
 	, rsp_thread_(NULL)
 	, stop_rsp_thread_(false)
 	, rsp_queue_(NULL)
 	, rsp_event_(NULL)
 	, started_(false)
-//    , m_alarm_(NULL)
     , p_comm_holiday_(NULL)
 {
-    m_at_accountchannel_tbl_name_ = "at_accountchannel";
-    m_autotrade_deal_tbl_name_ = "autotrade_deal";
-    m_autotrade_entrust_tbl_name_ = "autotrade_entrust";
-    m_autotrade_withdraw_tbl_name_ = "autotrade_withdraw";
-    m_statutory_holiday_tbl_name_ = "statutory_holidays";
 }
 
 trade_server::~trade_server()
@@ -56,29 +44,15 @@ trade_server::~trade_server()
 
 int trade_server::start(const char* config_file)
 {
-	TRACE_SYSTEM(AT_TRACE_TAG, "------------------- start trader server -------------------");
+	TRACE_SYSTEM(AT_TRACE_TAG, "--start trader server --");
 
 	if (started_) {
 		return NAUT_AT_S_OK;
 	}
 
-	int ret = load_config(config_file, params_);
+	int ret = load_config(config_file);
 	CHECK_LABEL(ret, end);
 
-	ret = request_server_config(params_);
-	CHECK_LABEL(ret, end);
-
-    ret = load_statutory_holidays(params_);
-    CHECK_LABEL(ret, end);
-
-	if(params_.use_simulation_flag) {
-        ret = request_account_channel_config(params_);
-        CHECK_LABEL(ret, end);
-	} else {
-        ret = load_statutory_holidays(params_);
-        CHECK_LABEL(ret, end);
-        p_comm_holiday_ = new comm_holiday(this);
-    }
 	ret = start_internal();
 	CHECK_LABEL(ret, end);
 
@@ -94,7 +68,7 @@ end:
 
 int trade_server::stop()
 {
-	TRACE_SYSTEM(AT_TRACE_TAG, "------------------- stop trader server -------------------");
+	TRACE_SYSTEM(AT_TRACE_TAG, "-- stop trader server --");
 
 	started_ = false;
 	return stop_internal();
@@ -177,16 +151,6 @@ int trade_server::dispatch_message(atp_message& msg)
 			}
 		}
 		break;
-	case ATP_MESSAGE_TYPE_CHECKER_RSP:
-		if(order_checker_ != NULL) {
-		    order_checker_->post(msg);
-		}
-		break;
-	case ATP_MESSAGE_TYPE_IN_SPECIAL_QUERY:
-		if(squery_processor_ != NULL) {
-		    squery_processor_->post(msg);
-		}
-		break;
 	default:
 		TRACE_WARNING(AT_TRACE_TAG, "unknown message type: %d", msg.type);
 		break;
@@ -200,55 +164,34 @@ int trade_server::start_internal()
 
 	LABEL_SCOPE_START;
 
-	/* initialize database */
-	naut::unidb_param dbparam;
-	dbparam.create_database_if_not_exists = false;
-	dbparam.recreate_database_if_exists = false;
-	dbparam.host = params_.server_config_database.host;
-	dbparam.port = params_.server_config_database.port;
-	dbparam.user = params_.server_config_database.user;
-	dbparam.password = params_.server_config_database.password;
-	dbparam.database_name = params_.server_config_database.dbname;
-
-	trade_db_ = new naut::unidb();
-	ret = trade_db_->open(dbparam);
-	CHECK_LABEL(ret, end);
-
     ret = init_db_pool();
+    CHECK_LABEL(ret, end);
+
+    ret = request_account_config();
     CHECK_LABEL(ret, end);
 
 	/* initialize localno */
 	ret = init_localno();
-	CHECK_LABEL(ret, end);
-
-	/* initialize account channel */
-    for (int i = 0; i < (int)params_.account_channel_info.size(); i++)
+    CHECK_LABEL(ret, end);
     {
-        account_channel& acc_channel = params_.account_channel_info[i];
-        std::string channel_key = get_account_broker_bs_key(acc_channel.broker, acc_channel.account, acc_channel.bs_type);
-        map_account_channel::iterator iter = map_account_channel_bs_.find(channel_key);
-        if(iter != map_account_channel_bs_.end()) {
-            iter->second.chanelvec.push_back(acc_channel.channel);
-        } else {
-            account_channel_vec acc_chanel_vec;
-            acc_chanel_vec.chanelvec.push_back(acc_channel.channel);
-            map_account_channel_bs_[channel_key] = acc_chanel_vec;
-        }
+        database::dbscope mysql_db_keepper(*pub_trade_db_pool_);
+        database::db_instance* dbconn = mysql_db_keepper.get_db_conn();
+        CHECK_IF_DBCONN_NULL(dbconn);
+        p_comm_holiday_->load_holiday(dbconn, params_.m_statutory_holiday_tbl_name_);
     }
+    
 
-	/* initialize trade units */
+    /* initialize trade units */
 	for (int i = 0; i < (int)params_.ar_accounts_info.size(); i++)
 	{
 		trade_unit_params tparams;
-		tparams.trade_host = params_.server_config.host;
-		tparams.trade_port = params_.server_config.port;
+		tparams.trade_host = params_.m_server_config.host;
+		tparams.trade_port = params_.m_server_config.port;
 		tparams.userid = params_.ar_accounts_info[i].userid;
 		tparams.password = params_.ar_accounts_info[i].password;
 		tparams.account = params_.ar_accounts_info[i].account;
 		tparams.broker = params_.ar_accounts_info[i].broker;
-		tparams.autotrade_entrust_tbl_name = m_autotrade_entrust_tbl_name_;
-		tparams.autotrade_withdraw_tbl_name = m_autotrade_withdraw_tbl_name_;
-		tparams.use_simulation_flag = params_.use_simulation_flag;
+		tparams.use_simulation_flag = false;
 		tparams.trade_log_file = params_.blog_root_path + params_.ar_accounts_info[i].account + "/";
 
 		std::string account_key_str = get_account_broker_bs_key(tparams.broker, tparams.account);
@@ -286,82 +229,16 @@ int trade_server::start_internal()
 		CHECK_LABEL(ret, end);
 	}
 
-	if(params_.use_simulation_flag) {
-        squery_processor_ = new special_query_processor();
-        ret = squery_processor_->start(this, this);
-        CHECK_LABEL(ret, end);
-	}
-	order_checker_ = new order_checker();
-	ret = order_checker_->start(params_.server_name.c_str(), this,this);
-	CHECK_LABEL(ret, end);
-
-	/* initialize progress recorder */
-	char file_path[256];
-	sprintf(file_path, "%s%s/progress_%s.log",
-			params_.blog_root_path.c_str(), "progress", curr_trade_date().c_str());
-	ret = progress_recorder::shared_instance().init(file_path);
-	CHECK_LABEL(ret, end);
-
 	/* initialize mq response references */
 	rsp_queue_ = new base::srt_queue<atp_message>(10);
 	rsp_queue_->init();
-
 	rsp_event_ = new base::event();
-
-	/* connect to mq server */
-	mqc_ = nio::mqclient::create_client();
-	if (!mqc_->init(params_.mq_config.host.c_str(), params_.mq_config.port)) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONNECT_MQ_FAILED,
-				"connect to mq failed, host: %s, port: %d",
-				params_.mq_config.host.c_str(), params_.mq_config.port);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONNECT_MQ_FAILED, end);
-	}
-	mqc_->signal_state_.connect(this, &trade_server::on_state_changed);
-	mqc_->signal_message_.connect(this, &trade_server::on_incoming_message);
-
-	/* subscribe to mq */
-	for (int i = 0; i < (int)params_.ar_accounts_info.size(); i++)
-	{
-		std::string subtopic = get_subs_subtopic(params_.ar_accounts_info[i].broker.c_str(),
-				params_.ar_accounts_info[i].account.c_str());
-
-		char key[512];
-		sprintf(key, "%s_%s_%s", MQ_TOPIC_TRADE, params_.ar_accounts_info[i].broker.c_str(),
-				params_.ar_accounts_info[i].account.c_str());
-		mq_progress_info* pi = new mq_progress_info();
-		pi->topic = MQ_TOPIC_TRADE;
-		pi->subtopic = subtopic;
-		pi->sub_id = -1;
-		map_subs_by_topic_[key] = pi;
-		progress_info* pgi = progress_recorder::shared_instance().get_progress_info(subtopic.c_str());
-		if (pgi != NULL){
-			pi->recv_index = pgi->processed_index;
-		}
-		else {
-			pi->recv_index = -1;
-		}
-
-		sprintf(key, "%s_%s_%s", MQ_TOPIC_QUERY, params_.ar_accounts_info[i].broker.c_str(),
-				params_.ar_accounts_info[i].account.c_str());
-		pi = new mq_progress_info();
-		pi->topic = MQ_TOPIC_QUERY;
-		pi->subtopic = subtopic;
-		pi->sub_id = -1;
-		pi->recv_index = -1;
-		map_subs_by_topic_[key] = pi;
-	}
-	do_subscriptions();
 
 	/* start response process thread */
 	stop_rsp_thread_ = false;
-	rsp_thread_ = new base::thread();
-	rsp_thread_->create(process_rsp_thread, this);
+    m_sptr_rsp_thread = std::make_shared<std::thread>
+        (process_rsp_thread, this);
 
-//    base::alarm_info alarminfo;
-//    sscanf(params_.switch_time.c_str(), "%d:%d:%d", &alarminfo.hour, &alarminfo.minute, &alarminfo.second);
-//    m_alarm_ = new base::alarm(alarminfo.hour, alarminfo.minute, alarminfo.second);
-//    m_alarm_->signal_alarm_.connect(this, &trade_server::alarm_callback);
-//    m_alarm_->turn_on();
 	LABEL_SCOPE_END;
 
 end:
@@ -378,48 +255,24 @@ int trade_server::init_db_pool()
         delete pub_trade_db_pool_;
         pub_trade_db_pool_ = NULL;
     }
-
-    if(risk_trade_db_pool_ != NULL) {
-        risk_trade_db_pool_->release_all_conns();
-        delete risk_trade_db_pool_;
-        risk_trade_db_pool_ = NULL;
-    }
-
     LABEL_SCOPE_START;
 
     // pub_trade_db_pool_ initialize database
-    naut::unidb_param dbparam_pub;
+    database::unidb_param dbparam_pub;
     dbparam_pub.create_database_if_not_exists = false;
     dbparam_pub.recreate_database_if_exists = false;
-    dbparam_pub.host = params_.server_config.database.host;
-    dbparam_pub.port = params_.server_config.database.port;
-    dbparam_pub.user = params_.server_config.database.user;
-    dbparam_pub.password = params_.server_config.database.password;
-    dbparam_pub.database_name = params_.server_config.database.dbname;
+    dbparam_pub.host = params_.server_config_database.host;
+    dbparam_pub.port = params_.server_config_database.port;
+    dbparam_pub.user = params_.server_config_database.user;
+    dbparam_pub.password = params_.server_config_database.password;
+    dbparam_pub.database_name = params_.server_config_database.dbname;
 
     std::string str_db_type = "mysql";
     int conn_count = 1;
-    pub_trade_db_pool_ = new naut::db_conn_pool();
+    pub_trade_db_pool_ = new database::db_conn_pool();
     ret = pub_trade_db_pool_->init(dbparam_pub, conn_count, str_db_type, params_.switch_time);
     CHECK_LABEL(ret, end);
 
-    if (params_.use_simulation_flag) {
-        // risk_trade_db_pool_ initialize database
-        naut::unidb_param dbparam_risk;
-        dbparam_risk.create_database_if_not_exists = false;
-        dbparam_risk.recreate_database_if_exists = false;
-        dbparam_risk.host = params_.server_config_risk_database.host;
-        dbparam_risk.port = params_.server_config_risk_database.port;
-        dbparam_risk.user = params_.server_config_risk_database.user;
-        dbparam_risk.password = params_.server_config_risk_database.password;
-        dbparam_risk.database_name = params_.server_config_risk_database.dbname;
-
-        std::string str_db_type2 = "mysql";
-        int conn_count2 = 1;
-        risk_trade_db_pool_ = new naut::db_conn_pool();
-        ret = risk_trade_db_pool_->init(dbparam_risk, conn_count2, str_db_type2, params_.switch_time);
-        CHECK_LABEL(ret, end);
-    }
     LABEL_SCOPE_END;
 
 end:
@@ -428,206 +281,68 @@ end:
 
 int trade_server::stop_internal()
 {
-	/* reset mq reconnecte timer */
-	mq_reconnect_timer_.reset();
+    /* stop mq response thread */
+    if (m_sptr_rsp_thread != nullptr) {
+        stop_rsp_thread_ = true;
+        m_sptr_rsp_thread->join();
+    }
 
-	/* stop mq response thread */
-	if (rsp_thread_ != NULL) {
-		stop_rsp_thread_ = true;
-		rsp_thread_->join();
-		delete rsp_thread_;
-		rsp_thread_ = NULL;
-	}
-
-	/* stop mq */
-	if (mqc_ != NULL) {
-		mqc_->shutdown();
-		nio::mqclient::destroy_client(mqc_);
-		mqc_ = NULL;
-	}
-
-	/* stop processors */
-	for (int i = 0; i < (int)ar_trade_processors_.size(); i++) {
-		if (ar_trade_processors_[i] != NULL) {
-			ar_trade_processors_[i]->stop();
-			delete ar_trade_processors_[i];
-		}
-	}
-	ar_trade_processors_.clear();
-
-	for (int i = 0; i < (int)ar_query_processors_.size(); i++) {
-		if (ar_query_processors_[i] != NULL) {
-			ar_query_processors_[i]->stop();
-			delete ar_query_processors_[i];
-		}
-	}
-	ar_query_processors_.clear();
-
-   for (int i = 0; i < (int)ar_trade_units_.size(); i++) {
-        if (ar_trade_units_[i] != NULL) {
-            ar_trade_units_[i]->stop();
-            delete ar_trade_units_[i];
+    /* stop processors */
+    for (int i = 0; i < (int)ar_trade_processors_.size(); i++) {
+        if (ar_trade_processors_[i] != NULL) {
+            ar_trade_processors_[i]->stop();
+            delete ar_trade_processors_[i];
         }
     }
-    ar_trade_units_.clear();
+    ar_trade_processors_.clear();
 
-	if (order_checker_ != NULL) {
-		order_checker_->stop();
-		delete order_checker_;
-		order_checker_ = NULL;
-	}
+    for (int i = 0; i < (int)ar_query_processors_.size(); i++) {
+        if (ar_query_processors_[i] != NULL) {
+            ar_query_processors_[i]->stop();
+            delete ar_query_processors_[i];
+        }
+    }
+    ar_query_processors_.clear();
 
-	if (squery_processor_ != NULL) {
-		squery_processor_->stop();
-		delete squery_processor_;
-		squery_processor_ = NULL;
-	}
+    /* stop trade unit */
+    map_accounts_info_.clear();
+    VBASE_HASH_MAP<const char*, trade_unit*, string_hash, string_compare>::iterator mit = map_tunits_.begin();
+    for (; mit != map_tunits_.end(); mit++) {
+        const char* account = mit->first;
+        trade_unit* tunit = mit->second;
+        if (tunit != NULL) {
+            tunit->stop();
+            delete tunit;
+            tunit = NULL;
+        }
+        delete[]account;
 
-	/* stop trade unit */
-	map_accounts_info_.clear();
-	VBASE_HASH_MAP<const char*, trade_unit*, string_hash, string_compare>::iterator mit = map_tunits_.begin();
-	for (; mit != map_tunits_.end(); mit++) {
-		const char* account = mit->first;
-		trade_unit* tunit = mit->second;
-		if (tunit != NULL) {
-			tunit->stop();
-			delete tunit;
-			tunit = NULL;
-		}
-		delete[]account;
+    }
+    map_tunits_.clear();
 
-	}
-	map_tunits_.clear();
-
-	/* release progress info */
-	VBASE_HASH_MAP<std::string, mq_progress_info*>::iterator sit = map_subs_by_topic_.begin();
-	for (; sit != map_subs_by_topic_.end(); ) {
-		if (sit->second) {
-			delete sit->second;
-			sit++;
-		}
-	}
-	map_subs_by_topic_.clear();
-	map_subs_by_id_.clear();
-
-	/* release response reference resource */
-	if (rsp_queue_ != NULL) {
-		release_rsp_messages();
-		delete rsp_queue_;
-		rsp_queue_ = NULL;
-	}
-	if (rsp_event_ != NULL) {
-		delete rsp_event_;
-		rsp_event_ = NULL;
-	}
-
-	/* close database */
-	if (trade_db_ != NULL) {
-		trade_db_->close();
-		delete trade_db_;
-		trade_db_ = NULL;
-	}
-
-	map_account_channel_bs_.clear();
-
-	/* release shared progress recorder */
-	progress_recorder::release_shared_instance();
-
-	/* reset trade server param */
-	params_ = trade_server_param();
-
-//    if(m_alarm_ != NULL) {
-//        m_alarm_->turn_off();
-//        delete m_alarm_;
-//        m_alarm_ = NULL;
-//    }
-
-	if(pub_trade_db_pool_ != NULL) {
-		delete pub_trade_db_pool_;
-		pub_trade_db_pool_ = NULL;
-	}
-
-    if(risk_trade_db_pool_ != NULL) {
-        delete risk_trade_db_pool_;
-        risk_trade_db_pool_ = NULL;
+    /* release response reference resource */
+    if (rsp_queue_ != NULL) {
+        release_rsp_messages();
+        delete rsp_queue_;
+        rsp_queue_ = NULL;
+    }
+    if (rsp_event_ != NULL) {
+        delete rsp_event_;
+        rsp_event_ = NULL;
     }
 
-	return NAUT_AT_S_OK;
+    /* reset trade server param */
+    params_ = trade_server_param();
+
+    if (pub_trade_db_pool_ != NULL) {
+        delete pub_trade_db_pool_;
+        pub_trade_db_pool_ = NULL;
+    }
+
+    return NAUT_AT_S_OK;
 }
 
-
-int trade_server::load_statutory_holidays(trade_server_param& params)
-{
-    int ret = NAUT_AT_S_OK;
-     naut::unidb* db = NULL;
-     naut::unidb_conn* dbconn = NULL;
-
-     LABEL_SCOPE_START;
-
-     naut::unidb_param dbparam;
-     dbparam.host = params.server_config_database.host;
-     dbparam.port = params.server_config_database.port;
-     dbparam.database_name = params.server_config_database.dbname;
-     dbparam.user = params.server_config_database.user;
-     dbparam.password = params.server_config_database.password;
-     dbparam.create_database_if_not_exists = false;
-     dbparam.recreate_database_if_exists = false;
-
-     db = new naut::unidb("mysql");
-     int dbret = db->open(dbparam);
-     if (BFAILED(dbret)) {
-         TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED,
-                 "open config database failed, ret: %d, host: %s, port: %d, dbname: %s, user: %s",
-                 dbret, dbparam.host.c_str(), dbparam.port, dbparam.database_name.c_str(), dbparam.user.c_str());
-         ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED, end);
-     }
-
-     dbconn = new naut::unidb_conn(db);
-     if (!dbconn->init_conn()) {
-         TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED,
-                 "init dbconn of the config database failed");
-         ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED, end);
-     }
-
-     /* query at_accountchannel */
-     char sql[512];
-
-     sprintf(sql,"select * from %s", m_statutory_holiday_tbl_name_.c_str());
-
-     if(dbconn->query(sql))
-     {
-         params.holidaysvec_.clear();
-         while(dbconn->fetch_row())
-         {
-             std::string holiday = dbconn->get_string("holiday");
-
-             if(holiday.empty())
-             {
-                 continue;
-             }
-
-             params.holidaysvec_.push_back(holiday);
-         }
-     }
-
-     LABEL_SCOPE_END;
-
- end:
-     if (BFAILED(ret)) {
-         params.holidaysvec_.clear();
-     }
-     if (dbconn != NULL) {
-         dbconn->release_conn();
-         delete dbconn;
-     }
-     if (db != NULL) {
-         db->close();
-         delete db;
-     }
-     return ret;
-}
-
-int trade_server::load_config(const char* config_file, trade_server_param& params)
+int trade_server::load_config(const char* config_file)
 {
 	assert(config_file != NULL);
 
@@ -638,192 +353,117 @@ int trade_server::load_config(const char* config_file, trade_server_param& param
 	pugi::xml_document doc;
 	if (!doc.load_file(config_file)) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIGFILE_INVALID,
-				"ctp-trade: config file is not exist or invalid '%s'", config_file);
+				"ctp_trade: config file is not exist or invalid '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIGFILE_INVALID, end);
 	}
 
-	pugi::xml_node xroot = doc.child("ctp-trade");
+	pugi::xml_node xroot = doc.child("ctp_trade");
 	if (xroot.empty()) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: root element 'ctp-trade' should be specified, '%s'", config_file);
+				"ctp_trade: root element 'ctp_trade' should be specified, '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 	}
 
 	/* server name */
-	std::string tmp = xroot.child("server-name").text().as_string();
+	std::string tmp = xroot.child("server_name").text().as_string();
 	if (tmp.empty()) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: server name should be specified, '%s'", config_file);
+				"ctp_trade: server name should be specified, '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 	}
-	params.server_name = tmp;
-
-    pugi::xml_node xmoa_reg_con = xroot.child("moa-register");
-    tmp = xmoa_reg_con.text().as_string();
-    if (tmp == "true") {
-    	params.moa_register = true;
-     } else {
-    	params.moa_register = false;
-     }
+	params_.server_name = tmp;
 
 	/* server config database */
-	pugi::xml_node xserver_config_database = xroot.child("server-config-database");
+	pugi::xml_node xserver_config_database = xroot.child("server_config_database");
 	if (xserver_config_database.empty()) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: server config database should be specified, '%s'", config_file);
+				"ctp_trade: server config database should be specified, '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 	}
 
 	tmp = xserver_config_database.child("host").text().as_string();
 	if (tmp.empty()) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: host of the server config database should be specified, '%s'", config_file);
+				"ctp_trade: host of the server config database should be specified, '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 	}
-	params.server_config_database.host = tmp;
+    params_.server_config_database.host = tmp;
 
 	tmp = xserver_config_database.child("port").text().as_string();
 	if (tmp.empty()) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: port of the server config database should be specified, '%s'", config_file);
+				"ctp_trade: port of the server config database should be specified, '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 	}
-	params.server_config_database.port = atoi(tmp.c_str());
-
-	tmp = xserver_config_database.child("dbname").text().as_string();
-	if (tmp.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: dbname of the server config database should be specified, '%s'", config_file);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-	}
-	params.server_config_database.dbname = tmp;
+	params_.server_config_database.port = atoi(tmp.c_str());
 
 	tmp = xserver_config_database.child("user").text().as_string();
 	if (tmp.empty()) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: user of the server config database should be specified, '%s'", config_file);
+				"ctp_trade: user of the server config database should be specified, '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 	}
-	params.server_config_database.user = tmp;
+	params_.server_config_database.user = tmp;
 
 	tmp = xserver_config_database.child("password").text().as_string();
 	if (tmp.empty()) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: password of the server config database should be specified, '%s'", config_file);
+				"ctp_trade: password of the server config database should be specified, '%s'", config_file);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 	}
+	params_.server_config_database.password = tmp;
 
-	//20151116 david wang
-	base::aes rsapwd;
-	std::string eplain = rsapwd.decrypt_base64(tmp.c_str(), tmp.length());
-
-	params.server_config_database.password = eplain;
-
-    /* server config risk database */
-    pugi::xml_node xserver_simulation_trade = xroot.child("simulation-trade");
-    if (!xserver_simulation_trade.empty()) {
-        tmp = xserver_simulation_trade.text().as_string();
-        if(tmp == "true") {
-            params.use_simulation_flag = true;
-        }
-    }
-
-    if(params.use_simulation_flag) {
-        /* server config risk database */
-        pugi::xml_node xserver_config_risk_database = xroot.child("server-config-risk-database");
-        if (xserver_config_risk_database.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-                    "ctp-trade: server config database should be specified, '%s'", config_file);
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-        }
-
-        tmp = xserver_config_risk_database.child("host").text().as_string();
-        if (tmp.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-                    "ctp-trade: host of the server config database should be specified, '%s'", config_file);
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-        }
-        params.server_config_risk_database.host = tmp;
-
-        tmp = xserver_config_risk_database.child("port").text().as_string();
-        if (tmp.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-                    "ctp-trade: port of the server config database should be specified, '%s'", config_file);
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-        }
-        params.server_config_risk_database.port = atoi(tmp.c_str());
-
-        tmp = xserver_config_risk_database.child("dbname").text().as_string();
-        if (tmp.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-                    "ctp-trade: dbname of the server config database should be specified, '%s'", config_file);
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-        }
-        params.server_config_risk_database.dbname = tmp;
-
-        tmp = xserver_config_risk_database.child("user").text().as_string();
-        if (tmp.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-                    "ctp-trade: user of the server config database should be specified, '%s'", config_file);
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-        }
-        params.server_config_risk_database.user = tmp;
-
-        tmp = xserver_config_risk_database.child("password").text().as_string();
-        if (tmp.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-                    "ctp-trade: password of the server config database should be specified, '%s'", config_file);
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-        }
-
-        eplain = rsapwd.decrypt_base64(tmp.c_str(), tmp.length());
-
-        params.server_config_risk_database.password = eplain;
-    }
-
-	/* processor config */
-	pugi::xml_node xprocessor_config = xroot.child("processor-config");
-	if (xprocessor_config.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: element 'processor-config' should be specified, '%s'", config_file);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-	}
-
-	tmp = xprocessor_config.child("query-thread-count").text().as_string();
-	if (tmp.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: query-thread-count should be specified, '%s'", config_file);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-	}
-	params.query_thread_count = atoi(tmp.c_str());
-
-	tmp = xprocessor_config.child("trade-thread-count").text().as_string();
-	if (tmp.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: trade-thread-count should be specified, '%s'", config_file);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-	}
-	params.trade_thread_count = atoi(tmp.c_str());
-
-   tmp = xprocessor_config.child("unit-thread-count").text().as_string();
-   if (tmp.empty()) {
+    tmp = xserver_config_database.child("dbname").text().as_string();
+    if (tmp.empty()) {
         TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-                "ctp-trade: unit-thread-count should be specified, '%s'", config_file);
+            "ctp_trade: dbname of the server config database should be specified, '%s'", config_file);
         ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
     }
-    params.unit_thread_count = atoi(tmp.c_str());
+    params_.server_config_database.dbname = tmp;
+
+	/* processor_config */
+	pugi::xml_node xprocessor_config = xroot.child("processor_config");
+	if (xprocessor_config.empty()) {
+		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+				"ctp_trade: element 'processor_config' should be specified, '%s'", config_file);
+		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+	}
+
+	tmp = xprocessor_config.child("query_thread_count").text().as_string();
+	if (tmp.empty()) {
+		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+				"ctp_trade: query_thread_count should be specified, '%s'", config_file);
+		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+	}
+	params_.query_thread_count = atoi(tmp.c_str());
+
+	tmp = xprocessor_config.child("trade_thread_count").text().as_string();
+	if (tmp.empty()) {
+		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+				"ctp_trade: trade_thread_count should be specified, '%s'", config_file);
+		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+	}
+	params_.trade_thread_count = atoi(tmp.c_str());
+
+   tmp = xprocessor_config.child("unit_thread_count").text().as_string();
+   if (tmp.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+                "ctp_trade: unit_thread_count should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
+    params_.unit_thread_count = atoi(tmp.c_str());
 
 	/* blog root path */
-	tmp = xroot.child("blog-root-path").text().as_string();
+	tmp = xroot.child("blog_root_path").text().as_string();
 	if (!tmp.empty()) {
-		params.blog_root_path = tmp;
-		if (params.blog_root_path.rfind("/") != params.blog_root_path.length() - 1) {
-			params.blog_root_path += "/";
+		params_.blog_root_path = tmp;
+		if (params_.blog_root_path.rfind("/") != params_.blog_root_path.length() - 1) {
+			params_.blog_root_path += "/";
 		}
 	}
 
 	/* switch time */
-	tmp = xroot.child("switch-time").text().as_string();
+	tmp = xroot.child("switch_time").text().as_string();
 	if (!tmp.empty()) {
 		bool valid = false;
 		int hour, minute, second;
@@ -833,320 +473,86 @@ int trade_server::load_config(const char* config_file, trade_server_param& param
 			}
 		}
 		if (valid) {
-			params.switch_time = tmp;
+			params_.switch_time = tmp;
 		}
 		else {
 			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-					"ctp-trade: format of switch time is invalid, '%s'", tmp.c_str());
+					"ctp_trade: format of switch time is invalid, '%s'", tmp.c_str());
 			ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
 		}
 	}
 
-    /* check-interval path */
-    int intvalue = xroot.child("check-interval").text().as_int();
+    /* check_interval path */
+    int intvalue = xroot.child("check_interval").text().as_int();
     if (intvalue != 0) {
-        params.check_interval_ = intvalue;
+        params_.check_interval_ = intvalue;
     }
 
-	/* mq server config */
-	pugi::xml_node xmqserver = xroot.child("mqserver");
-	if (xmqserver.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: element mqserver should be specified, '%s'", config_file);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-	}
+    /* table_config */
+    pugi::xml_node xtable_config = xroot.child("table_config");
+    if (xtable_config.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+            "ctp_trade: element 'table_config' should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
 
-	params.mq_config.name = xmqserver.child("name").text().as_string();
-	params.mq_config.host = xmqserver.child("host").text().as_string();
-	if (params.mq_config.host.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: host of the mqserver should be specified, '%s'", config_file);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-	}
+    tmp = xtable_config.child("account").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+            "ctp_trade: account should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
+    params_.m_account_tbl_name_ = tmp;
 
-	tmp = xmqserver.child("port").text().as_string();
-	if (tmp.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
-				"ctp-trade: port of the mqserver should be specified, '%s'", config_file);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
-	}
-	params.mq_config.port = atoi(tmp.c_str());
+    tmp = xtable_config.child("statutory_holidays").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+            "ctp_trade: statutory_holidays should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
+    params_.m_statutory_holiday_tbl_name_ = tmp;
+
+    tmp = xtable_config.child("entrust").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+            "ctp_trade: entrust should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
+    params_.m_entrust_tbl_name_ = tmp;
+
+    tmp = xtable_config.child("deal").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+            "ctp_trade: deal should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
+    params_.m_deal_tbl_name_ = tmp;
+
+    /* ctp_server_info */
+    pugi::xml_node xctp_server_info = xroot.child("ctp_server_info");
+    if (xtable_config.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+            "ctp_trade: element 'ctp_server_info' should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
+
+    tmp = xctp_server_info.child("ip").text().as_string();
+    if (tmp.empty()) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONFIG_INVALID,
+            "ctp_trade: ip should be specified, '%s'", config_file);
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONFIG_INVALID, end);
+    }
+    params_.m_server_config.host = tmp;
+
+    int port = xctp_server_info.child("port").text().as_int();
+    if (port != 0) {
+        params_.m_server_config.port = port;
+    }
 
 	LABEL_SCOPE_END;
 
 end:
 	return ret;
-}
-
-int trade_server::request_server_config(trade_server_param& params)
-{
-	int ret = NAUT_AT_S_OK;
-
-	naut::unidb* db = NULL;
-	naut::unidb_conn* dbconn = NULL;
-
-	LABEL_SCOPE_START;
-
-	naut::unidb_param dbparam;
-	dbparam.host = params.server_config_database.host;
-	dbparam.port = params.server_config_database.port;
-	dbparam.database_name = params.server_config_database.dbname;
-	dbparam.user = params.server_config_database.user;
-	dbparam.password = params.server_config_database.password;
-	dbparam.create_database_if_not_exists = false;
-	dbparam.recreate_database_if_exists = false;
-
-	db = new naut::unidb("mysql");
-	int dbret = db->open(dbparam);
-	if (BFAILED(dbret)) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED,
-				"open config database failed, ret: %d, host: %s, port: %d, dbname: %s, user: %s",
-				dbret, dbparam.host.c_str(), dbparam.port, dbparam.database_name.c_str(), dbparam.user.c_str());
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED, end);
-	}
-
-	dbconn = new naut::unidb_conn(db);
-	if (!dbconn->init_conn()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED,
-				"init dbconn of the config database failed");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED, end);
-	}
-
-	/* query server config */
-	char sql[512];
-	sprintf(sql, "select trade_host, trade_db_host, trade_db_name, trade_db_user,"
-			"trade_db_password from server_config where server_name='%s'", params.server_name.c_str());
-	if (!dbconn->query(sql)) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_QUERY_SERVER_CONFIG_FAILED,
-				"query server config failed, db error: (%d:%s)", dbconn->get_errno(), dbconn->get_error().c_str());
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_QUERY_SERVER_CONFIG_FAILED, end);
-	}
-
-	if (dbconn->get_count() == 0 || !dbconn->fetch_row()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_NOT_EXIST,
-				"config of the specified server_name is not exist");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_NOT_EXIST, end);
-	}
-
-	std::string tmp = dbconn->get_string("trade_host");
-	if (tmp.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_INVALID,
-				"server-config: trade host should be specified");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_INVALID, end);
-	}
-	if (!base::util::parse_server_addr(tmp, params.server_config.host, params.server_config.port)) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_INVALID,
-				"server-config: trade host seems invalid");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_INVALID, end);
-	}
-
-	tmp = dbconn->get_string("trade_db_host");
-	if (tmp.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_INVALID,
-				"server-config: host of the trade database should be specified");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_INVALID, end);
-	}
-	if (!base::util::parse_server_addr(tmp, params.server_config.database.host,
-			params.server_config.database.port)) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_INVALID,
-				"server-config: trade database host seems invalid");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_INVALID, end);
-	}
-
-	params.server_config.database.dbname = dbconn->get_string("trade_db_name");
-	if (params.server_config.database.dbname.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_INVALID,
-				"server-config: name of the trade database should be specified");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_INVALID, end);
-	}
-
-	params.server_config.database.user = dbconn->get_string("trade_db_user");
-	if (params.server_config.database.user.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_INVALID,
-				"server-config: user of the trade database should be specified");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_INVALID, end);
-	}
-
-	//20151116 david wang
-	tmp = dbconn->get_string("trade_db_password");
-	base::aes rsapwd;
-	std::string eplain = rsapwd.decrypt_base64(tmp.c_str(), tmp.length());
-	params.server_config.database.password = eplain;
-
-	if (params.server_config.database.password.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_INVALID,
-				"server-config: password of the trade database should be specified");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_INVALID, end);
-	}
-
-	/* query trade account config */
-	sprintf(sql, "select userid, password, account, broker from account_config "
-			"where server_name='%s'", params.server_name.c_str());
-	if (!dbconn->query(sql)) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_QUERY_ACCOUNT_CONFIG_FAILED,
-				"query account config failed, db error: (%d:%s)", dbconn->get_errno(), dbconn->get_error().c_str());
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_QUERY_ACCOUNT_CONFIG_FAILED, end);
-	}
-
-	if (dbconn->get_count() == 0) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_NOT_EXIT,
-				"account config of the specified server_name is not exist");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_NOT_EXIT, end);
-	}
-
-	while (dbconn->fetch_row()) {
-		trade_account_info account_info;
-		account_info.userid = dbconn->get_string("userid");
-		if (account_info.userid.empty()) {
-			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-					"account-config: userid of the account should be specified");
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-		}
-
-		//20151116 david wang
-		std::string tmp = dbconn->get_string("password");
-		base::aes rsapwd;
-		std::string eplain = rsapwd.decrypt_base64(tmp.c_str(), tmp.length());
-
-		account_info.password = eplain;
-		if (account_info.password.empty()) {
-			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-					"account-config: password of the account should be specified");
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-		}
-
-		account_info.account = dbconn->get_string("account");
-		if (account_info.account.empty()) {
-			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-					"account-config: capital account of the account should be specified");
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-		}
-
-		account_info.broker = dbconn->get_string("broker");
-		if (account_info.broker.empty()) {
-			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-					"account-config: broker of the account should be specified");
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-		}
-		params.ar_accounts_info.push_back(account_info);
-	}
-
-	LABEL_SCOPE_END;
-
-end:
-	if (BFAILED(ret)) {
-		params.ar_accounts_info.clear();
-	}
-	if (dbconn != NULL) {
-		dbconn->release_conn();
-		delete dbconn;
-	}
-	if (db != NULL) {
-		db->close();
-		delete db;
-	}
-	return ret;
-}
-
-int trade_server::request_account_channel_config(trade_server_param& params)
-{
-    int ret = NAUT_AT_S_OK;
-    naut::unidb* db = NULL;
-    naut::unidb_conn* dbconn = NULL;
-
-    LABEL_SCOPE_START;
-
-    naut::unidb_param dbparam;
-    dbparam.host = params.server_config_risk_database.host;
-    dbparam.port = params.server_config_risk_database.port;
-    dbparam.database_name = params.server_config_risk_database.dbname;
-    dbparam.user = params.server_config_risk_database.user;
-    dbparam.password = params.server_config_risk_database.password;
-    dbparam.create_database_if_not_exists = false;
-    dbparam.recreate_database_if_exists = false;
-
-    db = new naut::unidb("mysql");
-    int dbret = db->open(dbparam);
-    if (BFAILED(dbret)) {
-        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED,
-                "open config database failed, ret: %d, host: %s, port: %d, dbname: %s, user: %s",
-                dbret, dbparam.host.c_str(), dbparam.port, dbparam.database_name.c_str(), dbparam.user.c_str());
-        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED, end);
-    }
-
-    dbconn = new naut::unidb_conn(db);
-    if (!dbconn->init_conn()) {
-        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED,
-                "init dbconn of the config database failed");
-        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_CONNECT_CONFIG_DATABASE_FAILED, end);
-    }
-
-    /* query at_accountchannel */
-    char sql[512];
-    sprintf(sql, "select broker, account, flag, svrname,"
-            "bs_type, channel from %s where flag = 1 and svrname = '%s' ", m_at_accountchannel_tbl_name_.c_str(), params.server_name.c_str());
-    if (!dbconn->query(sql)) {
-        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_QUERY_SERVER_CONFIG_FAILED,
-                "query at_accountchannel failed, db error: (%d:%s)", dbconn->get_errno(), dbconn->get_error().c_str());
-        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_QUERY_SERVER_CONFIG_FAILED, end);
-    }
-
-    if (dbconn->get_count() == 0) {
-        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_SERVER_CONFIG_NOT_EXIST,
-                "config of the specified at_accountchannel is not exist");
-        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_SERVER_CONFIG_NOT_EXIST, end);
-    }
-    while (dbconn->fetch_row()) {
-        account_channel account_info;
-        account_info.account = dbconn->get_string("account");
-        if (account_info.account.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-                    "at_accountchannel: capital account of the account should be specified");
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-        }
-
-        account_info.broker = dbconn->get_string("broker");
-        if (account_info.broker.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-                    "at_accountchannel: broker of the account should be specified");
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-        }
-
-        account_info.svrname = dbconn->get_string("svrname");
-        if (account_info.svrname.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-                    "at_accountchannel: broker of the account should be specified");
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-        }
-
-        account_info.channel = dbconn->get_string("channel");
-        if (account_info.channel.empty()) {
-            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
-                    "at_accountchannel: broker of the account should be specified");
-            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
-        }
-
-        account_info.bs_type = dbconn->get_long("bs_type");
-        account_info.flag = dbconn->get_long("flag");
-
-        params.account_channel_info.push_back(account_info);
-    }
-
-    LABEL_SCOPE_END;
-
-end:
-    if (BFAILED(ret)) {
-        params.account_channel_info.clear();
-    }
-    if (dbconn != NULL) {
-        dbconn->release_conn();
-        delete dbconn;
-    }
-    if (db != NULL) {
-        db->close();
-        delete db;
-    }
-    return ret;
 }
 
 std::string trade_server::get_account_broker_bs_key(std::string broker, std::string account, long bs)
@@ -1160,32 +566,96 @@ std::string trade_server::get_account_broker_bs_key(std::string broker, std::str
     return buf;
 }
 
+int trade_server::request_account_config()
+{
+    int ret = NAUT_AT_S_OK;
+
+    LABEL_SCOPE_START;
+
+    database::dbscope mysql_db_keepper(*pub_trade_db_pool_);
+    database::db_instance* dbconn = mysql_db_keepper.get_db_conn();
+    CHECK_IF_DBCONN_NULL(dbconn);
+
+    char sql[512];
+    sprintf(sql, "select userid, password, account, broker from %s "
+        "where server_name='%s'", params_.m_account_tbl_name_.c_str(),
+        params_.server_name.c_str());
+    if (!dbconn->_conn->query(sql)) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_QUERY_ACCOUNT_CONFIG_FAILED,
+            "query account config failed, db error: (%d:%s)", dbconn->_conn->get_errno(),
+            dbconn->_conn->get_error().c_str());
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_QUERY_ACCOUNT_CONFIG_FAILED, end);
+    }
+
+    if (dbconn->_conn->get_count() == 0) {
+        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_NOT_EXIT,
+            "account config of the specified server_name is not exist");
+        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_NOT_EXIT, end);
+    }
+
+    while (dbconn->_conn->fetch_row()) {
+        trade_account_info account_info;
+        account_info.userid = dbconn->_conn->get_string("userid");
+        if (account_info.userid.empty()) {
+            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
+                "account-config: userid of the account should be specified");
+            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
+        }
+
+        std::string tmp = dbconn->_conn->get_string("password");
+        account_info.password = tmp;
+        if (account_info.password.empty()) {
+            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
+                "account-config: password of the account should be specified");
+            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
+        }
+
+        account_info.account = dbconn->_conn->get_string("account");
+        if (account_info.account.empty()) {
+            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
+                "account-config: capital account of the account should be specified");
+            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
+        }
+
+        account_info.broker = dbconn->_conn->get_string("broker");
+        if (account_info.broker.empty()) {
+            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_CONFIG_INVALID,
+                "account-config: broker of the account should be specified");
+            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNT_CONFIG_INVALID, end);
+        }
+        params_.ar_accounts_info.push_back(account_info);
+    }
+
+    LABEL_SCOPE_END;
+
+end:
+    if (BFAILED(ret)) {
+        params_.ar_accounts_info.clear();
+    }
+    return ret;
+}
+
+
 int trade_server::init_localno()
 {
-	assert(trade_db_ != NULL);
-
 	int ret = NAUT_AT_S_OK;
+    database::dbscope mysql_db_keepper(*pub_trade_db_pool_);
+    database::db_instance* dbconn = mysql_db_keepper.get_db_conn();
+    CHECK_IF_DBCONN_NULL(dbconn);
 
-	naut::unidb_conn* db_conn = new naut::unidb_conn(trade_db_);
-
-	LABEL_SCOPE_START;
-
-	if (!db_conn->init_conn()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED,
-				"init dbconn of the trade database failed");
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_INIT_DATABASE_CONN_FAILED, end);
-	}
+    LABEL_SCOPE_START;
 
 	char sql[2048];
-	sprintf(sql, "select max(localno) as max_localno from entrust");
-	if (!db_conn->query(sql)) {
+	sprintf(sql, "select max(localno) as max_localno from %s",
+        params_.m_entrust_tbl_name_.c_str());
+	if (!dbconn->_conn->query(sql)) {
 		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_EXCUTE_DB_QUERY_FAILED,
 				"select max localno from database failed, sql: '%s'", sql);
 		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_EXCUTE_DB_QUERY_FAILED, end);
 	}
 
-	if (db_conn->fetch_row()) {
-		localno_ = (int)db_conn->get_long("max_localno") + 10000;
+	if (dbconn->_conn->fetch_row()) {
+		localno_ = (int)dbconn->_conn->get_long("max_localno") + 10000;
 	}
 	else {
 		localno_ = 1;
@@ -1194,235 +664,7 @@ int trade_server::init_localno()
 	LABEL_SCOPE_END;
 
 end:
-	db_conn->release_conn();
-	delete db_conn;
 	return ret;
-}
-
-void trade_server::on_state_changed(nio::mqclient* mqc, int sub_id, int state, void* param)
-{
-	switch (state) {
-	case nio::MQCLIENT_STATE_CONNECTED:
-		TRACE_SYSTEM(AT_TRACE_TAG, "server mq connected");
-		break;
-	case nio::MQCLIENT_STATE_SUBSCRIBE_SUCCESS:
-		{
-			nio::mqsubscribe_info* minfo = (nio::mqsubscribe_info*)param;
-			assert(minfo != NULL);
-			std::string key = get_subs_key(minfo->topic.c_str(), minfo->sub_cond.c_str());
-			VBASE_HASH_MAP<std::string, mq_progress_info*>::iterator mit = map_subs_by_topic_.find(key);
-
-			assert(mit != map_subs_by_topic_.end());
-			assert(mit->second != NULL);
-
-			mit->second->sub_id = sub_id;
-			map_subs_by_id_[sub_id] = mit->second;
-
-			TRACE_SYSTEM(AT_TRACE_TAG, "subscibe topic: %s, subtopic: %s successfully",
-					minfo->topic.c_str(), minfo->sub_cond.c_str());
-		}
-		break;
-	case nio::MQCLIENT_STATE_SUBSCRIBE_FAILED:
-		{
-			nio::mqsubscribe_info* minfo = (nio::mqsubscribe_info*)param;
-			assert(minfo != NULL);
-			std::string key = get_subs_key(minfo->topic.c_str(), minfo->sub_cond.c_str());
-			VBASE_HASH_MAP<std::string, mq_progress_info*>::iterator mit = map_subs_by_topic_.find(key);
-
-			assert(mit != map_subs_by_topic_.end());
-			assert(mit->second != NULL);
-
-			mq_progress_info* pinfo = mit->second;
-			assert(pinfo != NULL);
-
-			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_SUBSCRIBE_FAILED,
-					"subscribe to mq failed, topic: %s, subtopic: %s, error msg: %s",
-					pinfo->topic.c_str(), pinfo->subtopic.c_str(), minfo->extra_msg.c_str());
-		}
-		break;
-	case nio::MQCLIENT_STATE_UNSUBSCRIBE_SUCCESS:
-		break;
-	case nio::MQCLIENT_STATE_UNSUBSCRIBE_FAILED:
-		break;
-	case nio::MQCLIENT_STATE_DISCONNECTED:
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_DISCONNECTED,
-				"mqclient is disconnected");
-		break;
-	case nio::MQCLIENT_STATE_CLOSED:
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_DISCONNECTED,
-				"mqclient is closed, and will reconnect in 2 seconds");
-		on_mq_disconnected();
-		break;
-	}
-}
-
-void trade_server::on_incoming_message(nio::mqclient* mqc, int sub_id, short type,
-		long msg_index, const char* reserved, const char* data, int data_size)
-{
-	assert(data != NULL);
-
-	int ret = NAUT_AT_S_OK;
-
-	char* package = new char[data_size + 1];
-	memcpy(package, data, data_size);
-	package[data_size] = 0;
-
-	TRACE_SYSTEM(AT_TRACE_TAG, "incoming message: %s", package);
-
-	mq_progress_info* pinfo = map_subs_by_id_[sub_id];
-	assert(pinfo != NULL);
-
-	pinfo->recv_index = msg_index;
-
-	base::dictionary* dict = base::djson::str2dict(package);
-	if (dict == NULL) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_MESSAGE_INVALID,
-				"receive a message that is not a valid json string, %s", package);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_MQ_MESSAGE_INVALID, end);
-	}
-
-	LABEL_SCOPE_START;
-
-	std::string account = (*dict)["account"].string_value();
-	if (account.empty()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_MESSAGE_INVALID,
-				"acount field is missing or empty, %s", package);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_MQ_MESSAGE_INVALID, end);
-	}
-   std::string broker = (*dict)["broker"].string_value();
-   if (broker.empty()) {
-        TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_MESSAGE_INVALID,
-                "broker field is missing or empty, %s", package);
-        ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_MQ_MESSAGE_INVALID, end);
-    }
-   std::string account_key = get_account_broker_bs_key(broker, account);
-	if (map_accounts_info_.find(account_key.c_str()) == map_accounts_info_.end()) {
-		TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_MESSAGE_INVALID,
-				"the account is not exist in local account list, %s", package);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_MQ_MESSAGE_INVALID, end);
-	}
-
-	if ((*dict)["userid"].string_value().empty()) {
-		(*dict)["userid"] = map_accounts_info_[account_key.c_str()].userid;
-	}
-
-    if ((*dict)["excode"].string_value().empty()) {
-        (*dict)["excode"] = "SHFE";
-    }
-
-	(*dict)["msg_index"] = msg_index;
-	if (pinfo->topic == MQ_TOPIC_TRADE)
-	{
-		progress_recorder::shared_instance().record_progress(
-				(*dict)["broker"].string_value().c_str(),
-				(*dict)["account"].string_value().c_str(),
-				(*dict)["orderid"].string_value().c_str(),
-				msg_index, ORDER_RECV);
-
-		if ((*dict)["cmd"].string_value() == ATPM_CMD_ENTRUST) {
-			char tmp[11];
-			sprintf(tmp, "%09d", localno_++);
-			(*dict)["localno"] = tmp;
-		}
-		ref_dictionary* rd = new ref_dictionary(dict);
-		atp_message am;
-		am.type = ATP_MESSAGE_TYPE_IN_ORDER;
-		am.param1 = (void*)rd;
-		dispatch_message(am);
-	}
-	else if (pinfo->topic == MQ_TOPIC_QUERY)
-	{
-		ref_dictionary* rd = new ref_dictionary(dict);
-		atp_message am;
-		if ((*dict)["cmd"].string_value() == ATPM_CMD_QRY_DEAL_ALL) {
-			am.type = ATP_MESSAGE_TYPE_IN_SPECIAL_QUERY;
-		}
-		else {
-			am.type = ATP_MESSAGE_TYPE_IN_QUERY;
-		}
-		am.param1 = (void*)rd;
-		dispatch_message(am);
-	}
-	else {
-		assert(false);
-		ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_MQ_MESSAGE_INVALID, end);
-	}
-
-	LABEL_SCOPE_END;
-
-end:
-	if (BFAILED(ret)) {
-		if (dict != NULL) {
-			delete dict;
-		}
-	}
-	delete[]package;
-}
-
-void trade_server::do_subscriptions(mq_progress_info* pinfo)
-{
-	assert(mqc_ != NULL);
-
-	if (pinfo == NULL) {
-		VBASE_HASH_MAP<std::string, mq_progress_info*>::iterator mit = map_subs_by_topic_.begin();
-		for (; mit != map_subs_by_topic_.end(); mit++) {
-			mq_progress_info* pinfo = mit->second;
-			assert(pinfo != NULL);
-			if (pinfo->sub_id == -1) {
-				mqc_->subscribe_subtopic(pinfo->topic.c_str(),
-						pinfo->subtopic.c_str(), "RESERVE", pinfo->recv_index + 1);
-			}
-		}
-	}
-	else {
-		if (pinfo->sub_id == -1) {
-			mqc_->subscribe_subtopic(pinfo->topic.c_str(),
-					pinfo->subtopic.c_str(), "RESERVE", pinfo->recv_index + 1);
-		}
-	}
-}
-
-void trade_server::on_mq_disconnected()
-{
-	if (!started_) {
-		return;
-	}
-
-	VBASE_HASH_MAP<std::string, mq_progress_info*>::iterator mit = map_subs_by_topic_.begin();
-	for (; mit != map_subs_by_topic_.end(); mit++) {
-		mq_progress_info* pinfo = mit->second;
-		assert(pinfo != NULL);
-		pinfo->sub_id = -1;
-	}
-	mq_reconnect_timer_.set_timer(this, on_mq_reconnect_callback, mqc_, 2000);
-	mq_reconnect_timer_.start();
-}
-
-void trade_server::on_mq_reconnect()
-{
-	mq_reconnect_timer_.reset();
-
-	if (started_) {
-		mqc_->shutdown();
-		if (!mqc_->init(params_.mq_config.host.c_str(), params_.mq_config.port)) {
-			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_CONNECT_MQ_FAILED,
-					"connect to mq failed, host: %s, port: %d",
-					params_.mq_config.host.c_str(), params_.mq_config.port);
-			/* it will reconnect to mq later in mq state callback */
-		}
-		else {
-			do_subscriptions();
-		}
-	}
-}
-
-void trade_server::on_mq_reconnect_callback(void* obj, void* param)
-{
-	TRACE_DEBUG(AT_TRACE_TAG, "on mq reconnect callback");
-
-	trade_server* ts = (trade_server*)obj;
-	assert(param == ts->mqc_);
-	ts->on_mq_reconnect();
 }
 
 void trade_server::post_rsp_message(atp_message& msg)
@@ -1563,20 +805,6 @@ int trade_server::get_index(const char* key, int bound)
 {
 	return base::util::hash_key(key) % bound;
 }
-
-//void trade_server::alarm_callback(base::alarm_info& ainfo, struct tm* t)
-//{
-//    TRACE_SYSTEM(AT_TRACE_TAG, "on alarm now~~~");
-//    if(started_) {
-//        started_ = false;
-//        int ret = init_db_pool();
-//        if(ret != NAUT_AT_S_OK) {
-//            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED, "init db pool failed :%d", ret);
-//        } else {
-//            started_ = true;
-//        }
-//    }
-//}
 
 int get_response_error_code(int ret, const char* server_error)
 {

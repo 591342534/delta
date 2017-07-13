@@ -25,23 +25,19 @@ comm_holiday::~comm_holiday()
 
 bool comm_holiday::load_holiday(database::db_instance* dbconn, const std::string &table)
 {
-    if (dbconn == NULL)
-    {
+    if (dbconn == NULL) {
         TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED,
-            "add policy get db conn failed");
+            "get db conn failed");
         return false;
     }
     char sql[512] = { 0 };
     sprintf(sql, "select * from %s", table.c_str());
     TRACE_SYSTEM(AT_TRACE_TAG, "load_holiday info,sql:%s", sql);
 
-    if (dbconn->_conn->query(sql))
-    {
+    if (dbconn->_conn->query(sql)) {
         holidaysvec_.clear();
-        while (dbconn->_conn->fetch_row())
-        {
+        while (dbconn->_conn->fetch_row()) {
             std::string holiday = dbconn->_conn->get_string("holiday");
-
             if (holiday.empty()) {
                 continue;
             }
@@ -163,12 +159,22 @@ std::string comm_holiday::get_trade_day()
     string s = "";
     struct tm curTime = { 0 };
     time_t tmNow = time(NULL);
+
+#ifdef _MSC_VER
+    localtime_s(&curTime, &tmNow);
+#else
     localtime_r(&tmNow, &curTime);
+#endif
     /*如果当前时间小于6点，则交易时间取前一天的日期*/
     if (curTime.tm_hour < 6) {
         time_t yesterday = get_last_work_day(tmNow);
         memset(&curTime, 0, sizeof (curTime));
+
+#ifdef _MSC_VER
+        localtime_s(&curTime, &yesterday);
+#else
         localtime_r(&yesterday, &curTime);
+#endif
     }
     if (curTime.tm_year == 0)
     {
@@ -187,7 +193,11 @@ int comm_holiday::get_today_second()
 {
     struct tm curTime = { 0 };
     time_t tmNow = time(NULL);
+#ifdef _MSC_VER
+    localtime_s(&curTime, &tmNow);
+#else
     localtime_r(&tmNow, &curTime);
+#endif
     if (curTime.tm_year == 0)
         return 0;
 

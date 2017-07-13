@@ -12,49 +12,34 @@
 #ifndef __NAUT_CTPTRADE_TRADE_SERVER_H__
 #define __NAUT_CTPTRADE_TRADE_SERVER_H__
 
-#include "base/base.h"
 #include "base/sigslot.h"
+#include "database/dbscope.h"
+
 #include "trade_struct.h"
 #include "query_processor.h"
 #include "trade_processor.h"
-#include "special_query_processor.h"
-#include "order_checker.h"
 #include "trade_unit.h"
 #include "comm_holiday.h"
-#include "database/unidb.h"
-#include "database/unidbpool.h"
-#include "base/timer.h"
-#include "base/alarm.h"
+
 #include <vector>
 #include <string>
-
+#include <thread>
+#include <memory>
 namespace ctp
 {
 
 typedef VBASE_HASH_MAP<const char*, trade_unit*, string_hash, string_compare> map_str_trade_unit;
 
-typedef VBASE_HASH_MAP<string, vector<string> > map_str_acc;
-
 struct database_config
 {
 	std::string host;
 	int port;
-
-	std::string dbname;
 	std::string user;
 	std::string password;
-
+    std::string dbname;
 	database_config()
 		: port(3306)
 	{}
-};
-
-struct trade_server_config
-{
-	std::string host;
-	int port;
-
-	database_config database;
 };
 
 struct trade_account_info
@@ -65,11 +50,10 @@ struct trade_account_info
 	std::string password;
 };
 
-struct trade_mq_config
+struct trade_server_config
 {
-	std::string name;
-	std::string host;
-	int port;
+    std::string host;
+    int port;
 };
 
 struct trade_server_param
@@ -90,8 +74,7 @@ struct trade_server_param
     std::string m_entrust_tbl_name_;
 
     database_config server_config_database;
-	trade_server_config server_config;
-
+    trade_server_config m_server_config;
 	std::vector<trade_account_info> ar_accounts_info;
 	std::vector<std::string> holidaysvec_;  //节假日列表
 	trade_server_param()
@@ -107,7 +90,6 @@ struct trade_server_param
         , m_deal_tbl_name_("")
         , m_entrust_tbl_name_("")
 	{
-	    holidaysvec_.clear();
 	}
 };
 
@@ -124,9 +106,9 @@ struct mq_progress_info
 	{}
 };
 
-class trade_server
-	: public message_dispatcher
-	, public sigslot::has_slots<>
+class trade_server : 
+    public message_dispatcher , 
+    public sigslot::has_slots<>
 {
 public:
 	trade_server();
@@ -138,7 +120,6 @@ public:
 
 public:
 	virtual int dispatch_message(atp_message& msg);
-//	void alarm_callback(base::alarm_info& ainfo, struct tm* t);
 
 public:
 	trade_server_param& server_param() {
@@ -153,30 +134,26 @@ public:
 		return pub_trade_db_pool_;
 	}
 
-    database::db_conn_pool* get_risk_conn_pool() {
-        return risk_trade_db_pool_;
-    }
-
-	bool get_server_start_flag(){
-	    return started_;
-	}
 	comm_holiday* get_comm_holiday() {
 	    return p_comm_holiday_;
 	}
 
-   static std::string get_account_broker_bs_key(std::string broker, std::string account, long bs = -1);
+    bool get_server_start_flag(){
+        return started_;
+    }
+
+   static std::string get_account_broker_bs_key(std::string broker, 
+       std::string account, long bs = -1);
 
 protected:
 	int start_internal();
 	int stop_internal();
 
 protected:
-	int load_config(const char* config_file, trade_server_param& params);
-	int request_server_config(trade_server_param& params);
-	int request_account_channel_config(trade_server_param& params);
-	int init_localno();
-	int init_db_pool();
-	int load_statutory_holidays(trade_server_param& params);
+	int load_config(const char* config_file);
+    int init_db_pool();
+    int request_account_config();
+    int init_localno();
 
 protected:
 	void post_rsp_message(atp_message& msg);
@@ -194,26 +171,19 @@ protected:
 
 private:
 	trade_server_param params_;
-    database::unidb* trade_db_;
     database::db_conn_pool* pub_trade_db_pool_;
-    database::db_conn_pool* risk_trade_db_pool_;
 
 	map_str_trade_unit map_tunits_;
 	std::vector<trade_processor*> ar_trade_processors_;
 	std::vector<query_processor*> ar_query_processors_;
-	std::vector<trade_unit*> ar_trade_units_;
-	special_query_processor* squery_processor_;
-	order_checker* order_checker_;
+    comm_holiday* p_comm_holiday_;
 
-	base::timer mq_reconnect_timer_;
-
-	VBASE_HASH_MAP<const char*, trade_account_info, string_hash, string_compare> map_accounts_info_;
+	VBASE_HASH_MAP<const char*, trade_account_info, 
+        string_hash, string_compare> map_accounts_info_;
 
 	int localno_;
 
-    comm_holiday* p_comm_holiday_;
-
-	base::thread* rsp_thread_;
+	std::shared_ptr<std::thread> m_sptr_rsp_thread;
 	bool stop_rsp_thread_;
 	base::srt_queue<atp_message>* rsp_queue_;
 	base::event* rsp_event_;

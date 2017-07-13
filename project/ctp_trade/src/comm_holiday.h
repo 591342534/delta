@@ -5,7 +5,7 @@ FileName: common_deal.h
 Version: 1.0
 Date: 2016.03.26
 
-History: cwm     2016.03.26   1.0     Create
+History: ericsheng     2016.03.26   1.0     Create
 ******************************************************************************/
 
 #ifndef __COMMON_HOLIDAY_H__
@@ -46,5 +46,4 @@ private:
 };
 
 }
-
 #endif

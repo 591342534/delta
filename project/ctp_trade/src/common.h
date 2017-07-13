@@ -76,7 +76,7 @@ enum CTPTRADE_ERROR
 	NAUT_AT_E_PROGRESS_INFO_CRC_MISMATCHED = 30402,			/* 进度信息CRC校验失败 */
 };
 
-const char* const AT_TRACE_TAG = "ctp-trade";
+const char* const AT_TRACE_TAG = "ctp_trade";
 
 /* mq topic defines */
 const char* const MQ_TOPIC_TRADE = "trade";
@@ -348,6 +348,36 @@ enum AT_ERROR_CODE
 	AT_ERROR_WITHDRAW_FROM_EXCODE = 300102,        /* 可能是委托单被退回做撤单处理比如超过每秒发送委托数量或者委托参数不对 */
 	AT_ERROR_SEND_TRADE_INFO_FAILED = 300103,        /* 交易服务实例连接服务失败或者发送消息失败 */
 };
+
+
+#define CHECK_IF_DBCONN_NULL(dbconn) \
+if (dbconn == NULL) { \
+TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED, \
+"failed to get db conn "); \
+return NAUT_AT_E_INIT_DATABASE_CONN_FAILED; \
+} \
+
+#define DBCONN_TRAN_START(dbconn) \
+if (!dbconn->_conn->begin_transaction()) { \
+TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED, \
+"failed to start transaction"); \
+return NAUT_AT_E_INIT_DATABASE_CONN_FAILED; \
+} \
+
+#define DBCONN_TRAN_COMMIT(dbconn) \
+if (!dbconn->_conn->commit()) { \
+TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED, \
+"failed to commit transaction"); \
+return NAUT_AT_E_INIT_DATABASE_CONN_FAILED; \
+} \
+
+#define DBCONN_TRAN_ROLLBACK(dbconn) \
+if (!dbconn->_conn->rollback()) { \
+TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_INIT_DATABASE_CONN_FAILED, \
+"failed to rollback transaction"); \
+return NAUT_AT_E_INIT_DATABASE_CONN_FAILED; \
+} \
+
 
 int get_response_error_code(int ret, const char* server_error = NULL);
 std::string get_response_error_msg(int error_code, const char* server_error = NULL);

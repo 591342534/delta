@@ -16,15 +16,25 @@
     <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcUserApiDataType.h" />
     <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcUserApiStruct.h" />
     <ClInclude Include="src\common.h" />
-    <ClInclude Include="src\ctp_quote.h" />
+    <ClInclude Include="src\comm_holiday.h" />
+    <ClInclude Include="src\processor_base.h" />
+    <ClInclude Include="src\query_processor.h" />
+    <ClInclude Include="src\trade_processor.h" />
+    <ClInclude Include="src\trade_server.h" />
+    <ClInclude Include="src\trade_struct.h" />
+    <ClInclude Include="src\trade_unit.h" />
     <ClInclude Include="src\version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ctp_quote.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <Xml Include="doc\ctp_trade_config.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\bin\Debug\config\ctp_quote_config.xml" />
+    <ClCompile Include="src\comm_holiday.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\query_processor.cpp" />
+    <ClCompile Include="src\trade_processor.cpp" />
+    <ClCompile Include="src\trade_server.cpp" />
+    <ClCompile Include="src\trade_unit.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{09A6A459-D194-4480-87F5-5B1B9E4226D9}</ProjectGuid>
