@@ -21,20 +21,21 @@
 #include "trade_server.h"
 #include "common.h"
 #include "version.h"
-
+#include <iostream>
 namespace ctp
 {
 
 trade_server::trade_server()
-	: pub_trade_db_pool_(NULL)
-	, localno_(time(NULL))
-	, rsp_thread_(NULL)
+	: localno_(time(NULL))
 	, stop_rsp_thread_(false)
+    , m_sptr_rsp_thread(nullptr)
 	, rsp_queue_(NULL)
 	, rsp_event_(NULL)
 	, started_(false)
-    , p_comm_holiday_(NULL)
+
 {
+    map_accounts_info_.clear();
+    map_tunits_.clear();
 }
 
 trade_server::~trade_server()
@@ -74,204 +75,87 @@ int trade_server::stop()
 	return stop_internal();
 }
 
-int trade_server::dispatch_message(atp_message& msg)
-{
-	if (!started_) {
-		ref_dictionary* rd = (ref_dictionary*)msg.param1;
-		rd->release();
-		return NAUT_AT_S_OK;
-	}
-
-	switch (msg.type) {
-	case ATP_MESSAGE_TYPE_IN_ORDER:
-		{
-			ref_dictionary* rd = (ref_dictionary*)msg.param1;
-			assert(rd != NULL);
-
-			if(ar_trade_processors_.size() > 0) {
-                int index = get_index((*(rd->get()))["account"].string_value().c_str(),
-                        (int)ar_trade_processors_.size());
-                TRACE_SYSTEM(AT_TRACE_TAG, "ar_trade_processors_ post msg:[ %s ] ~~~", rd->get()->to_string().c_str());
-                ar_trade_processors_[index]->post(msg);
-			} else {
-			    TRACE_WARNING(AT_TRACE_TAG, "ar_trade_processors_ size is 0 ~~~~");
-			}
-		}
-		break;
-	case ATP_MESSAGE_TYPE_SERVER_TRADE_RSP:
-		{
-			ref_dictionary* rd = (ref_dictionary*)msg.param1;
-			assert(rd != NULL);
-			if(ar_trade_processors_.size() > 0) {
-                int index = get_index((*(rd->get()))["account"].string_value().c_str(),
-                        (int)ar_trade_processors_.size());
-                ar_trade_processors_[index]->post(msg);
-			} else {
-			    TRACE_WARNING(AT_TRACE_TAG, "ar_trade_processors_ size is 0 ~~~~");
-			}
-		}
-		break;
-	case ATP_MESSAGE_TYPE_IN_QUERY:
-	case ATP_MESSAGE_TYPE_CHECKER_REQ:
-	case ATP_MESSAGE_TYPE_SERVER_QUERY_RSP:
-		{
-			ref_dictionary* rd = (ref_dictionary*)msg.param1;
-			assert(rd != NULL);
-
-			if(ar_query_processors_.size() > 0) {
-                int index = get_index((*(rd->get()))["account"].string_value().c_str(),
-                        (int)ar_query_processors_.size());
-                ar_query_processors_[index]->post(msg);
-			} else {
-			    TRACE_WARNING(AT_TRACE_TAG, "ar_query_processors_ size is 0 ~~~~");
-			}
-		}
-		break;
-	case ATP_MESSAGE_TYPE_DEAL_PUSH:
-	case ATP_MESSAGE_TYPE_QUERY_REPLY:
-	case ATP_MESSAGE_TYPE_ORDER_REPLY:
-		post_rsp_message(msg);
-		break;
-	case ATP_MESSAGE_TYPE_SERVER_TRADE_REQ:
-	case ATP_MESSAGE_TYPE_SERVER_QUERY_REQ:
-		{
-			ref_dictionary* rd = (ref_dictionary*)msg.param1;
-			assert(rd != NULL);
-
-			std::string account = (*(rd->get()))["account"].string_value();
-			std::string broker = (*(rd->get()))["broker"].string_value();
-			std::string account_key = get_account_broker_bs_key(broker, account);
-			if (map_tunits_.find(account_key.c_str()) != map_tunits_.end()) {
-				map_tunits_[account_key.c_str()]->post(msg);
-			}
-			else {
-				TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_MISMATCHED,
-						"the trade unit with specified account '%s' is not found,",
-						account_key.c_str());
-			}
-		}
-		break;
-	default:
-		TRACE_WARNING(AT_TRACE_TAG, "unknown message type: %d", msg.type);
-		break;
-	}
-	return NAUT_AT_S_OK;
-}
-
 int trade_server::start_internal()
 {
-	int ret = NAUT_AT_S_OK;
+    int ret = NAUT_AT_S_OK;
 
-	LABEL_SCOPE_START;
+    LABEL_SCOPE_START;
 
     ret = init_db_pool();
     CHECK_LABEL(ret, end);
 
+    {
+        database::dbscope mysql_db_keepper(m_db_pool_);
+        database::db_instance* dbconn = mysql_db_keepper.get_db_conn();
+        CHECK_IF_DBCONN_NULL(dbconn);
+        m_comm_holiday_.load_holiday(dbconn, params_.m_statutory_holiday_tbl_name_);
+    }
+
     ret = request_account_config();
     CHECK_LABEL(ret, end);
 
-	/* initialize localno */
-	ret = init_localno();
+    /* initialize localno */
+    ret = init_localno();
     CHECK_LABEL(ret, end);
-    {
-        database::dbscope mysql_db_keepper(*pub_trade_db_pool_);
-        database::db_instance* dbconn = mysql_db_keepper.get_db_conn();
-        CHECK_IF_DBCONN_NULL(dbconn);
-        p_comm_holiday_->load_holiday(dbconn, params_.m_statutory_holiday_tbl_name_);
-    }
-    
+
 
     /* initialize trade units */
-	for (int i = 0; i < (int)params_.ar_accounts_info.size(); i++)
-	{
-		trade_unit_params tparams;
-		tparams.trade_host = params_.m_server_config.host;
-		tparams.trade_port = params_.m_server_config.port;
-		tparams.userid = params_.ar_accounts_info[i].userid;
-		tparams.password = params_.ar_accounts_info[i].password;
-		tparams.account = params_.ar_accounts_info[i].account;
-		tparams.broker = params_.ar_accounts_info[i].broker;
-		tparams.use_simulation_flag = false;
-		tparams.trade_log_file = params_.blog_root_path + params_.ar_accounts_info[i].account + "/";
+    for (int i = 0; i < (int)params_.ar_accounts_info.size(); i++)
+    {
+        trade_unit_params tparams;
+        tparams.trade_host = params_.m_server_config.host;
+        tparams.trade_port = params_.m_server_config.port;
+        tparams.userid = params_.ar_accounts_info[i].userid;
+        tparams.password = params_.ar_accounts_info[i].password;
+        tparams.account = params_.ar_accounts_info[i].account;
+        tparams.broker = params_.ar_accounts_info[i].broker;
+        tparams.use_simulation_flag = false;
+        tparams.trade_log_file = params_.blog_root_path + params_.ar_accounts_info[i].account + "/";
 
-		std::string account_key_str = get_account_broker_bs_key(tparams.broker, tparams.account);
+        std::string account_key_str = get_account_broker_bs_key(tparams.broker, tparams.account);
 
-		if (map_tunits_.find(account_key_str.c_str()) != map_tunits_.end()) {
-			TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNTS_DUPLICATED,
-					"duplicate account found, %s", account_key_str.c_str());
-			ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNTS_DUPLICATED, end);
-		}
+        if (map_tunits_.find(account_key_str.c_str()) != map_tunits_.end()) {
+            TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNTS_DUPLICATED,
+                "duplicate account found, %s", account_key_str.c_str());
+            ASSIGN_AND_CHECK_LABEL(ret, NAUT_AT_E_ACCOUNTS_DUPLICATED, end);
+        }
         trade_unit* tunit = new trade_unit();
         ret = tunit->start(tparams, this, this);
         if (BFAILED(ret)) {
-          delete tunit;
-          CHECK_LABEL(ret, end);
+            delete tunit;
+            CHECK_LABEL(ret, end);
         }
         char* account_key = new char[account_key_str.length() + 1];
         strcpy(account_key, account_key_str.c_str());
 
         map_tunits_[account_key] = tunit;
         map_accounts_info_[account_key] = params_.ar_accounts_info[i];
-	}
+    }
 
-	/* start processors */
-	for (int i = 0; i < params_.trade_thread_count; i++) {
-		trade_processor* ep = new trade_processor();
-		ar_trade_processors_.push_back(ep);
-		ret = ep->start(params_.server_name.c_str(), this, this);
-		CHECK_LABEL(ret, end);
-	}
+    /* start processors */
+    for (int i = 0; i < params_.trade_thread_count; i++) {
+        trade_processor* ep = new trade_processor();
+        ar_trade_processors_.push_back(ep);
+        ret = ep->start(params_.server_name.c_str(), this, this);
+        CHECK_LABEL(ret, end);
+    }
 
-	for (int i = 0; i < params_.query_thread_count; i++) {
-		query_processor* qp = new query_processor();
-		ar_query_processors_.push_back(qp);
-		ret = qp->start(params_.server_name.c_str(), this, this);
-		CHECK_LABEL(ret, end);
-	}
+    for (int i = 0; i < params_.query_thread_count; i++) {
+        query_processor* qp = new query_processor();
+        ar_query_processors_.push_back(qp);
+        ret = qp->start(params_.server_name.c_str(), this, this);
+        CHECK_LABEL(ret, end);
+    }
 
-	/* initialize mq response references */
-	rsp_queue_ = new base::srt_queue<atp_message>(10);
-	rsp_queue_->init();
-	rsp_event_ = new base::event();
+    /* initialize mq response references */
+    rsp_queue_ = new base::srt_queue<atp_message>(10);
+    rsp_queue_->init();
+    rsp_event_ = new base::event();
 
-	/* start response process thread */
-	stop_rsp_thread_ = false;
+    /* start response process thread */
+    stop_rsp_thread_ = false;
     m_sptr_rsp_thread = std::make_shared<std::thread>
         (process_rsp_thread, this);
-
-	LABEL_SCOPE_END;
-
-end:
-	return ret;
-}
-
-
-int trade_server::init_db_pool()
-{
-    int ret = NAUT_AT_S_OK;
-
-    if(pub_trade_db_pool_ != NULL) {
-        pub_trade_db_pool_->release_all_conns();
-        delete pub_trade_db_pool_;
-        pub_trade_db_pool_ = NULL;
-    }
-    LABEL_SCOPE_START;
-
-    // pub_trade_db_pool_ initialize database
-    database::unidb_param dbparam_pub;
-    dbparam_pub.create_database_if_not_exists = false;
-    dbparam_pub.recreate_database_if_exists = false;
-    dbparam_pub.host = params_.server_config_database.host;
-    dbparam_pub.port = params_.server_config_database.port;
-    dbparam_pub.user = params_.server_config_database.user;
-    dbparam_pub.password = params_.server_config_database.password;
-    dbparam_pub.database_name = params_.server_config_database.dbname;
-
-    std::string str_db_type = "mysql";
-    int conn_count = 1;
-    pub_trade_db_pool_ = new database::db_conn_pool();
-    ret = pub_trade_db_pool_->init(dbparam_pub, conn_count, str_db_type, params_.switch_time);
-    CHECK_LABEL(ret, end);
 
     LABEL_SCOPE_END;
 
@@ -331,16 +215,94 @@ int trade_server::stop_internal()
         rsp_event_ = NULL;
     }
 
-    /* reset trade server param */
-    params_ = trade_server_param();
-
-    if (pub_trade_db_pool_ != NULL) {
-        delete pub_trade_db_pool_;
-        pub_trade_db_pool_ = NULL;
-    }
-
     return NAUT_AT_S_OK;
 }
+
+
+int trade_server::dispatch_message(atp_message& msg)
+{
+	if (!started_) {
+		ref_dictionary* rd = (ref_dictionary*)msg.param1;
+		rd->release();
+		return NAUT_AT_S_OK;
+	}
+
+	switch (msg.type) {
+	case ATP_MESSAGE_TYPE_IN_ORDER:
+		{
+			ref_dictionary* rd = (ref_dictionary*)msg.param1;
+			assert(rd != NULL);
+
+			if(ar_trade_processors_.size() > 0) {
+                int index = get_index((*(rd->get()))["account"].string_value().c_str(),
+                        (int)ar_trade_processors_.size());
+                TRACE_SYSTEM(AT_TRACE_TAG, "ar_trade_processors_ post msg:[ %s ] ~~~", rd->get()->to_string().c_str());
+                ar_trade_processors_[index]->post(msg);
+			} else {
+			    TRACE_WARNING(AT_TRACE_TAG, "ar_trade_processors_ size is 0 ~~~~");
+			}
+		}
+		break;
+	case ATP_MESSAGE_TYPE_SERVER_TRADE_RSP:
+		{
+			ref_dictionary* rd = (ref_dictionary*)msg.param1;
+			assert(rd != NULL);
+			if(ar_trade_processors_.size() > 0) {
+                int index = get_index((*(rd->get()))["account"].string_value().c_str(),
+                        (int)ar_trade_processors_.size());
+                ar_trade_processors_[index]->post(msg);
+			} else {
+			    TRACE_WARNING(AT_TRACE_TAG, "ar_trade_processors_ size is 0 ~~~~");
+			}
+		}
+		break;
+	case ATP_MESSAGE_TYPE_IN_QUERY:
+	case ATP_MESSAGE_TYPE_CHECKER_REQ:
+	case ATP_MESSAGE_TYPE_SERVER_QUERY_RSP:
+		{
+			ref_dictionary* rd = (ref_dictionary*)msg.param1;
+			assert(rd != NULL);
+
+			if(ar_query_processors_.size() > 0) {
+                int index = get_index((*(rd->get()))["account"].string_value().c_str(),
+                        (int)ar_query_processors_.size());
+                ar_query_processors_[index]->post(msg);
+			} else {
+			    TRACE_WARNING(AT_TRACE_TAG, "ar_query_processors_ size is 0 ~~~~");
+			}
+		}
+		break;
+	case ATP_MESSAGE_TYPE_DEAL_PUSH:
+	case ATP_MESSAGE_TYPE_ORDER_REPLY:
+    case ATP_MESSAGE_TYPE_QUERY_REPLY:
+		post_rsp_message(msg);
+		break;
+	case ATP_MESSAGE_TYPE_SERVER_TRADE_REQ:
+	case ATP_MESSAGE_TYPE_SERVER_QUERY_REQ:
+		{
+			ref_dictionary* rd = (ref_dictionary*)msg.param1;
+			assert(rd != NULL);
+
+			std::string account = (*(rd->get()))["account"].string_value();
+			std::string broker = (*(rd->get()))["broker"].string_value();
+			std::string account_key = get_account_broker_bs_key(broker, account);
+			if (map_tunits_.find(account_key.c_str()) != map_tunits_.end()) {
+				map_tunits_[account_key.c_str()]->post(msg);
+			}
+			else {
+				TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_ACCOUNT_MISMATCHED,
+						"the trade unit with specified account '%s' is not found,",
+						account_key.c_str());
+			}
+		}
+		break;
+	default:
+		TRACE_WARNING(AT_TRACE_TAG, "unknown message type: %d", msg.type);
+		break;
+	}
+	return NAUT_AT_S_OK;
+}
+
 
 int trade_server::load_config(const char* config_file)
 {
@@ -555,15 +517,31 @@ end:
 	return ret;
 }
 
-std::string trade_server::get_account_broker_bs_key(std::string broker, std::string account, long bs)
+int trade_server::init_db_pool()
 {
-    char buf[1024];
-    if(bs == -1) {
-        sprintf(buf, "%s_%s", broker.c_str(), account.c_str());
-      } else {
-        sprintf(buf, "%s_%s_%ld", broker.c_str(), account.c_str(), bs);
-      }
-    return buf;
+    int ret = NAUT_AT_S_OK;
+
+    LABEL_SCOPE_START;
+    m_db_pool_.release_all_conns();
+    // pub_trade_db_pool_ initialize database
+    database::unidb_param dbparam_pub;
+    dbparam_pub.create_database_if_not_exists = false;
+    dbparam_pub.recreate_database_if_exists = false;
+    dbparam_pub.host = params_.server_config_database.host;
+    dbparam_pub.port = params_.server_config_database.port;
+    dbparam_pub.user = params_.server_config_database.user;
+    dbparam_pub.password = params_.server_config_database.password;
+    dbparam_pub.database_name = params_.server_config_database.dbname;
+
+    std::string str_db_type = "mysql";
+    int conn_count = 1;
+    ret = m_db_pool_.init(dbparam_pub, conn_count, str_db_type, params_.switch_time);
+    CHECK_LABEL(ret, end);
+
+    LABEL_SCOPE_END;
+
+end:
+    return ret;
 }
 
 int trade_server::request_account_config()
@@ -572,7 +550,7 @@ int trade_server::request_account_config()
 
     LABEL_SCOPE_START;
 
-    database::dbscope mysql_db_keepper(*pub_trade_db_pool_);
+    database::dbscope mysql_db_keepper(m_db_pool_);
     database::db_instance* dbconn = mysql_db_keepper.get_db_conn();
     CHECK_IF_DBCONN_NULL(dbconn);
 
@@ -639,7 +617,7 @@ end:
 int trade_server::init_localno()
 {
 	int ret = NAUT_AT_S_OK;
-    database::dbscope mysql_db_keepper(*pub_trade_db_pool_);
+    database::dbscope mysql_db_keepper(m_db_pool_);
     database::db_instance* dbconn = mysql_db_keepper.get_db_conn();
     CHECK_IF_DBCONN_NULL(dbconn);
 
@@ -704,63 +682,35 @@ void trade_server::process_rsp()
 {
 	atp_message msg;
 	while (!stop_rsp_thread_) {
-		bool processed = false;
-		if (mqc_->connected())
-		{
-			if (!rsp_queue_->pop(msg)) {
-				rsp_event_->reset();
-				rsp_event_->wait(20);
-				continue;
-			}
+        if (!rsp_queue_->pop(msg)) {
+            rsp_event_->reset();
+            rsp_event_->wait(20);
+            continue;
+        }
 
-			ref_dictionary* rd = (ref_dictionary*)msg.param1;
-			assert(rd != NULL);
+        ref_dictionary* rd = (ref_dictionary*)msg.param1;
+        assert(rd != NULL);
 
-			std::string subtopic = get_subs_subtopic((*rd->get())["broker"].string_value().c_str(), (*rd->get())["account"].string_value().c_str());
+        TRACE_SYSTEM(AT_TRACE_TAG, "send response: %s", rd->get()->to_string().c_str());
 
-			TRACE_SYSTEM(AT_TRACE_TAG, "send response: %s", rd->get()->to_string().c_str());
-
-			assert(mqc_ != NULL);
-			switch (msg.type) {
-			case ATP_MESSAGE_TYPE_DEAL_PUSH:
-			case ATP_MESSAGE_TYPE_ORDER_REPLY:
-				{
-					std::string result = base::djson::dict2str(rd->get());
-					if (!mqc_->publish(1, MQ_TOPIC_RSP_TRADE, subtopic.c_str(), result.c_str(), result.length() + 1)) {
-						TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_PUBLISH_MESSAGE_FAILED,
-								"send deal push message failed, will retry later, '%s'", result.c_str());
-						rd->retain();
-						rsp_queue_->push(msg);
-					}
-				}
-				break;
-			case ATP_MESSAGE_TYPE_QUERY_REPLY:
-				{
-					std::string result = base::djson::dict2str(rd->get());
-					TRACE_DEBUG(AT_TRACE_TAG,
-							"send query response message dict: '%s'", result.c_str());
-					if (!mqc_->publish(1, MQ_TOPIC_RSP_QUERY, subtopic.c_str(), result.c_str(), result.length() + 1)) {
-						TRACE_ERROR(AT_TRACE_TAG, NAUT_AT_E_MQ_PUBLISH_MESSAGE_FAILED,
-								"send query response message failed, will retry later, '%s'", result.c_str());
-						rd->retain();
-						rsp_queue_->push(msg);
-					} else {
-					    TRACE_DEBUG(AT_TRACE_TAG, "topic:%s, subtopic:%s, dict: [%s]", MQ_TOPIC_RSP_QUERY, subtopic.c_str(), result.c_str());
-					}
-				}
-				break;
-			default:
-				break;
-			}
-
-			processed = true;
-			rd->release();
-		}
-
-		if (!processed) {
-			rsp_event_->reset();
-			rsp_event_->wait(20);
-		}
+        switch (msg.type) {
+        case ATP_MESSAGE_TYPE_DEAL_PUSH:
+        case ATP_MESSAGE_TYPE_ORDER_REPLY:
+        {
+                                             std::string result = base::djson::dict2str(rd->get());
+                                             std::cout << result << endl;
+        }
+            break;
+        case ATP_MESSAGE_TYPE_QUERY_REPLY:
+        {
+                                             std::string result = base::djson::dict2str(rd->get());
+                                             std::cout << result << endl;
+        }
+            break;
+        default:
+            break;
+        }
+        rd->release();
 	}
 }
 
@@ -768,42 +718,6 @@ void trade_server::process_rsp_thread(void* param)
 {
 	trade_server* ts = (trade_server*)param;
 	ts->process_rsp();
-}
-
-std::string trade_server::curr_trade_date()
-{
-	long t = time(NULL);
-	int hour, minute, second;
-	if (sscanf(params_.switch_time.c_str(), "%02d:%02d:%02d", &hour, &minute, &second) != 0) {
-		t -= (hour * 3600 + minute * 60 + second);
-	}
-	return base::util::date_string(t);
-}
-
-std::string trade_server::get_subs_subtopic(const char* broker, const char* account)
-{
-	char topic[256];
-	sprintf(topic, "%s_%s", broker, account);
-	return topic;
-}
-
-std::string trade_server::get_subs_key(const char* broker, const char* account, const char* subtopic)
-{
-	char key[256];
-	sprintf(key, "%s_%s_%s", broker, account, subtopic);
-	return key;
-}
-
-std::string trade_server::get_subs_key(const char* topic, const char* subtopic)
-{
-	char key[256];
-	sprintf(key, "%s_%s", topic, subtopic);
-	return key;
-}
-
-int trade_server::get_index(const char* key, int bound)
-{
-	return base::util::hash_key(key) % bound;
 }
 
 int get_response_error_code(int ret, const char* server_error)

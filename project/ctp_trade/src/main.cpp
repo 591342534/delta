@@ -181,7 +181,7 @@ int main(int argc, char **argv)
     curr_path = curr_path.substr(0, pos);
 
     std::string config_file = curr_path +
-        "/config/ctp_quote_config.xml";
+        "/config/ctp_trade_config.xml";
     std::string log_config_file = curr_path + "/config/log_config.xml";
     const char * binary_name = strrchr(argv[0], '/');
 
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
             return 0;
         case 'l':
             config_file = curr_path + 
-                "/config/manager_server_config.xml";
+                "/config/ctp_trade_config.xml";
             break;
         default:
             break;
@@ -222,11 +222,11 @@ int main(int argc, char **argv)
 #endif
     /* bind trace base log config file */
     if (!base::default_log_binder::bind_trace(log_config_file.c_str())) {
-        cout << "trade_simulation server bind trace failed" << endl;
+        cout << "ctp_trade server bind trace failed" << endl;
     }
     base::trace::enable_std_output(output_log_to_console);
 
-    TRACE_SYSTEM("ctp-quote", "main function to be running %d:%s", 110, "hello manager_server");
+    TRACE_SYSTEM(AT_TRACE_TAG, "--main function to be running--");
 
     proc_main(config_file);
 

@@ -29,6 +29,7 @@ namespace ctp
 {
 
 typedef VBASE_HASH_MAP<const char*, trade_unit*, string_hash, string_compare> map_str_trade_unit;
+typedef VBASE_HASH_MAP<const char*, trade_account_info, string_hash, string_compare> map_str_account_info;
 
 struct database_config
 {
@@ -76,7 +77,7 @@ struct trade_server_param
     database_config server_config_database;
     trade_server_config m_server_config;
 	std::vector<trade_account_info> ar_accounts_info;
-	std::vector<std::string> holidaysvec_;  //节假日列表
+
 	trade_server_param()
         : server_name("")
         , query_thread_count(1)
@@ -93,19 +94,6 @@ struct trade_server_param
 	}
 };
 
-struct mq_progress_info
-{
-	std::string topic;
-	std::string subtopic;
-	long recv_index;
-	int sub_id;
-
-	mq_progress_info()
-		: recv_index(-1)
-		, sub_id(-1)
-	{}
-};
-
 class trade_server : 
     public message_dispatcher , 
     public sigslot::has_slots<>
@@ -118,6 +106,10 @@ public:
 	int start(const char* config_file);
 	int stop();
 
+protected:
+    int start_internal();
+    int stop_internal();
+
 public:
 	virtual int dispatch_message(atp_message& msg);
 
@@ -126,28 +118,34 @@ public:
 		return params_;
 	}
 
-	map_str_trade_unit& map_tunits() {
-		return map_tunits_;
+	database::db_conn_pool& get_conn_pool() {
+        return m_db_pool_;
 	}
 
-	database::db_conn_pool* get_conn_pool() {
-		return pub_trade_db_pool_;
+	comm_holiday& get_comm_holiday() {
+        return m_comm_holiday_;
 	}
 
-	comm_holiday* get_comm_holiday() {
-	    return p_comm_holiday_;
-	}
+    map_str_trade_unit& map_tunits() {
+        return map_tunits_;
+    }
 
     bool get_server_start_flag(){
         return started_;
     }
 
    static std::string get_account_broker_bs_key(std::string broker, 
-       std::string account, long bs = -1);
-
-protected:
-	int start_internal();
-	int stop_internal();
+       std::string account, long bs = -1)
+   {
+       char buf[1024];
+       if (bs == -1) {
+           sprintf(buf, "%s_%s", broker.c_str(), account.c_str());
+       }
+       else {
+           sprintf(buf, "%s_%s_%ld", broker.c_str(), account.c_str(), bs);
+       }
+       return buf;
+   }
 
 protected:
 	int load_config(const char* config_file);
@@ -161,30 +159,34 @@ protected:
 	void process_rsp();
 	static void process_rsp_thread(void* param);
 
-	std::string curr_trade_date();
+private:
+	std::string curr_trade_date()
+    {
+        long t = time(NULL);
+        int hour, minute, second;
+        if (sscanf(params_.switch_time.c_str(), "%02d:%02d:%02d", &hour, &minute, &second) != 0) {
+            t -= (hour * 3600 + minute * 60 + second);
+        }
+        return base::util::date_string(t);
+    }
 
-protected:
-	std::string get_subs_subtopic(const char* broker, const char* account);
-	std::string get_subs_key(const char* broker, const char* account, const char* subtopic);
-	std::string get_subs_key(const char* topic, const char* subtopic);
-	int get_index(const char* key, int bound);
+	int get_index(const char* key, int bound)
+    {
+        return base::util::hash_key(key) % bound;
+    }
 
 private:
 	trade_server_param params_;
-    database::db_conn_pool* pub_trade_db_pool_;
-
+    database::db_conn_pool m_db_pool_;
+    comm_holiday m_comm_holiday_;
+    map_str_account_info map_accounts_info_;
 	map_str_trade_unit map_tunits_;
 	std::vector<trade_processor*> ar_trade_processors_;
 	std::vector<query_processor*> ar_query_processors_;
-    comm_holiday* p_comm_holiday_;
-
-	VBASE_HASH_MAP<const char*, trade_account_info, 
-        string_hash, string_compare> map_accounts_info_;
 
 	int localno_;
-
+    bool stop_rsp_thread_;
 	std::shared_ptr<std::thread> m_sptr_rsp_thread;
-	bool stop_rsp_thread_;
 	base::srt_queue<atp_message>* rsp_queue_;
 	base::event* rsp_event_;
 	bool started_;
