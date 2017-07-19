@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{7137d3a0-b34a-48c2-9d05-46804fbe73e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ComHeader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ConstDef.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnAcceptor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnAcceptorBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnBaseIOService.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnCommGlobal.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnConnBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnConnection.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnEndPoint.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnPacket.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnRingBuffer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnTCPClient.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnTCPServer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnThreadSafeList.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WnUtility.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\fndnet\fndnet.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\fndnet\ITCPClient.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\fndnet\ITCPServer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\name.txt">
+      <Filter>src</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\WnBaseIOService.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnCommGlobal.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnConnBase.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnEndPoint.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnPacket.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnRingBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnTCPClient.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnTCPServer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WnUtility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

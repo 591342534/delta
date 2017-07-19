@@ -68,6 +68,7 @@ int db_conn_pool::init(unidb_param param,int nconns,std::string &stype, std::str
     m_param = param;
     m_nconns = nconns;
     m_stype = stype;
+    m_switch_time = switch_time;
 
     start();
 
@@ -176,7 +177,7 @@ void db_conn_pool::alarm_callback()
     }
 }
 
-void db_conn_pool::Run()
+void db_conn_pool::run()
 {
 	while (is_running()) {
 		if (base::util::local_time_string() == m_switch_time ) {

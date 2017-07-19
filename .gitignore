@@ -8,6 +8,7 @@ project/riskapidemo/*
 ipch/*
 project/log/*
 project/test_base/log/*
+project/db_sync/log/*
 
  # Compiled source # 
 ################### 

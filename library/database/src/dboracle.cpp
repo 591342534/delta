@@ -181,6 +181,7 @@ db_oracle_conn::db_oracle_conn(unidb_base* db)
     , num_cols_(0)
     , initialized_(false)
     , last_error_(NAUT_DATABASE_S_OK)
+    , last_error_inner_(0)
 {
     assert(db != NULL);
 }
@@ -201,6 +202,8 @@ bool db_oracle_conn::init_conn()
     LABEL_SCOPE_START;
 
     last_error_ = NAUT_DATABASE_S_OK;
+    last_error_inner_ = 0;
+    slast_error_inner_ = "";
 
     last_error_ = real_connect();
     CHECK_LABEL(last_error_, end);
@@ -380,8 +383,7 @@ bool db_oracle_conn::set_auto_commit(bool auto_commit)
 
 bool db_oracle_conn::is_transaction()
 {
-    //return is_transaction_;
-    return true;
+    return is_transaction_;
 }
 
 std::string db_oracle_conn::get_error()
@@ -464,7 +466,7 @@ bool db_oracle_conn::execute(const char* sql)
         last_error_ = NAUT_DATABASE_E_ORACLE_EXECUTE_SQL_FAILED;
     }
     
-    printf("affected_rows = %d\n", OCI_GetAffectedRows(statement_));
+    //printf("affected_rows = %d\n", OCI_GetAffectedRows(statement_));
     //OCI_Commit(connection_);
 
     return (ret == TRUE);

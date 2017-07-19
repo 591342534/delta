@@ -241,9 +241,9 @@ void test_unidb::start_oracle_db_pool()
     param.recreate_database_if_exists = false;
 
     string type = "oracle";
-    tradepool.init(param, 2, type);
+    tradepool.init(param, 2, type, "13:33:00");
     dbscope db_scope(tradepool);
-    db_instance* dbconn = db_scope.get_db_conn();
+
 #if 0
     /* delete all records */
     if (!dbconn->_conn->execute("delete from \"t_stu\"")) {
@@ -297,14 +297,20 @@ void test_unidb::start_oracle_db_pool()
         dbconn->_conn->execute(buffer);
     }
 #endif
-    /* query records */
-    if (dbconn->_conn->query("select * from t_dcepair_inscom")) {
-        while (dbconn->_conn->fetch_row()) {
-            printf("COMKIND:%s CONTRACTCODE:%s\n", 
-                dbconn->_conn->get_string("COMKIND"), 
-                dbconn->_conn->get_string("CONTRACTCODE"));
+    while (true)
+    {
+        /* query records */
+        db_instance* dbconn = db_scope.get_db_conn();
+        if (dbconn->_conn->query("select * from t_instrument")) {
+            while (dbconn->_conn->fetch_row()) {
+                printf("COMKIND:%s CONTRACTCODE:%s\n",
+                    dbconn->_conn->get_string("instrumentid"),
+                    dbconn->_conn->get_string("exchangeid"));
+            }
         }
+        Sleep(10000);
     }
+
 
     printf("end of dbtest\n");
     getchar();

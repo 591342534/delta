@@ -46,13 +46,13 @@ public:
     db_conn_pool();
     ~db_conn_pool();
 public:
-    int init(unidb_param param,int nconns,std::string &stype, std::string switch_time = "");
+    int init(unidb_param param,int nconns,std::string &stype, std::string switch_time = "04:00:00");
     db_instance* getconn();
     void release_all_conns();
     void retconn(db_instance *dbconn);
     void alarm_callback();
 
-    virtual void Run();
+    virtual void run();
 private:
     db_instance* createconn();
     int init_db_conn();

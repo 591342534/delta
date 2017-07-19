@@ -667,16 +667,7 @@ windows ---------------------------------------------------------------------
 #pragma comment (lib, "AdvApi32.lib")
 #endif
 
- 
 
-fis--------------------------------------------------------------------------
-\\AP-SHA-DFS01\China\Shanghai\Public\IT
-
-
-sftp://10.243.140.114
-hui.yang
-E5265380
-BfOH1cY4
 
 
 bjam stage link=static runtime-link=shared threading=multi debug release
