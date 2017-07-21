@@ -26,66 +26,49 @@
 #include <log4cplus/layout.h>
 #include <log4cplus/loggingmacros.h>
 #include <log4cplus/fileappender.h>
+
 using namespace log4cplus;
 using namespace log4cplus::helpers;
 
 using namespace std;
-
-class Base
+class A;
+class B
 {
 public:
-    Base() 
-    { 
-        cout << "base()" << endl;
-    }
-    virtual ~Base() 
+    B(shared_ptr<A> tmp)
+        : one(tmp)
     {
-        cout << "~base()" << endl;
+
     }
+private:
+    shared_ptr<A> one;
 };
-class Base1 :  public Base
-{
+class A : public enable_shared_from_this<A> {
 public:
-    Base1()
-        : Base()
-    {
-        cout << "base1()" << endl;
-    }
-    virtual ~Base1()
-    {
-        cout << "~base1()" << endl;
+    A() {
+        cout << "A::A()" << endl;
     }
 
-    void test(int b)
-    {
-        static int i = b;
-        cout << b << endl;
+    ~A() {
+        cout << "A::~A()" << endl;
     }
+    void test()
+    {
+        bb.reset(new B(shared_from_this()));
+    }
+
+private:
+    int x_;
+    shared_ptr<B> bb;
 };
 
-class my_exception : public exception
-{
-    const char* what() const
-    {
-        return "c++ exception";
-    }
-};
+
+
 int main(int argc, char *argv[])
 {
-    
-    try {
-        throw 1;
-    }
-    //catch (my_exception &e){
-    //    cout << "my_exception caught" << endl;
-    //    cout << e.what() << endl;
-    //}
-    catch (std::exception& e) {
-        cout << e.what() << endl;
-    }
-    //catch (...) {
-    //    cout << "..." << endl;
-    //}
+    int result = sum(100, 10);
+
+    cout << result << endl;
 
     getchar();
     return 0;

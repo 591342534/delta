@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{7137d3a0-b34a-48c2-9d05-46804fbe73e5}</UniqueIdentifier>
+      <UniqueIdentifier>{b9c6cbb9-81d6-4abb-b60d-f61267802a9d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,9 +48,6 @@
     <ClInclude Include="src\WnPacket.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\WnRingBuffer.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\WnTCPClient.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -63,20 +60,12 @@
     <ClInclude Include="src\WnUtility.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\fndnet\fndnet.h">
+    <ClInclude Include="src\ITCPClient.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\fndnet\ITCPClient.h">
+    <ClInclude Include="src\ITCPServer.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\fndnet\ITCPServer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\name.txt">
-      <Filter>src</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\WnBaseIOService.cpp">
@@ -92,9 +81,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\WnPacket.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WnRingBuffer.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\WnTCPClient.cpp">

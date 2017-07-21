@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <memory>
 #include <map>
 
 #include "boost/filesystem.hpp"
@@ -11,6 +12,8 @@
 #include <boost/asio.hpp>
 
 using namespace std;
+
+#define PRINT_DEBUG printf
 
 void print(const boost::system::error_code&)
 {
@@ -68,20 +71,26 @@ void test_timer_asyn_loop()
     io.run();
 }
 
+
+void test_asio_work()
+{
+    boost::asio::io_service ios;
+    // 增加一个work对象  
+    boost::asio::io_service::work work(ios);
+
+    PRINT_DEBUG("ios before");
+    // 当没有任务时，ios.run()也不会马上返回  
+    ios.reset();
+    ios.run();
+    PRINT_DEBUG("ios end");
+}
+
 int main()
 {
-    boost::asio::io_service ioservice;
-    boost::asio::io_service my_io_service;
-    boost::asio::ip::tcp::resolver resolver(my_io_service);
-    boost::asio::ip::tcp::resolver::query query("www.qq.com", "http");
-    boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
-    boost::asio::ip::tcp::resolver::iterator end; // End marker.  
+    int* one = new int(10);
+    shared_ptr<int> two(one);
 
-    while (iter != end)
-    {
-        boost::asio::ip::tcp::endpoint endpoint = *iter++;
-        std::cout << endpoint << std::endl;
-    }
+
     getchar();
 	return 0;
 }

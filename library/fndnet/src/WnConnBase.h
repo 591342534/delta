@@ -10,7 +10,6 @@
 #endif
 
 #include "WnPacket.h"
-#include "WnRingBuffer.h"
 #include "WnEndPoint.h"
 #include "WnThreadSafeList.h"
 

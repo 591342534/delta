@@ -8,7 +8,6 @@
 #include "ComHeader.h"
 
 #include "WnEndPoint.h"
-#include "WnRingBuffer.h"
 #include "WnConnBase.h"
 
 #ifdef _DEBUG

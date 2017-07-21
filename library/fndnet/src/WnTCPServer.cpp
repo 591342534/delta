@@ -17,16 +17,6 @@
 #define new	new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#ifndef _WIN32
-	#define COMMON_API
-#else
-	#ifdef COMMON_EXPORT 
-		#define COMMON_API _declspec(dllexport)
-	#else
-		#define COMMON_API _declspec(dllimport)
-	#endif
-#endif
-
 enum ENU_RUN_STATE
 {
 	E_WAIT,
@@ -469,7 +459,7 @@ void WnTCPServer::OnNoRecvDataTimer(CONNECTION_APTR apConnection, const boost::s
 
 extern "C"
 {
-	COMMON_API IFndNetServer* NetCreateServer(IFndNetServerNotify* poNotifyObj, unsigned short usThreadCount)
+    IFndNetServer* NetCreateServer(IFndNetServerNotify* poNotifyObj, unsigned short usThreadCount)
 	{
 		boost::mutex::scoped_lock oGlobalLock(WnCommGlobal::GetGlobalMutex());
 
@@ -485,7 +475,7 @@ extern "C"
 		return poResult;
 	}
 
-	COMMON_API void NetDeleteServer(IFndNetServer *poServerInstance)
+	void NetDeleteServer(IFndNetServer *poServerInstance)
 	{
 		WnTCPServer *poServer = dynamic_cast<WnTCPServer*>(poServerInstance);
 

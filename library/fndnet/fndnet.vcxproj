@@ -19,11 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\fndnet\fndnet.h" />
-    <ClInclude Include="..\..\include\fndnet\ITCPClient.h" />
-    <ClInclude Include="..\..\include\fndnet\ITCPServer.h" />
     <ClInclude Include="src\ComHeader.h" />
     <ClInclude Include="src\ConstDef.h" />
+    <ClInclude Include="src\ITCPClient.h" />
+    <ClInclude Include="src\ITCPServer.h" />
     <ClInclude Include="src\WnAcceptor.h" />
     <ClInclude Include="src\WnAcceptorBase.h" />
     <ClInclude Include="src\WnBaseIOService.h" />
@@ -32,14 +31,10 @@
     <ClInclude Include="src\WnConnection.h" />
     <ClInclude Include="src\WnEndPoint.h" />
     <ClInclude Include="src\WnPacket.h" />
-    <ClInclude Include="src\WnRingBuffer.h" />
     <ClInclude Include="src\WnTCPClient.h" />
     <ClInclude Include="src\WnTCPServer.h" />
     <ClInclude Include="src\WnThreadSafeList.h" />
     <ClInclude Include="src\WnUtility.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\name.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\WnBaseIOService.cpp" />
@@ -47,7 +42,6 @@
     <ClCompile Include="src\WnConnBase.cpp" />
     <ClCompile Include="src\WnEndPoint.cpp" />
     <ClCompile Include="src\WnPacket.cpp" />
-    <ClCompile Include="src\WnRingBuffer.cpp" />
     <ClCompile Include="src\WnTCPClient.cpp" />
     <ClCompile Include="src\WnTCPServer.cpp" />
     <ClCompile Include="src\WnUtility.cpp" />
@@ -66,8 +60,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -99,7 +93,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)temp\$(ProjectName)</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\bin\$(Configuration)\$(Platform)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\obj\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
@@ -123,7 +117,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)include\fndnet\;$(SolutionDir)..\contrib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>COMMON_EXPORT;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -133,7 +127,10 @@
     </ClCompile>
     <PostBuildEvent>
       <Command>IF NOT EXIST $(SolutionDir)lib\$(Configuration) md $(SolutionDir)lib\$(Configuration)
-copy $(OutDir)$(TargetName).lib $(SolutionDir)lib\$(Configuration)</Command>
+IF NOT EXIST $(SolutionDir)include\$(TargetName) md $(SolutionDir)include\$(TargetName)
+copy $(OutDir)$(TargetName).lib $(SolutionDir)lib\$(Configuration)
+copy $(ProjectDir)src\ITCPClient.h  $(SolutionDir)include\$(TargetName)
+copy $(ProjectDir)src\ITCPServer.h  $(SolutionDir)include\$(TargetName)</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>

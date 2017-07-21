@@ -17,15 +17,6 @@
 #define new	new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 
-#ifndef _WIN32
-	#define COMMON_API
-#else
-	#ifdef COMMON_EXPORT
-		#define COMMON_API _declspec(dllexport)
-	#else
-		#define COMMON_API _declspec(dllimport)
-	#endif
-#endif
 
 WnTCPClient::WnTCPClient(io_service& oIoService, IFndNetClientNotify *poNotify)
 : WnEndPoint()
@@ -322,7 +313,7 @@ void WnTCPClient::OnNoRecvDataTimer(const boost::system::error_code& oErrorCode)
 
 extern "C"
 {
-	COMMON_API IFndNetClient* NetCreateClient(IFndNetClientNotify* poNotifyObj, unsigned short usThreadCount)
+	IFndNetClient* NetCreateClient(IFndNetClientNotify* poNotifyObj, unsigned short usThreadCount)
 	{
 		boost::mutex::scoped_lock oGlobalLock(WnCommGlobal::GetGlobalMutex());
 
@@ -338,7 +329,7 @@ extern "C"
 		return poResult;
 	}
 
-	COMMON_API void NetDeleteClient( IFndNetClient* poClientInstance )
+	void NetDeleteClient( IFndNetClient* poClientInstance )
 	{
 		WnTCPClient *poClient = dynamic_cast<WnTCPClient*>(poClientInstance);
 
