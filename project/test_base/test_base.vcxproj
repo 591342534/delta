@@ -95,6 +95,7 @@
     <ClCompile Include="src\test_timer.cpp" />
     <ClCompile Include="src\test_tqueue.cpp" />
     <ClCompile Include="src\test_util.cpp" />
+    <ClCompile Include="src\test_xml.cpp" />
     <ClCompile Include="src\test_zip.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +108,7 @@
     <ClInclude Include="src\test_timer.h" />
     <ClInclude Include="src\test_tqueue.h" />
     <ClInclude Include="src\test_util.h" />
+    <ClInclude Include="src\test_xml.h" />
     <ClInclude Include="src\test_zip.h" />
   </ItemGroup>
   <ItemGroup>
