@@ -66,9 +66,9 @@ private:
 
 int main(int argc, char *argv[])
 {
-    int result = sum(100, 10);
+    std::vector<int> one = {3, 4, 99, 22, 10, 9};
 
-    cout << result << endl;
+    cout << *std::min_element(one.begin(), one.end()) << endl;
 
     getchar();
     return 0;

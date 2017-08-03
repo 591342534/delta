@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -10,48 +10,22 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcMdApi.h" />
-    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcTraderApi.h" />
-    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcUserApiDataType.h" />
-    <ClInclude Include="..\..\..\contrib\20150803_tradeapi_win32\ThostFtdcUserApiStruct.h" />
-    <ClInclude Include="src\common.h" />
-    <ClInclude Include="src\comm_holiday.h" />
-    <ClInclude Include="src\processor_base.h" />
-    <ClInclude Include="src\query_processor.h" />
-    <ClInclude Include="src\trade_processor.h" />
-    <ClInclude Include="src\trade_server.h" />
-    <ClInclude Include="src\trade_struct.h" />
-    <ClInclude Include="src\trade_unit.h" />
-    <ClInclude Include="src\version.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="doc\ctp_trade_config.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\comm_holiday.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\query_processor.cpp" />
-    <ClCompile Include="src\trade_processor.cpp" />
-    <ClCompile Include="src\trade_server.cpp" />
-    <ClCompile Include="src\trade_unit.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{09A6A459-D194-4480-87F5-5B1B9E4226D9}</ProjectGuid>
+    <ProjectGuid>{75BDDCEA-B0E1-4A7C-AC0E-748911E15D88}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ctp_trade</RootNamespace>
+    <RootNamespace>ASIO_Client</RootNamespace>
+    <ProjectName>test_asionet_c</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -69,6 +43,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)temp\$(ProjectName)</IntDir>
+    <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -79,14 +54,14 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib\20150803_tradeapi_win32;$(SolutionDir)include;$(SolutionDir)..\contrib</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\contrib;$(SolutionDir)include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libiconv;$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\20150803_tradeapi_win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>iconvD.lib;thostmduserapi.lib;utility.lib;base.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\boost\lib_vc120;$(SolutionDir)lib\$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fndnet.lib;ws2_32.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -97,15 +72,18 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
