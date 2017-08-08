@@ -6,13 +6,12 @@
  Date: 2016.03.21
 
  History:
- david wang     2016.03.21   1.0     Create
+ eric     2016.03.21   1.0     Create
  ******************************************************************************/
 
-#ifndef __NAUT_CTPTRADE_TRADE_SERVER_H__
-#define __NAUT_CTPTRADE_TRADE_SERVER_H__
+#ifndef __TRADE_SERVER_H__
+#define __TRADE_SERVER_H__
 
-#include "base/sigslot.h"
 #include "database/dbscope.h"
 #include "trade_struct.h"
 #include "query_processor.h"
@@ -79,7 +78,6 @@ namespace ctp
             , trade_thread_count(1)
             , unit_thread_count(1)
             , blog_root_path("./")
-            , switch_time("03:00:00")
             , check_interval_(120)
             , m_account_tbl_name_("")
             , m_statutory_holiday_tbl_name_("")
@@ -95,8 +93,7 @@ typedef VBASE_HASH_MAP<const char*, trade_unit*, string_hash, string_compare> ma
 typedef VBASE_HASH_MAP<const char*, trade_account_info, string_hash, string_compare> map_str_account_info;
 
 class trade_server : 
-    public message_dispatcher , 
-    public sigslot::has_slots<>
+    public message_dispatcher
 {
 public:
 	trade_server();
@@ -160,16 +157,6 @@ protected:
 	static void process_rsp_thread(void* param);
 
 private:
-	std::string curr_trade_date()
-    {
-        long t = time(NULL);
-        int hour, minute, second;
-        if (sscanf(params_.switch_time.c_str(), "%02d:%02d:%02d", &hour, &minute, &second) != 0) {
-            t -= (hour * 3600 + minute * 60 + second);
-        }
-        return base::util::date_string(t);
-    }
-
 	int get_index(const char* key, int bound)
     {
         return base::util::hash_key(key) % bound;

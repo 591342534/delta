@@ -3,14 +3,14 @@
 
  FileName: trade_processor.h
  Version: 1.0
- Date: 2016.03.21
+ Date: 2017.08.08
 
  History:
- david wang     2016.03.21   1.0     Create
+ eric     2017.08.08   1.0     Create
  ******************************************************************************/
 
-#ifndef __NAUT_CTPTRADE_ENTRUST_PROCESSOR_H__
-#define __NAUT_CTPTRADE_ENTRUST_PROCESSOR_H__
+#ifndef _TRADE_PROCESSOR_H__
+#define _TRADE_PROCESSOR_H__
 
 #include "trade_struct.h"
 #include "processor_base.h"
@@ -32,33 +32,31 @@ public:
 
 public:
 	int start(const char* server_name, message_dispatcher* mdpt, trade_server* ts);
+    virtual void stop();
 
 public:
 	virtual void post(const atp_message& msg);
-	virtual void stop();
 
 protected:
 	int start_internal();
 	int stop_internal();
+    void release_messages();
 
 protected:
-	virtual void start();
 	virtual void run();
 
 protected:
 	void process_withdraws();
+    int process_withdraw(base::dictionary& dict);
 	int process_entrust(base::dictionary& dict);
 	int process_entrust_response(base::dictionary& dict);
-	int process_entrust_capital_response(base::dictionary& dict);
 	int process_order_status_response(base::dictionary& dict);
 	int process_deal(base::dictionary& dict);
-	int process_withdraw(base::dictionary& dict);
+
 	/* withdraw response is not supported by current zd server */
 	int process_withdraw_response(base::dictionary& dict);
 	int process_systemno_response(base::dictionary& dict);
 	int process_cmd_error(base::dictionary& dict);
-
-	void release_messages();
 
 protected:
 	std::string replace_quote(std::string& text);

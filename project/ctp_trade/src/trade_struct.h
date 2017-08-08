@@ -1,13 +1,13 @@
 /*****************************************************************************
- Nautilus Module ctp_trade Copyright (c) 2016. All Rights Reserved.
+Nautilus Module ctp_trade Copyright (c) 2016. All Rights Reserved.
 
- FileName: trade_struct.h
- Version: 1.0
- Date: 2016.03.21
+FileName: trade_struct.h
+Version: 1.0
+Date: 2017.08.08
 
- History:
- david wang     2016.03.21   1.0     Create
- ******************************************************************************/
+History:
+eric     2017.08.08   1.0     Create
+******************************************************************************/
 
 #ifndef __NAUT_CTPTRADE_TRADE_STRUCT_H__
 #define __NAUT_CTPTRADE_TRADE_STRUCT_H__

@@ -228,21 +228,7 @@ int trade_server::dispatch_message(atp_message& msg)
 	}
 
 	switch (msg.type) {
-	case ATP_MESSAGE_TYPE_IN_ORDER:
-		{
-			ref_dictionary* rd = (ref_dictionary*)msg.param1;
-			assert(rd != NULL);
-
-			if(ar_trade_processors_.size() > 0) {
-                int index = get_index((*(rd->get()))["account"].string_value().c_str(),
-                        (int)ar_trade_processors_.size());
-                TRACE_SYSTEM(AT_TRACE_TAG, "ar_trade_processors_ post msg:[ %s ] ~~~", rd->get()->to_string().c_str());
-                ar_trade_processors_[index]->post(msg);
-			} else {
-			    TRACE_WARNING(AT_TRACE_TAG, "ar_trade_processors_ size is 0 ~~~~");
-			}
-		}
-		break;
+    case ATP_MESSAGE_TYPE_IN_ORDER:
 	case ATP_MESSAGE_TYPE_SERVER_TRADE_RSP:
 		{
 			ref_dictionary* rd = (ref_dictionary*)msg.param1;
@@ -257,8 +243,8 @@ int trade_server::dispatch_message(atp_message& msg)
 		}
 		break;
 	case ATP_MESSAGE_TYPE_IN_QUERY:
-	case ATP_MESSAGE_TYPE_CHECKER_REQ:
 	case ATP_MESSAGE_TYPE_SERVER_QUERY_RSP:
+    case ATP_MESSAGE_TYPE_CHECKER_REQ:
 		{
 			ref_dictionary* rd = (ref_dictionary*)msg.param1;
 			assert(rd != NULL);
@@ -271,11 +257,6 @@ int trade_server::dispatch_message(atp_message& msg)
 			    TRACE_WARNING(AT_TRACE_TAG, "ar_query_processors_ size is 0 ~~~~");
 			}
 		}
-		break;
-	case ATP_MESSAGE_TYPE_DEAL_PUSH:
-	case ATP_MESSAGE_TYPE_ORDER_REPLY:
-    case ATP_MESSAGE_TYPE_QUERY_REPLY:
-		post_rsp_message(msg);
 		break;
 	case ATP_MESSAGE_TYPE_SERVER_TRADE_REQ:
 	case ATP_MESSAGE_TYPE_SERVER_QUERY_REQ:
@@ -296,6 +277,11 @@ int trade_server::dispatch_message(atp_message& msg)
 			}
 		}
 		break;
+    case ATP_MESSAGE_TYPE_ORDER_REPLY:
+    case ATP_MESSAGE_TYPE_QUERY_REPLY:
+    case ATP_MESSAGE_TYPE_DEAL_PUSH:
+        post_rsp_message(msg);
+        break;
 	default:
 		TRACE_WARNING(AT_TRACE_TAG, "unknown message type: %d", msg.type);
 		break;

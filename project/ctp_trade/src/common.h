@@ -3,10 +3,10 @@
 
  FileName: common.h
  Version: 1.0
- Date: 2016.03.21
+ Date: 2017.08.08
 
  History:
- david wang     2016.03.21   1.0     Create
+ eric     2017.08.08   1.0     Create
  ******************************************************************************/
 
 #ifndef __NAUT_CTPTRADE_COMMON_H__

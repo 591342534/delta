@@ -163,10 +163,10 @@ static int proc_main(std::string& param)
 #ifndef  WIN32
     if (!check_single_instance()) return -1;
 #endif // ! WIN32
-    //trade_server ts;
-    //if (ts.start(param.c_str()) != 0) {
-    //    return -1;
-    //}
+    trade_server ts;
+    if (ts.start(param.c_str()) != 0) {
+        return -1;
+    }
 
     while (true) {
         base::thread::sleep(1000);
