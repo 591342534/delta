@@ -16,6 +16,7 @@ ericsheng     2015.9.15   1.0     Create
 #include <sstream>
 
 using namespace std;
+using namespace base;
 
 test_util::test_util()
 {
@@ -27,11 +28,16 @@ test_util::~test_util()
 
 void test_util::test()
 {
-    cout << "before passwd encode: ";
-    std::string pwd;
-    cin >> pwd;
-    base::util::encode(const_cast<char *>(pwd.c_str()));
-    cout << "after passwd encode: " << pwd;
+    util tmp;
+    cout << tmp.local_datestamp() << endl;;
+
+    cout << tmp.string_to_datestamp("2017-08-08") << endl;
+
+//     cout << "before passwd encode: ";
+//     std::string pwd;
+//     cin >> pwd;
+//     base::util::encode(const_cast<char *>(pwd.c_str()));
+//     cout << "after passwd encode: " << pwd;
 
 }
 

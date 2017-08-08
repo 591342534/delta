@@ -100,7 +100,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="config\test-config.xml">
+    <Xml Include="config\xml_config.xml">
       <Filter>资源文件</Filter>
     </Xml>
   </ItemGroup>

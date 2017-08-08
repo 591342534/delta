@@ -110,26 +110,6 @@ void test_pugixml(int argc, char* argv[])
 {
     test_xml t;
     t.test();
-    //std::string position_config = "D:/work/delta/project/base_test/config/test-config.xml";
-    //pugi::xml_document doc;
-    //if (!doc.load_file(position_config.c_str())) {
-    //    std::cout << "config file is not exist or invalid" << std::endl;
-    //}
-
-    //pugi::xml_node xroot = doc.child("position");
-    //if (xroot.empty()) {
-    //    std::cout << "root element should be specified" << std::endl;
-    //}
-
-    //std::string tmp = xroot.child("date").text().as_string();
-    //cout << tmp << endl;
-
-    //tmp = xroot.child("sequenceno").text().as_string();
-    //cout << tmp << endl;
-
-    //xroot.child("date").text().set("2017-05-03"); \
-    //xroot.child("sequenceno").text().set(8889);
-    //doc.save_file(position_config.c_str());
 }
 
 void test_log4cplus1(int argc, char* argv[])

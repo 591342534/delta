@@ -22,8 +22,10 @@ base     2016.1.13   1.0     Create
 #endif
 #ifdef COMMON_EXPORT
 #define COMMON_API  __declspec(dllexport)
+#define TEMPLATE_API  __declspec(dllexport)
 #else 
 #define COMMON_API  __declspec(dllimport)
+#define TEMPLATE_API 
 #endif
 #else	//WIN32 END
 #define COMMON_API

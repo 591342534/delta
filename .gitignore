@@ -9,6 +9,8 @@ ipch/*
 project/log/*
 project/test_base/log/*
 project/db_sync/log/*
+project/ctp_quote/temp/*
+project/ctp_trade/temp/*
 
  # Compiled source # 
 ################### 

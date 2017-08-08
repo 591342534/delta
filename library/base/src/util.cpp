@@ -23,7 +23,7 @@ base     2016.1.13   1.0     Create
 #include <stdlib.h>
 #endif
 #include <stdio.h>
-
+#include <iostream>
 namespace base {
 
 bool util::is_equal_ignore_case(const char* s1, const char* s2)
@@ -626,13 +626,15 @@ void util::splitstrbychar(const char* buf, char ch, std::vector<std::string>& ar
 	return;
 }
 
-#ifndef _MSC_VER
-
 long util::local_datestamp()
 {
 	struct tm timeinfo = {0}, timeinfo1 = {0};
 	time_t tmnow = time(NULL);
+#ifndef _MSC_VER
 	localtime_r(&tmnow,&timeinfo);
+#else
+    localtime_s(&timeinfo, &tmnow);
+#endif
 	if(timeinfo.tm_year == 0)
 	{
 		return 0;
@@ -641,7 +643,6 @@ long util::local_datestamp()
 	timeinfo1.tm_year = timeinfo.tm_year;
 	timeinfo1.tm_mon = timeinfo.tm_mon;
 	timeinfo1.tm_mday = timeinfo.tm_mday;
-	
 	return mktime(&timeinfo1);
 }
 
@@ -660,8 +661,6 @@ long util::string_to_datestamp(char* str)
 
 	return 0;
 }
-
-#endif
 
 void util::encode(char *pstr)
 {

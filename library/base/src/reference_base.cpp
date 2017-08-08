@@ -14,7 +14,6 @@ base     2016.1.13   1.0     Create
 #include <Windows.h>
 #else
 #endif
-#include "base.h"
 
 namespace base {
 

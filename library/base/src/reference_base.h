@@ -13,10 +13,10 @@ base     2016.1.13   1.0     Create
 #define __VBASE_REFERENCE_BASE_H__
 
 #include <stdio.h>
-
+#include "base.h"
 namespace base {
 
-class reference_base
+class TEMPLATE_API reference_base
 {
 public:
 	reference_base();
@@ -36,7 +36,7 @@ private:
 };
 
 template<class T>
-class ref_adapter
+class TEMPLATE_API ref_adapter
 	: public reference_base
 {
 public:
