@@ -4,62 +4,57 @@
 #include <thread>
 #include <map>
 #include <list>
-#include "boost/filesystem.hpp"
-#include "boost/thread.hpp"
-#include "boost/bind.hpp"
-#include <boost/asio/buffer.hpp>
-#include <boost/asio.hpp>
-
-
-class A;
-class B
+#include "test_strand.h"
+#include "test_deadline_timer.h"
+void test_strand1(int argc, char* argv[])
 {
-public:
-    B(boost::shared_ptr<A> tmp)
-        : one(tmp)
-    {
+    test_strand tt;
 
-    }
-private:
-    boost::shared_ptr<A> one;
-};
-class A : public boost::enable_shared_from_this<A> {
-public:
-    A() {
-        std::cout << "A::A()" << std::endl;
-    }
+    //tt.test_strands();
+    tt.test_service();
+    getchar(); //»»ÐÐ·û
+    getchar(); 
+}
 
-    ~A() {
-        std::cout << "A::~A()" << std::endl;
-    }
-    void test()
-    {
-        bb.reset(new B(shared_from_this()));
-    }
-
-private:
-    int x_;
-    boost::shared_ptr<B> bb;
-};
-
-void test_func(boost::shared_ptr<A> tmp)
+void test_deadline_timer1(int argc, char* argv[])
 {
-    boost::shared_ptr<A> aa = tmp;
-    std::cout << aa.use_count() << std::endl;
+    test_deadline_timer tt;
+
+    //tt.test_timer_syn();
+    //tt.test_timer_asyn();
+    tt.test_timer_asyn_loop();
+    getchar(); //»»ÐÐ·û
+    getchar();
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
-    std::list<boost::shared_ptr<A> > list_aa;
-    A *aa = new A();
-    boost::shared_ptr<A> ss = boost::shared_ptr<A>(aa);
-        
-        
-    std::cout << ss.use_count() << std::endl;
-    list_aa.push_back(ss);
-    std::cout << ss.use_count() << std::endl;
+    int ch = '1';
+    do{
+        printf("the list: \n");
+        printf("0: exit \n");
+        printf("1: test strand \n");
+        printf("2: test deadline_timer \n");
+        printf("please select your decide: ");
+        ch = getchar();
+        switch (ch) {
+        case '0':
+            printf("exit OK ~~\n");
+            break;
+        case '1':
+            test_strand1(argc, argv);
+            break;
+        case '2':
+            test_deadline_timer1(argc, argv);
+            break;
+        default:
+            printf("please input right decide~~\n");
+            break;
+        }
+    } while (ch != '0');
 
     getchar();
-	return 0;
+    getchar();
+    return 0;
 }

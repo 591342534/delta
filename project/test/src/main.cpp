@@ -66,10 +66,11 @@ private:
 
 int main(int argc, char *argv[])
 {
-    std::vector<int> one = {3, 4, 99, 22, 10, 9};
+    std::string one = "hello";
+    int two = 1;
+    one = one + two;
 
-    cout << *std::min_element(one.begin(), one.end()) << endl;
-
+    cout << one << endl;
     getchar();
     return 0;
 } 

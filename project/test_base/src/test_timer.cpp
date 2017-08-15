@@ -34,12 +34,12 @@ void test_timer::test_settimer_single()
 {
     base::timer t1, t2;
 	t1.set_timer(this, test_timer::timer_cb, NULL, 1000, true);
-	printf("timer begin~~");
+	printf("timer begin~~\n");
 	//t1.fire();
 	t1.start();
 
-    t2.set_timer(this, test_timer::timer_cb, NULL, 2000, true);
-    printf("timer begin~~");
+    t2.set_timer(this, test_timer::timer_cb2, NULL, 2000, true);
+    printf("timer begin~~\n");
     //t2.fire();
     t2.start();
 	while(getchar() != '0') {};

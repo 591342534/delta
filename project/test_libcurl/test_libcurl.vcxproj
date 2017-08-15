@@ -10,10 +10,19 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\httpclient.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\httpclient.h" />
+    <ClInclude Include="src\test_curl.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E1F89C96-1E73-49C4-A5CD-DE6ADFFEE129}</ProjectGuid>
+    <ProjectGuid>{69CC7D50-BB82-4092-9E07-855E83D31DF1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>test_boost</RootNamespace>
+    <RootNamespace>test_libcurl</RootNamespace>
+    <ProjectName>test_libcurl</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -54,12 +63,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)../contrib/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../contrib/libcurl/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\boost\lib_vc120</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libcurl\lib\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcurl.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,14 +89,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\test_common.h" />
-    <ClInclude Include="src\test_deadline_timer.h" />
-    <ClInclude Include="src\test_strand.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

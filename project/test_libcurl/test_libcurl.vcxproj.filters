@@ -18,18 +18,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\httpclient.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\test_strand.h">
+    <ClInclude Include="src\httpclient.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\test_common.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\test_deadline_timer.h">
+    <ClInclude Include="src\test_curl.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
