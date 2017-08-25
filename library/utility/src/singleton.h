@@ -14,7 +14,7 @@ ericsheng     2016.1.13   1.0     Create
 #include <stdio.h>
 #include <mutex>
 #include "nocopyable.h"
-#include "mutex.h"
+//#include "mutex.h"
 namespace utility {
     template <typename T>
     class singleton : public nocopyable

@@ -21,56 +21,64 @@
 #include <mutex>
 #include <exception>
 #include <iomanip>
-#include <log4cplus/logger.h>
-#include <log4cplus/consoleappender.h>
-#include <log4cplus/layout.h>
-#include <log4cplus/loggingmacros.h>
-#include <log4cplus/fileappender.h>
-
-using namespace log4cplus;
-using namespace log4cplus::helpers;
-
+#include <algorithm>
+#include <utility>
+#include <tuple>
+#include <chrono>
+#include <time.h>
 using namespace std;
-class A;
-class B
+
+class Graphics
 {
 public:
-    B(shared_ptr<A> tmp)
-        : one(tmp)
-    {
-
-    }
+    void test();
 private:
-    shared_ptr<A> one;
+    class Impl;
+    std::shared_ptr<Impl> impl;
 };
-class A : public enable_shared_from_this<A> {
+
+class Graphics::Impl
+{
 public:
-    A() {
-        cout << "A::A()" << endl;
-    }
-
-    ~A() {
-        cout << "A::~A()" << endl;
-    }
-    void test()
-    {
-        bb.reset(new B(shared_from_this()));
-    }
-
-private:
-    int x_;
-    shared_ptr<B> bb;
+    void test();
 };
 
+void Graphics::Impl::test()
+{
+    cout << __FUNCTION__ << endl;
+}
+
+void Graphics::test()
+{
+    impl->test();
+}
+
+template <typename T>
+void foo_impl(T val, true_type)
+{
+    cout << "one" << endl;
+}
+
+template <typename T>
+void foo_impl(T val, false_type)
+{
+    cout << "two" << endl;
+}
+
+template <typename T>
+void foo(T val)
+{
+    foo_impl(val, std::is_integral<T>());
+}
 
 
 int main(int argc, char *argv[])
 {
-    std::string one = "hello";
-    int two = 1;
-    one = one + two;
-
-    cout << one << endl;
+    chrono::seconds one(20);
+    chrono::hours two(10);
+    std::time_t t = chrono::steady_clock::to_time_t(chrono::steady_clock::now());
+    cout << time(NULL) << endl;
+    cout << clock() / CLOCKS_PER_SEC << endl;
     getchar();
     return 0;
-} 
+}

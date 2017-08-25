@@ -10,6 +10,21 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\log\Log.h" />
+    <ClInclude Include="src\log\Logger.h" />
+    <ClInclude Include="src\log\Severity.h" />
+    <ClInclude Include="src\log\singleton.h" />
+    <ClInclude Include="src\test_common.h" />
+    <ClInclude Include="src\test_deadline_timer.h" />
+    <ClInclude Include="src\test_log.h" />
+    <ClInclude Include="src\test_strand.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\log\Logger.cpp" />
+    <ClCompile Include="src\log\Severity.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E1F89C96-1E73-49C4-A5CD-DE6ADFFEE129}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -54,7 +69,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)../contrib/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../contrib/;$(SolutionDir)include/;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -79,14 +94,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\test_common.h" />
-    <ClInclude Include="src\test_deadline_timer.h" />
-    <ClInclude Include="src\test_strand.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

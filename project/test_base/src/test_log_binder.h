@@ -22,7 +22,7 @@ ericsheng     2016.1.13   1.0     Create
 #include <log4cplus/fileappender.h>
 #include "base/trace.h"
 #include "base/log_binder.h"
-
+using namespace std;
 using namespace log4cplus;
 using namespace log4cplus::helpers;
 
@@ -39,11 +39,14 @@ public:
             std::cout << "log bind_trace failed" << std::endl;
             return;
         }
-        base::trace::enable_std_output(true);
+        base::trace::enable_std_output(false);
         base::trace::set_trace_level_filter(base::TRACE_LEVEL_SYSTEM);
 
-        TRACE_ERROR("test_log_binder", 10000, "%s", "this is log4cplus packet");
-        TRACE_SYSTEM("test_log_binder", "test_log_binder (%s:%d)\n", "hello", 10001);
+        for (int i = 0; i < 100; i++) {
+            TRACE_ERROR("test_log_binder", 10000, "%s", "this is log4cplus packet");
+            TRACE_SYSTEM("test_log_binder", "test_log_binder (%s:%d)\n", "hello", i);
+        }
+        int i = 0;
     }
 };
 

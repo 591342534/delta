@@ -6,6 +6,7 @@
 #include <list>
 #include "test_strand.h"
 #include "test_deadline_timer.h"
+#include "test_log.h"
 void test_strand1(int argc, char* argv[])
 {
     test_strand tt;
@@ -27,6 +28,13 @@ void test_deadline_timer1(int argc, char* argv[])
     getchar();
 }
 
+void test_log1(int argc, char* argv[])
+{
+    test_log tt;
+    tt.test();
+    getchar(); //»»ÐÐ·û
+    getchar();
+}
 
 int main(int argc, char* argv[])
 {
@@ -36,6 +44,7 @@ int main(int argc, char* argv[])
         printf("0: exit \n");
         printf("1: test strand \n");
         printf("2: test deadline_timer \n");
+        printf("3: test log \n");
         printf("please select your decide: ");
         ch = getchar();
         switch (ch) {
@@ -47,6 +56,9 @@ int main(int argc, char* argv[])
             break;
         case '2':
             test_deadline_timer1(argc, argv);
+            break;
+        case '3':
+            test_log1(argc, argv);
             break;
         default:
             printf("please input right decide~~\n");
