@@ -39,9 +39,6 @@
     <ClInclude Include="src\log\Logger.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="src\log\Severity.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
     <ClInclude Include="src\log\singleton.h">
       <Filter>src\log</Filter>
     </ClInclude>
@@ -51,9 +48,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\log\Logger.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="src\log\Severity.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,9 +3,54 @@
 
 #include <string>
 #include "singleton.h"
-#include "Severity.h"
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/noncopyable.hpp>
+#include <iostream>
+
+using namespace std;
+
+//@ afw severity level.
+enum SeverityLevel
+{
+    trace = 0,
+    debug,
+    info,
+    warn,
+    error,
+    fatal,
+
+    test
+};
+
+//@ outputs stringized representation of the severity level to the stream
+template< typename CharT, typename TraitsT >
+inline std::basic_ostream< CharT, TraitsT >& operator<< (
+    std::basic_ostream< CharT, TraitsT >& strm,
+    SeverityLevel lvl)
+{
+    static const char* const str[] =
+    {
+        // log use.
+        "trace",
+        "debug",
+        "info ",
+        "warn ",
+        "error",
+        "fatal",
+
+        // test use.
+        "test ",
+    };
+    //const char* str = ToString(lvl);
+    if (static_cast<size_t>(lvl) < (sizeof(str) / sizeof(*str))) {
+        strm << str[lvl];
+    }
+    else {
+        strm << static_cast<int>(lvl);
+    }
+
+    return strm;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 class Logger : boost::noncopyable

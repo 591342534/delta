@@ -6,14 +6,14 @@
 #include <boost/log/sources/record_ostream.hpp>
 
 //log use.
-#define AfwTrace BOOST_LOG_SEV(get_Logger().GetMt(), trace)
-#define AfwDebug BOOST_LOG_SEV(get_Logger().GetMt(), debug)
-#define AfwInfo  BOOST_LOG_SEV(get_Logger().GetMt(), info)
-#define AfwWarn  BOOST_LOG_SEV(get_Logger().GetMt(), warn)
-#define AfwError BOOST_LOG_SEV(get_Logger().GetMt(), error)
-#define AfwFatal BOOST_LOG_SEV(get_Logger().GetMt(), fatal)
+#define BOOST_TRACE BOOST_LOG_SEV(get_Logger().GetMt(), trace)
+#define BOOST_DEBUG BOOST_LOG_SEV(get_Logger().GetMt(), debug)
+#define BOOST_INFO  BOOST_LOG_SEV(get_Logger().GetMt(), info)
+#define BOOST_WARN  BOOST_LOG_SEV(get_Logger().GetMt(), warn)
+#define BOOST_ERROR BOOST_LOG_SEV(get_Logger().GetMt(), error)
+#define BOOST_FATAL BOOST_LOG_SEV(get_Logger().GetMt(), fatal)
 //test use.
-#define AfwTest  BOOST_LOG_SEV(get_Logger().GetMt(), test)
+#define BOOST_TEST  BOOST_LOG_SEV(get_Logger().GetMt(), test)
 
 inline const char* ReqTag()
 {

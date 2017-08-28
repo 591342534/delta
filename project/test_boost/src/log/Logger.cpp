@@ -363,7 +363,7 @@ void Logger::Flush()
 }
 void Logger::Enable(bool is_enabled)
 {
-	boost::log::core::get()->set_logging_enabled(is_enabled);
+	logging::core::get()->set_logging_enabled(is_enabled);
 }
 void Logger::Filter(SeverityLevel sev)
 {
