@@ -30,3 +30,6 @@ project/ctp_trade/temp/*
 *.log
 *.bak
 *.con
+*.suo
+*.db
+*.opendb

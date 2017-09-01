@@ -2,7 +2,7 @@
 c++跨平台的应用系统组件。
 
 #开发环境
-windows7+vs2013
+windows7+vs2015
 linux centos7
 
 #基础库封装：
