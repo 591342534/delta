@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -96,8 +96,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>log4cplusSD.lib;libevent.lib;libevent_core.lib;libevent_extras.lib;utility.lib;libeay32.lib;ssleay32.lib;zdll.lib;lib_json.lib;ws2_32.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libevent\lib\win;$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\ssl\lib\win;$(SolutionDir)..\contrib\zlib-1.2.8\lib\win;$(SolutionDir)..\contrib\log4cplus\lib_vc120;$(SolutionDir)..\contrib\jsoncpp\lib_vc120</AdditionalLibraryDirectories>
+      <AdditionalDependencies>log4cplusSD.lib;libevent.lib;libevent_core.lib;libevent_extras.lib;utility.lib;libeay32.lib;ssleay32.lib;zdll.lib;json_vc71_libmtd.lib;ws2_32.lib;wsock32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\contrib\libevent\lib\win;$(SolutionDir)lib\$(Configuration);$(SolutionDir)..\contrib\ssl\lib\win;$(SolutionDir)..\contrib\zlib-1.2.8\lib\win;$(SolutionDir)..\contrib\log4cplus\lib_vc140;$(SolutionDir)..\contrib\jsoncpp\lib_vc140</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
