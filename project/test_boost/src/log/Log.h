@@ -15,13 +15,4 @@
 //test use.
 #define BOOST_TEST  BOOST_LOG_SEV(get_Logger().GetMt(), test)
 
-inline const char* ReqTag()
-{
-	return "request  > ";
-}
-
-inline const char* RspTag()
-{
-	return "response > ";
-}
 #endif

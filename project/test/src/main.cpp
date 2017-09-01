@@ -31,27 +31,11 @@ using namespace std;
 class Graphics
 {
 public:
-    void test();
-private:
-    class Impl;
-    std::shared_ptr<Impl> impl;
+    void operator()(int i)
+    {
+        cout << "operator()" << i << endl;
+    }
 };
-
-class Graphics::Impl
-{
-public:
-    void test();
-};
-
-void Graphics::Impl::test()
-{
-    cout << __FUNCTION__ << endl;
-}
-
-void Graphics::test()
-{
-    impl->test();
-}
 
 template <typename T>
 void foo_impl(T val, true_type)
@@ -74,11 +58,10 @@ void foo(T val)
 
 int main(int argc, char *argv[])
 {
-    chrono::seconds one(20);
-    chrono::hours two(10);
-    std::time_t t = chrono::steady_clock::to_time_t(chrono::steady_clock::now());
-    cout << time(NULL) << endl;
-    cout << clock() / CLOCKS_PER_SEC << endl;
+    vector<int> tt = { 1, 2, 3, 4, 5 };
+    auto it = tt.begin();
+    it = it + 3;
+    cout << *it << endl;
     getchar();
     return 0;
 }

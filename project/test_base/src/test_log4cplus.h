@@ -15,6 +15,7 @@ ericsheng     2016.1.13   1.0     Create
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 #include <log4cplus/logger.h>
 #include <log4cplus/consoleappender.h>
 #include <log4cplus/layout.h>
@@ -65,9 +66,13 @@ public:
         /* step 5: Attach the appender object to the logger  */
         _logger.addAppender(_append);
         /* log activity */
-        for (int i = 0; i < 10; i++) {
+        auto begin_clock = chrono::system_clock::now();
+        for (int i = 0; i < 500; i++) {
             LOG4CPLUS_WARN(_logger, "Entering loop #" << i << "End line#");
+            LOG4CPLUS_ERROR(_logger, "Entering loop #" << i << "End line#");
         }
+        cout << chrono::duration_cast<chrono::milliseconds>
+            (chrono::system_clock::now() - begin_clock).count() << endl;
     }
 
 };

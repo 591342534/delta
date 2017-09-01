@@ -15,6 +15,7 @@ ericsheng     2016.1.13   1.0     Create
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 #include <log4cplus/logger.h>
 #include <log4cplus/consoleappender.h>
 #include <log4cplus/layout.h>
@@ -42,11 +43,14 @@ public:
         base::trace::enable_std_output(false);
         base::trace::set_trace_level_filter(base::TRACE_LEVEL_SYSTEM);
 
+        auto begin_clock = chrono::system_clock::now();
         for (int i = 0; i < 100; i++) {
             TRACE_ERROR("test_log_binder", 10000, "%s", "this is log4cplus packet");
-            TRACE_SYSTEM("test_log_binder", "test_log_binder (%s:%d)\n", "hello", i);
+            TRACE_SYSTEM("test_log_binder", "test_log_binder (%s:%d)", "hello", i);
         }
-        int i = 0;
+        auto end_clock = chrono::system_clock::now();
+        auto diff = end_clock - begin_clock;
+        cout << chrono::duration_cast<chrono::milliseconds>(diff).count() << endl;
     }
 };
 

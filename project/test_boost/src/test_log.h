@@ -12,6 +12,8 @@ ericsheng     2016.1.13   1.0     Create
 #ifndef __TEST_LOG_H__
 #define __TEST_LOG_H__
 
+#include <chrono>
+#include <thread>
 #include "test_common.h"
 #include "log/Log.h"
 class test_log
@@ -28,11 +30,13 @@ public:
         //get_Logger().InitConsoleSink();
         get_Logger().Filter(info);
 
-        for (int i = 0; i < 100; i++)
-        {
-            BOOST_INFO << "boost::thread::hardware_concurrency() = " << i;
+        auto begin_clock = chrono::system_clock::now();
+        for (int i = 0; i < 500; i++) {
+            BOOST_ERROR << "boost::thread::hardware_concurrency() = " << i;
+            BOOST_WARN << "boost::thread::hardware_concurrency() = " << i;
         }
-        cout << ">>>>>>>>>>>>>>>>>>>>hello>>>>>>>>>>>>>>>>>>>" << endl;
+        cout << chrono::duration_cast<chrono::milliseconds>
+            (chrono::system_clock::now() - begin_clock).count() << endl;
     }
 };
 

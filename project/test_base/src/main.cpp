@@ -115,7 +115,7 @@ void test_pugixml(int argc, char* argv[])
 void test_log4cplus1(int argc, char* argv[])
 {
     test_log4cplus tmp;
-    tmp.test_console_appender();
+    tmp.test_file_appender();
 }
 
 void test_util1(int argc, char* argv[])
