@@ -742,3 +742,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
 systemctl start iptables.service
 
 export LD_LIBRARY_PATH=~/app:$LD_LIBRARY_PATH
+
+//risk product 
+scp Trade_Gateway.exe test@192.168.4.10:/home/test/test/risk/gtja/trade_gateway

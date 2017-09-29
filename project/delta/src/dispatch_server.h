@@ -17,13 +17,15 @@ ericsheng     2016.4.13   1.0     Create
 #include "message_server.h"
 namespace serverframe{;
 
+typedef std::string Context;
+typedef std::shared_ptr<Context> ContextPtr;
+
 template<typename message_t>
 class dispatch_server : public message_server<message_t>
 {
 public:
-    typedef message_server<message_t> super;
-    typedef typename dispatch_handler<message_t>::message_dispatcher_alias message_dispatcher;
-    typedef std::function<void(message_dispatcher&)> register_func;
+    typedef typename dispatch_handler<message_t>::MessageDispatcher MessageDispatcher;
+    typedef std::function<void(MessageDispatcher&)> register_func;
 
     inline dispatch_server() {}
 
@@ -31,18 +33,22 @@ public:
     inline void register_handle(register_func func)
     {
         if (func != nullptr) {
-            func(get_dispatcher());
+            func(m_message_handler.m_dispatcher);
         }
     }
 
-    inline message_dispatcher& get_dispatcher()
+    inline void on_read(message_t& data)
     {
-        return super::m_message_handler.m_dispatcher;
+        try {
+            // package message context.
+            std::shared_ptr<message_t> data(new message_t(data));
+            post(data);
+        }
+        catch (std::exception& ec) {
+            std::cout << ec.what();
+        }
     }
-    inline const message_dispatcher& get_dispatcher() const
-    {
-        return super::m_message_handler.m_dispatcher;
-    }
+
 };
 }// serverframe
 #endif

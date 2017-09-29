@@ -42,6 +42,9 @@
     <ClInclude Include="src\log\singleton.h">
       <Filter>src\log</Filter>
     </ClInclude>
+    <ClInclude Include="src\test_base.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

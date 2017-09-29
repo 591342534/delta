@@ -13,7 +13,7 @@ ericsheng     2016.4.13   1.0     Create
 
 namespace serverframe{;
 
-void default_handler::on_request(context& context)
+void default_handler::on_request(Context& context)
 {
     // default handler.
 }

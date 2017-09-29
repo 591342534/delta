@@ -20,7 +20,7 @@ using namespace common;
 namespace serverframe{;
 
 ////////////////////////////////////////////////////////////////////////////////
-void qry_instrument_handler::on_request(context& context)
+void qry_instrument_handler::on_request(Context& context)
 {
     try
     {

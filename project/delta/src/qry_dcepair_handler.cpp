@@ -20,7 +20,7 @@ using namespace common;
 namespace serverframe{;
 
 ////////////////////////////////////////////////////////////////////////////////
-void qry_dcepair_handler::on_request(context& context)
+void qry_dcepair_handler::on_request(Context& context)
 {
     try {
         std::string message;

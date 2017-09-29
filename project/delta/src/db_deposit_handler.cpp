@@ -20,7 +20,7 @@ using namespace common;
 namespace serverframe{;
 
 ////////////////////////////////////////////////////////////////////////////////
-void db_deposit_handler::on_request(context& context)
+void db_deposit_handler::on_request(Context& context)
 {
     try {
         std::string message;
@@ -33,20 +33,20 @@ void db_deposit_handler::on_request(context& context)
         TRACE_INFO(MODULE_NAME, "db_deposit_handler::on_request, clientid:%d "
                 "customer:%s", clientid, data.customer);
 
-        database::dbscope mysql_db_keepper(
-                get_project_server().get_db_conn_pool());
-        database::db_instance* mysql_dbconn = mysql_db_keepper.get_db_conn();
-        //CHECK_IF_DBCONN_NULL(mysql_dbconn);
+        //database::dbscope mysql_db_keepper(
+        //        get_project_server().get_db_conn_pool());
+        //database::db_instance* mysql_dbconn = mysql_db_keepper.get_db_conn();
+        ////CHECK_IF_DBCONN_NULL(mysql_dbconn);
 
-        char sql[1024] = { 0 };
-        sprintf(sql, "insert %s(calc_time, customer, cffex, czce, dce, shfe, total) "
-                "VALUES(FROM_UNIXTIME(%ld), '%s', %f, %f, %f, %f, %f)",
-                get_project_server().get_process_param().calcdeposit_table_str_.c_str(),
-                data.time_stamps, data.customer,
-                data.cffex, data.czce, data.dce, data.shfe, data.total);
-        if(!mysql_dbconn->_conn->execute(sql)) {
-            throw 404;
-        }
+        //char sql[1024] = { 0 };
+        //sprintf(sql, "insert %s(calc_time, customer, cffex, czce, dce, shfe, total) "
+        //        "VALUES(FROM_UNIXTIME(%ld), '%s', %f, %f, %f, %f, %f)",
+        //        get_project_server().get_process_param().calcdeposit_table_str_.c_str(),
+        //        data.time_stamps, data.customer,
+        //        data.cffex, data.czce, data.dce, data.shfe, data.total);
+        //if(!mysql_dbconn->_conn->execute(sql)) {
+        //    throw 404;
+        //}
     }
     catch (int error_code) {
         TRACE_ERROR(MODULE_NAME, MANAGER_E_DB_FAILED, \

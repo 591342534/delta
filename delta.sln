@@ -24,6 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{BE6698AA-0BF2-4609-B315-F5376994EB1D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		build\build_module.mk = build\build_module.mk
 		README.md = README.md
 	EndProjectSection
 EndProject

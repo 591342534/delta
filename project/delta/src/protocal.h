@@ -2,7 +2,7 @@
 #define __PROTOCAL_H__
 
 #include <string.h>
-
+#include <memory>
 namespace common
 {
 #pragma pack(push, 1)
@@ -32,6 +32,13 @@ const int TYPE_QUOTE_GATEWAY_MARKET_RSP                      = 30000;
 ///////////////////////////////////////////////////////////////////////////////
 const int TYPE_CUSTOMER_CASH_DEPOSIT_RSP                      = 40000;
 ///////////////////////////////////////////////////////////////////////////////
+
+struct InnerMessage
+{
+    int type;
+    std::shared_ptr<void> param1;
+    std::shared_ptr<void> param2;
+};
 
 typedef struct msg_header
 {

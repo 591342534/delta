@@ -21,7 +21,7 @@ class db_deposit_handler : public request_handler
 ////////////////////////////////////////////////////////////////////////////////
 public:
 public:
-    void on_request(context& context);
+    void on_request(Context& context);
 };
 
 

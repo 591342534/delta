@@ -26,42 +26,11 @@
 #include <tuple>
 #include <chrono>
 #include <time.h>
+
 using namespace std;
 
-class Graphics
+int main(int argc, char ** argv)
 {
-public:
-    void operator()(int i)
-    {
-        cout << "operator()" << i << endl;
-    }
-};
-
-template <typename T>
-void foo_impl(T val, true_type)
-{
-    cout << "one" << endl;
-}
-
-template <typename T>
-void foo_impl(T val, false_type)
-{
-    cout << "two" << endl;
-}
-
-template <typename T>
-void foo(T val)
-{
-    foo_impl(val, std::is_integral<T>());
-}
-
-
-int main(int argc, char *argv[])
-{
-    vector<int> tt = { 1, 2, 3, 4, 5 };
-    auto it = tt.begin();
-    it = it + 3;
-    cout << *it << endl;
     getchar();
     return 0;
 }

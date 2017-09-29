@@ -7,6 +7,7 @@
 #include "test_strand.h"
 #include "test_deadline_timer.h"
 #include "test_log.h"
+#include "test_base.h"
 void test_strand1(int argc, char* argv[])
 {
     test_strand tt;
@@ -36,6 +37,14 @@ void test_log1(int argc, char* argv[])
     getchar();
 }
 
+void TestBase1(int argc, char* argv[])
+{
+    TestBase tt;
+    tt.Test();
+    getchar(); //»»ÐÐ·û
+    getchar();
+}
+
 int main(int argc, char* argv[])
 {
     int ch = '1';
@@ -45,6 +54,7 @@ int main(int argc, char* argv[])
         printf("1: test strand \n");
         printf("2: test deadline_timer \n");
         printf("3: test log \n");
+        printf("4: test base \n");
         printf("please select your decide: ");
         ch = getchar();
         switch (ch) {
@@ -59,6 +69,9 @@ int main(int argc, char* argv[])
             break;
         case '3':
             test_log1(argc, argv);
+            break;
+        case '4':
+            TestBase1(argc, argv);
             break;
         default:
             printf("please input right decide~~\n");

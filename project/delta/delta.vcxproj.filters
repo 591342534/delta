@@ -66,12 +66,6 @@
     <ClInclude Include="src\tcp_engine.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\tcp_server_notify.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tcpserver_hub.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\thread_manager.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -82,6 +76,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\protocal.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tcp_server_notify.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -119,5 +116,8 @@
     <ClCompile Include="src\tcp_server_notify.cpp">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\bin\Debug\config\manager_server_config.xml" />
   </ItemGroup>
 </Project>

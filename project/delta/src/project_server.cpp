@@ -103,7 +103,7 @@ int project_server::load_config(const char* config_file)
         ASSIGN_AND_CHECK_LABEL(ret, MANAGER_E_CONFIG_INVALID,
                 end);
     }
-    base::util::encode(const_cast<char*>(tmp.c_str()));
+    //base::util::encode(const_cast<char*>(tmp.c_str()));
     params_.dbinfo_.dbparam.password = tmp;
 
     tmp = xdb.child("dbname").text().as_string();

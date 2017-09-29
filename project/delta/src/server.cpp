@@ -10,9 +10,8 @@ ericsheng     2016.4.13   1.0     Create
 ******************************************************************************/
 
 #include "server.h"
-
-#include "default_handler.h"
 #include "project_server.h"
+#include "default_handler.h"
 #include "qry_instrument_handler.h"
 #include "qry_insmrgnrate_handler.h"
 #include "qry_dcepair_handler.h"
@@ -20,33 +19,34 @@ ericsheng     2016.4.13   1.0     Create
 #include "db_deposit_handler.h"
 namespace serverframe
 {
+
 void server::run(const size_t thread_num)
 {
     // 注册请求处理
     std::cout << "server starting" << std::endl;
 
-    m_hub.register_handle(std::bind(&server::init, this, std::placeholders::_1));
+    dispatch_server_.register_handle(std::bind(&server::init, this, std::placeholders::_1));
 
     // 开启处理者线程
-    m_hub.run(thread_num);
+    dispatch_server_.run(thread_num);
 
     // tcp连接到消息总线
     int port = get_project_server().get_process_param().serverinfo_.port;
-    get_tcp_engine().init("127.0.0.1", port, m_tcp_notify);
+    get_tcp_engine().init("127.0.0.1", port, tcpserver_notify_);
 
 }
 
 void server::join()
 {
-    m_hub.join();
+    dispatch_server_.join();
 }
 
 void server::stop()
 {
-    m_hub.stop();
+    dispatch_server_.stop();
 }
 
-void server::init(message_dispather& dispatcher)
+void server::init(MessageDispatcher& dispatcher)
 {
     // 默认处理请求.
     dispatcher.route_default<default_handler>();

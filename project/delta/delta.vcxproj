@@ -27,7 +27,6 @@
     <ClInclude Include="src\qry_instrument_handler.h" />
     <ClInclude Include="src\request_adapter.h" />
     <ClInclude Include="src\server.h" />
-    <ClInclude Include="src\tcpserver_hub.h" />
     <ClInclude Include="src\tcp_engine.h" />
     <ClInclude Include="src\tcp_server_notify.h" />
     <ClInclude Include="src\thread_manager.h" />
@@ -46,6 +45,9 @@
     <ClCompile Include="src\server.cpp" />
     <ClCompile Include="src\tcp_engine.cpp" />
     <ClCompile Include="src\tcp_server_notify.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\bin\Debug\config\manager_server_config.xml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{31519246-B270-4510-9FCF-BDA83C01C2BA}</ProjectGuid>

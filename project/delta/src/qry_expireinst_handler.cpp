@@ -21,7 +21,7 @@ using namespace common;
 namespace serverframe{;
 
 ////////////////////////////////////////////////////////////////////////////////
-void qry_expireinst_handler::on_request(context& context)
+void qry_expireinst_handler::on_request(Context& context)
 {
     try {
         std::string message;

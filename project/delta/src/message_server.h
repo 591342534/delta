@@ -26,7 +26,7 @@ template<typename message_t>
 class dispatch_handler
 {
 public:
-    typedef message_dispatcher<message_t> message_dispatcher_alias;
+    typedef message_dispatcher<message_t> MessageDispatcher;
 
     inline dispatch_handler() {}
 
@@ -35,7 +35,7 @@ public:
         m_dispatcher.dispatch(msg);
     }
 
-    message_dispatcher_alias m_dispatcher;
+    MessageDispatcher m_dispatcher;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ template<typename message_t>
 class message_server : public utility::nocopyable
 {
 public:
-    typedef message_queue< std::shared_ptr<message_t> > message_queue_alias;
+    typedef message_queue< std::shared_ptr<message_t> > MessageQueue;
 
 public:
     inline message_server(){}
@@ -66,7 +66,7 @@ public:
         // start work thread, if "thread_size"==0, this server will run in a
         // synchronous mode and message queue will not be init.
         if (thread_size != 0) {    // asynchronous mode
-            m_message_queue.reset(new message_queue_alias());
+            m_message_queue.reset(new MessageQueue());
 
             m_thread_manager.reset(new thread_manager);
             m_thread_manager->run_thread(std::bind(&message_server::work, this), thread_size);
@@ -108,7 +108,7 @@ public:
             throw std::logic_error("message server is stopped.");
         }
 
-        std::shared_ptr<message_queue_alias> msg_q = m_message_queue;
+        std::shared_ptr<MessageQueue> msg_q = m_message_queue;
         if (msg_q == nullptr) {    // synchronous mode
             handle(msg);
         }
@@ -152,7 +152,7 @@ protected:
     std::shared_ptr<thread_manager> m_thread_manager;
 
     // message queue.
-    std::shared_ptr<message_queue_alias> m_message_queue;
+    std::shared_ptr<MessageQueue> m_message_queue;
 
     dispatch_handler<message_t> m_message_handler;
 
