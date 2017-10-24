@@ -22,9 +22,9 @@ void test_deadline_timer1(int argc, char* argv[])
 {
     test_deadline_timer tt;
 
-    //tt.test_timer_syn();
+    tt.test_timer_syn();
     //tt.test_timer_asyn();
-    tt.test_timer_asyn_loop();
+    //tt.test_timer_asyn_loop();
     getchar(); //»»ĞĞ·û
     getchar();
 }

@@ -6,7 +6,7 @@ Version: 1.0
 Date: 2016.1.13
 
 History:
-ericsheng     2016.1.13   1.0     Create
+eric     2016.1.13   1.0     Create
 ******************************************************************************/
 
 #ifndef __TEST_LOG_H__
@@ -24,11 +24,13 @@ public:
 
     void test()
     {
-        get_Logger().Init("", "");
-        // 若设置为False（异步控制台输出）会导致界面阻塞。
-        get_Logger().InitLoggingSink(true, true);
-        //get_Logger().InitConsoleSink();
-        get_Logger().Filter(info);
+        Logger::Instance().Init("", "");
+        // 文件日志
+        // 服务运行测试阶段：使用实时同步的日志策略，以便于跟踪问题。(当前)
+        // 服务正常运行阶段：使用非实时异步的日志策略，以提高性能。
+        Logger::Instance().InitPersistSink(true, true);
+        Logger::Instance().InitConsoleSink();
+        Logger::Instance().Filter(info);
 
         auto begin_clock = chrono::system_clock::now();
         for (int i = 0; i < 500; i++) {

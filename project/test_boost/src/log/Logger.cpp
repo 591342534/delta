@@ -1,6 +1,3 @@
-#ifndef AFW_LOG_LOGGER_IPP
-#define AFW_LOG_LOGGER_IPP
-////////////////////////////////////////////////////////////////////////////////
 #include "Logger.h"
 #include <boost/log/sinks.hpp>
 #include <boost/log/common.hpp>
@@ -369,7 +366,3 @@ void Logger::Filter(SeverityLevel sev)
 {
 	logging::core::get()->set_filter(attr_severity >= sev);
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
-#endif

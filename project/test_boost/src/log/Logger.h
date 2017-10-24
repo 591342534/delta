@@ -1,8 +1,7 @@
-#ifndef AFW_LOGGER_H
-#define AFW_LOGGER_H
+#ifndef LOGGER_H_
+#define LOGGER_H_
 
 #include <string>
-#include "singleton.h"
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/noncopyable.hpp>
 #include <iostream>
@@ -53,9 +52,9 @@ inline std::basic_ostream< CharT, TraitsT >& operator<< (
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-class Logger : boost::noncopyable
+class Logger
 {
-    SINGLETON_UNINIT(Logger);
+private:
     Logger();
 ////////////////////////////////////////////////////////////////////////////////
 public:
@@ -63,6 +62,12 @@ public:
 		SeverityLevel> logger_mt;
 
     ~Logger();
+
+    static Logger& Instance()
+    {
+        static Logger instance_;
+        return instance_;
+    }
 
     void Init(
         std::string module_name = "",
@@ -106,6 +111,5 @@ private:
 	impl* m_impl;
 };
 
-SINGLETON_GET(Logger);
 ////////////////////////////////////////////////////////////////////////////////
 #endif

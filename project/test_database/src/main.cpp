@@ -15,10 +15,10 @@ int main(int argc, char* argv[])
 {
     test_unidb t;
     //t.start_mysql_db();
-    //t.start_mysql_db_pool();
+    t.start_mysql_db_pool();
 
     //t.start_oracle_db();
-    t.start_oracle_db_pool();
+    //t.start_oracle_db_pool();
     return 0;
 }
 

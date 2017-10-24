@@ -145,7 +145,7 @@ void test_unidb::start_mysql_db_pool()
     param.port = 3306;
     param.user = "risk";
     param.password = "risk";
-    param.charset = "utf8";
+    param.charset = "gb2312"; //windows中文问题
     param.database_name = "future_risk";
     param.create_database_if_not_exists = false;
     param.recreate_database_if_exists = false;
@@ -166,7 +166,7 @@ void test_unidb::start_mysql_db_pool()
             `deal_amount` bigint(11) DEFAULT 0, \
             `itime` bigint(11) DEFAULT 0, \
             PRIMARY KEY (`id`) \
-        ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC");
+        ) ENGINE= InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC");
     if (!dbconn->_conn->execute(buffer)) {
         printf("create table failed\n");
     }
@@ -181,7 +181,7 @@ void test_unidb::start_mysql_db_pool()
     /* insert records */
     for (int i = 0; i < record_count; i++) {
         sprintf(buffer, "INSERT INTO hqetf (avr_price,deal_amount,date) VALUES (%f, %d, '%s')",
-                i + 3900.0, i, "2017-04-21");
+                i + 3900.0, i, "今天下雨了");
         dbconn->_conn->execute(buffer);
     }
 
