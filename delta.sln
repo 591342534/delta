@@ -54,6 +54,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_boost", "project\test_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_libcurl", "project\test_libcurl\test_libcurl.vcxproj", "{69CC7D50-BB82-4092-9E07-855E83D31DF1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_mysqlapi", "project\test_mysqlapi\test_mysqlapi.vcxproj", "{AEE63648-E67B-4923-8F83-7F0936CE95AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -344,6 +346,22 @@ Global
 		{69CC7D50-BB82-4092-9E07-855E83D31DF1}.Release|x64.ActiveCfg = Release|Win32
 		{69CC7D50-BB82-4092-9E07-855E83D31DF1}.Release|x86.ActiveCfg = Release|Win32
 		{69CC7D50-BB82-4092-9E07-855E83D31DF1}.Release|x86.Build.0 = Release|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|Win32.Build.0 = Debug|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|x64.ActiveCfg = Debug|x64
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|x64.Build.0 = Debug|x64
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|x86.ActiveCfg = Debug|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Debug|x86.Build.0 = Debug|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|Win32.ActiveCfg = Release|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|Win32.Build.0 = Release|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|x64.ActiveCfg = Release|x64
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|x64.Build.0 = Release|x64
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|x86.ActiveCfg = Release|Win32
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -366,5 +384,6 @@ Global
 		{09A6A459-D194-4480-87F5-5B1B9E4226D9} = {F2181D77-163D-4172-860C-C8F8EAAFBFD3}
 		{E1F89C96-1E73-49C4-A5CD-DE6ADFFEE129} = {F092697B-E095-4C2C-89AB-87873495252B}
 		{69CC7D50-BB82-4092-9E07-855E83D31DF1} = {F092697B-E095-4C2C-89AB-87873495252B}
+		{AEE63648-E67B-4923-8F83-7F0936CE95AE} = {F092697B-E095-4C2C-89AB-87873495252B}
 	EndGlobalSection
 EndGlobal

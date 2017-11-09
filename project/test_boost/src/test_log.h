@@ -24,21 +24,21 @@ public:
 
     void test()
     {
-        Logger::Instance().Init("", "");
         // 文件日志
         // 服务运行测试阶段：使用实时同步的日志策略，以便于跟踪问题。(当前)
         // 服务正常运行阶段：使用非实时异步的日志策略，以提高性能。
-        Logger::Instance().InitPersistSink(true, true);
-        Logger::Instance().InitConsoleSink();
-        Logger::Instance().Filter(info);
+        light::Logger::Instance().InitLevelLog("test_log");
+        //light::Logger::Instance().InitPersistLog(true, true);
+        light::Logger::Instance().InitConsoleLog(info);
+        light::Logger::Instance().Filter(error);
 
         auto begin_clock = chrono::system_clock::now();
-        for (int i = 0; i < 500; i++) {
-            BOOST_ERROR << "boost::thread::hardware_concurrency() = " << i;
-            BOOST_WARN << "boost::thread::hardware_concurrency() = " << i;
+        for (int i = 0; i < 100; i++) {
+            STLOG_INFO << "boost::thread::hardware_concurrency() = " << i;
+            STLOG_ERROR << "boost::thread::hardware_concurrency() = " << i;
         }
-        cout << chrono::duration_cast<chrono::milliseconds>
-            (chrono::system_clock::now() - begin_clock).count() << endl;
+        //cout << chrono::duration_cast<chrono::milliseconds>
+        //    (chrono::system_clock::now() - begin_clock).count() << endl;
     }
 };
 

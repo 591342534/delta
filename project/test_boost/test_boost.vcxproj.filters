@@ -33,21 +33,21 @@
     <ClInclude Include="src\test_strand.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\log\Log.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="src\log\Logger.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
     <ClInclude Include="src\test_base.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\log\log.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="src\log\logger.h">
+      <Filter>src\log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\log\Logger.cpp">
+    <ClCompile Include="src\log\logger.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
   </ItemGroup>

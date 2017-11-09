@@ -3,56 +3,40 @@
    
 namespace mysql_wrapper {
 
-    mysql_wrapper * mysql_wrapper::instance = NULL;
-
-    //构造函数 初始化各个变量和数据 
-    mysql_wrapper::mysql_wrapper() 
-        : error_num(0),
-          error_info("ok")
+    MysqlWrapper::MysqlWrapper()
+        : error_num(0)
+        , error_info("ok")
     {
         mysql_library_init(0, NULL, NULL);
         mysql_init(&mysql_instance);
         mysql_options(&mysql_instance, MYSQL_SET_CHARSET_NAME, "gbk");
     }
 
-    mysql_wrapper::~mysql_wrapper()
+    MysqlWrapper::~MysqlWrapper()
     {
-
-    }
-
-    mysql_wrapper * mysql_wrapper::get_instance()
-    {
-        //这里没有赋值给instance,为了创建多数据库句柄
-        if (instance == NULL) {
-            return new mysql_wrapper();
-        }
-        return instance;
+        close();
     }
 
     //连接MySQL
-    bool mysql_wrapper::connet(char* server, char* username, char* password, char* database, int port)
+    bool MysqlWrapper::connet(const ConnectParam& param)
     {
-        if (mysql_real_connect(&mysql_instance, server, username, password,
-            database, port, 0, CLIENT_MULTI_STATEMENTS) != NULL) {
-            strcpy(_server, server);
-            strcpy(_username, username);
-            strcpy(_password, password);
-            strcpy(_database, database);
-            _port = port;
+        param_ = param;
+        if (mysql_real_connect(&mysql_instance, param_.host.c_str(), 
+            param_.user.c_str(), param_.password.c_str(),
+            param_.database_name.c_str(), param_.port, 0, 
+            CLIENT_MULTI_STATEMENTS) != NULL) {
 
             my_bool status = true;
             mysql_options(&mysql_instance, MYSQL_OPT_RECONNECT, &status);
 
             return true;
-        } else {
-            run_failed();
-        }
-
+        } 
+        run_failed();
         return false;
     }
 
     //判断数据库是否存在，不存在则创建数据库，并打开 
-    bool mysql_wrapper::create_database(std::string& dbname)
+    bool MysqlWrapper::create_database(std::string& dbname)
     {
         std::string query_str = "create database if not exists ";
         query_str += dbname;
@@ -68,7 +52,7 @@ namespace mysql_wrapper {
     }
 
     //判断数据库中是否存在相应表，不存在则创建表 
-    bool mysql_wrapper::create_table(const std::string& sql)
+    bool MysqlWrapper::create_table(const std::string& sql)
     {
         if (0 == mysql_query(&mysql_instance, sql.c_str())) {
             return true;
@@ -78,19 +62,17 @@ namespace mysql_wrapper {
     }
 
     //写入数据 
-    bool mysql_wrapper::execute_sql(std::string sql)
+    bool MysqlWrapper::execute_sql(std::string sql)
     {
         if (0 == mysql_query(&mysql_instance, sql.c_str())) {
             return true;
-        } else {
-            run_failed();
-        }
-
+        } 
+        run_failed();
         return false;
     }
 
     //读取数据 
-    bool mysql_wrapper::fetch_data(std::string query, 
+    bool MysqlWrapper::fetch_data(std::string query,
         std::vector<std::vector<std::string> >& data)
     {
         if (0 != mysql_query(&mysql_instance, query.c_str())) {
@@ -126,13 +108,13 @@ namespace mysql_wrapper {
         return true;
     }
 
-    int mysql_wrapper::affected_rows()
+    int MysqlWrapper::affected_rows()
     {
         return mysql_affected_rows(&mysql_instance);
     }
 
     //错误信息 
-    void mysql_wrapper::run_failed()
+    void MysqlWrapper::run_failed()
     {
         error_num = mysql_errno(&mysql_instance);
         error_info = mysql_error(&mysql_instance);
@@ -141,7 +123,7 @@ namespace mysql_wrapper {
             error_num, error_info);
     }
 
-    void mysql_wrapper::get_last_error(int &error_code, std::string &error_msg)
+    void MysqlWrapper::get_last_error(int &error_code, std::string &error_msg)
     {
         error_code = error_num;
         if (error_num) {
@@ -150,7 +132,7 @@ namespace mysql_wrapper {
     }
 
     //断开连接 
-    void mysql_wrapper::close()
+    void MysqlWrapper::close()
     {
         mysql_close(&mysql_instance);
     }

@@ -15,12 +15,14 @@ ericsheng     2016.4.13   1.0     Create
 #include <iostream>
 #include <memory>
 
-#include "message_queue.h"
 #include "utility/nocopyable.h"
 #include "utility/state.h"
+#include "message_queue.h"
 #include "thread_manager.h"
 #include "message_dispatcher.h"
 namespace serverframe{;
+
+typedef std::string Context;
 
 template<typename message_t>
 class dispatch_handler
@@ -43,6 +45,8 @@ template<typename message_t>
 class message_server : public utility::nocopyable
 {
 public:
+    typedef typename dispatch_handler<message_t>::MessageDispatcher MessageDispatcher;
+    typedef std::function<void(MessageDispatcher&)> register_func;
     typedef message_queue< std::shared_ptr<message_t> > MessageQueue;
 
 public:
@@ -98,12 +102,21 @@ public:
     }
 
 public:
+    // init message handler map.
+    inline void register_handle(register_func func)
+    {
+        if (func != nullptr) {
+            func(m_message_handler.m_dispatcher);
+        }
+    }
+
     /*@ push message to message server.
     * @ if server running in synchronous mode, process this message.
     * @ else push this message in message queue.
     */
-    inline void post(std::shared_ptr<message_t>& msg)
+    inline void post(message_t& data)
     {
+        std::shared_ptr<message_t> msg(new message_t(data));
         if (m_state.isnone()) {
             throw std::logic_error("message server is stopped.");
         }
@@ -115,11 +128,6 @@ public:
         else {                    // asynchronous mode
             msg_q->post(msg);
         }
-    }
-
-    /*@ get the message handler.*/
-    inline dispatch_handler<message_t>& get_handler() {
-        return m_message_handler;
     }
 
 protected:

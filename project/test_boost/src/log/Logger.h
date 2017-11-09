@@ -2,11 +2,9 @@
 #define LOGGER_H_
 
 #include <string>
+#include <iostream>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/noncopyable.hpp>
-#include <iostream>
-
-using namespace std;
 
 //@ afw severity level.
 enum SeverityLevel
@@ -14,11 +12,9 @@ enum SeverityLevel
     trace = 0,
     debug,
     info,
-    warn,
+    warning,
     error,
-    fatal,
-
-    test
+    critical
 };
 
 //@ outputs stringized representation of the severity level to the stream
@@ -30,15 +26,12 @@ inline std::basic_ostream< CharT, TraitsT >& operator<< (
     static const char* const str[] =
     {
         // log use.
-        "trace",
-        "debug",
-        "info ",
-        "warn ",
-        "error",
-        "fatal",
-
-        // test use.
-        "test ",
+        "trace___",
+        "debug___",
+        "info____",
+        "warning_",
+        "error___",
+        "critical"
     };
     //const char* str = ToString(lvl);
     if (static_cast<size_t>(lvl) < (sizeof(str) / sizeof(*str))) {
@@ -50,66 +43,52 @@ inline std::basic_ostream< CharT, TraitsT >& operator<< (
 
     return strm;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-class Logger
+namespace light
 {
-private:
-    Logger();
-////////////////////////////////////////////////////////////////////////////////
-public:
-	typedef boost::log::sources::severity_logger_mt<
-		SeverityLevel> logger_mt;
 
-    ~Logger();
-
-    static Logger& Instance()
+    class Logger
     {
-        static Logger instance_;
-        return instance_;
-    }
+    private:
+        Logger();
 
-    void Init(
-        std::string module_name = "",
-        std::string process_id = "");
+    public:
+        typedef boost::log::sources::severity_logger_mt<
+            SeverityLevel> logger_mt;
 
-	// init console sink.
-	void InitConsoleSink();
+        ~Logger();
 
-	// init file sink.
-	void InitLoggingSink(
-		bool is_sync,
-		bool is_auto_flush);
+        static Logger& Instance()
+        {
+            static Logger instance_;
+            return instance_;
+        }
 
-	// persist logging.
-	void InitPersistSink(
-		bool is_sync,
-		bool is_auto_flush);
+        // 异步分等级输出日志
+        void InitLevelLog(const std::string & filename);
 
-	// get logger object.
-	logger_mt& GetMt();
+        // init console sink.
+        void InitConsoleLog(SeverityLevel sev = error);
 
-	// set module name.
-	void SetModuleName(
-		const std::string& module_name);
+        // init persist logging.
+        void InitPersistLog(
+            bool is_sync,
+            bool is_auto_flush);
 
-	// set process id.
-	void SetProcessId(
-		const std::string& process_id);
+        /*@ filter log by serverity.*/
+        void Filter(SeverityLevel sev = debug);
 
-	// flush logs to backend output.
-	void Flush();
+        // flush logs to backend output.
+        void Flush();
 
-	/*@ open logging.*/
-	void Enable(bool is_enabled = true);
+        /*@ open logging.*/
+        void Enable(bool is_enabled = true);
 
-	/*@ filter log by serverity.*/
-	void Filter(SeverityLevel sev = debug);
+        // get logger object.
+        logger_mt& GetMt();
 
-private:
-	class impl;
-	impl* m_impl;
-};
-
-////////////////////////////////////////////////////////////////////////////////
+    private:
+        class impl;
+        impl* m_impl;
+    };
+}
 #endif

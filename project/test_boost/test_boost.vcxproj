@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\log\Log.h" />
-    <ClInclude Include="src\log\Logger.h" />
+    <ClInclude Include="src\log\log.h" />
+    <ClInclude Include="src\log\logger.h" />
     <ClInclude Include="src\test_base.h" />
     <ClInclude Include="src\test_common.h" />
     <ClInclude Include="src\test_deadline_timer.h" />
@@ -20,7 +20,7 @@
     <ClInclude Include="src\test_strand.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\log\Logger.cpp" />
+    <ClCompile Include="src\log\logger.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

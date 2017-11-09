@@ -25,10 +25,10 @@ void server::run(const size_t thread_num)
     // 注册请求处理
     std::cout << "server starting" << std::endl;
 
-    dispatch_server_.register_handle(std::bind(&server::init, this, std::placeholders::_1));
+    message_server_.register_handle(std::bind(&server::init, this, std::placeholders::_1));
 
     // 开启处理者线程
-    dispatch_server_.run(thread_num);
+    message_server_.run(thread_num);
 
     // tcp连接到消息总线
     int port = get_project_server().get_process_param().serverinfo_.port;
@@ -38,12 +38,12 @@ void server::run(const size_t thread_num)
 
 void server::join()
 {
-    dispatch_server_.join();
+    message_server_.join();
 }
 
 void server::stop()
 {
-    dispatch_server_.stop();
+    message_server_.stop();
 }
 
 void server::init(MessageDispatcher& dispatcher)

@@ -4,15 +4,19 @@
 #include "Logger.h"
 #include <boost/log/sources/severity_feature.hpp>
 #include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/attributes/named_scope.hpp>
 
-//log use.
-#define BOOST_TRACE BOOST_LOG_SEV(Logger::Instance().GetMt(), trace)
-#define BOOST_DEBUG BOOST_LOG_SEV(Logger::Instance().GetMt(), debug)
-#define BOOST_INFO  BOOST_LOG_SEV(Logger::Instance().GetMt(), info)
-#define BOOST_WARN  BOOST_LOG_SEV(Logger::Instance().GetMt(), warn)
-#define BOOST_ERROR BOOST_LOG_SEV(Logger::Instance().GetMt(), error)
-#define BOOST_FATAL BOOST_LOG_SEV(Logger::Instance().GetMt(), fatal)
-//test use.
-#define BOOST_TEST  BOOST_LOG_SEV(Logger::Instance().GetMt(), test)
+
+//stlog define
+#define BOOST_SLOG(stlog_lvl) \
+    BOOST_LOG_FUNCTION();\
+    BOOST_LOG_SEV(light::Logger::Instance().GetMt(), stlog_lvl)
+
+#define STLOG_TRACE     BOOST_SLOG(trace)
+#define STLOG_DEBUG     BOOST_SLOG(debug)
+#define STLOG_INFO      BOOST_SLOG(info)
+#define STLOG_WARNING   BOOST_SLOG(warning)
+#define STLOG_ERROR     BOOST_SLOG(error)
+#define STLOG_CRITICAL  BOOST_SLOG(critical)
 
 #endif

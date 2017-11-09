@@ -2,23 +2,24 @@
 #ifndef TCP_NOTIFY_H__
 #define TCP_NOTIFY_H__
 #include <string>
-#include "dispatch_server.h"
 #include "utility/session.h"
+#include "message_server.h"
+
 namespace serverframe{;
 
-typedef dispatch_server<Context> DispatchServer;
+typedef message_server<Context> MessageServer;
 
 //消息回报
 class TcpserverNotify : public utility::tcp_notify
 {
 public:
-    TcpserverNotify(DispatchServer& hdl);
+    TcpserverNotify(MessageServer& hdl);
 
 protected:
     virtual size_t on_recv_data(const unsigned int clientid, const string& buf);
 
 private:
-    DispatchServer& dispatch_server_;
+    MessageServer& message_server_;
 
 };
 

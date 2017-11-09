@@ -16,7 +16,7 @@ ericsheng     2016.4.13   1.0     Create
 
 namespace serverframe{;
 
-typedef DispatchServer::MessageDispatcher MessageDispatcher;
+typedef MessageServer::MessageDispatcher MessageDispatcher;
 class request_handler
 {
     virtual void on_request(Context& context) = 0;
@@ -28,13 +28,13 @@ public:
 
 public:
     inline server()
-        : dispatch_server_(),
-        tcpserver_notify_(dispatch_server_)
+        : message_server_(),
+        tcpserver_notify_(message_server_)
     {}
 
     inline ~server()
     {
-        dispatch_server_.stop();
+        message_server_.stop();
     }
 
     // 启动服务
@@ -49,13 +49,10 @@ public:
     // 注册消息处理器
     void init(MessageDispatcher& dispatcher);
 
-    inline DispatchServer& dispatch_server()
-    { return dispatch_server_; }
-
 ////////////////////////////////////////////////////////////////////////////////
 private:
     // 消息处理
-    DispatchServer dispatch_server_;
+    MessageServer message_server_;
 
     //以下任选其一
     //tcp消息通知

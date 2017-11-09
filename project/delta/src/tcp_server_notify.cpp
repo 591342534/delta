@@ -5,8 +5,8 @@
 using namespace std;
 namespace serverframe
 {
-    TcpserverNotify::TcpserverNotify(DispatchServer& hdl)
-        : dispatch_server_(hdl)
+    TcpserverNotify::TcpserverNotify(MessageServer& hdl)
+        : message_server_(hdl)
     {
     }
 
@@ -15,7 +15,7 @@ namespace serverframe
         try {
             std::string buff;
             encode(clientid, buf.c_str(), buf.size(), buff);
-            dispatch_server_.on_read(buff);
+            message_server_.post(buff);
 
             return buf.size();
         }
