@@ -16,7 +16,10 @@ int main(int argc,char* argv[])
     mysql_pool.Init(param, 3);
 
     auto t = mysql_pool.get();
-    auto t2 = mysql_pool.get();
+    {
+        auto t2 = mysql_pool.get();
+    }
+    
 
     auto t3 = mysql_pool.get();
     auto t4 = mysql_pool.get();

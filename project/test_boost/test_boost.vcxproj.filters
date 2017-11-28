@@ -42,6 +42,12 @@
     <ClInclude Include="src\log\logger.h">
       <Filter>src\log</Filter>
     </ClInclude>
+    <ClInclude Include="src\timer_manager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alarm.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -49,6 +55,12 @@
     </ClCompile>
     <ClCompile Include="src\log\logger.cpp">
       <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timer_manager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\alarm.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

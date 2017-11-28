@@ -8,6 +8,8 @@
 #include "test_deadline_timer.h"
 #include "test_log.h"
 #include "test_base.h"
+#include "alarm.h"
+#include "timer_manager.h"
 void test_strand1(int argc, char* argv[])
 {
     test_strand tt;
@@ -45,6 +47,16 @@ void TestBase1(int argc, char* argv[])
     getchar();
 }
 
+void TestTimer(int argc, char* argv[])
+{
+    alarm inst(9, 14, 0);
+    TimerManager::get_timer_manager().RegisterTimer(500,
+        std::bind(&alarm::on_timeout, &inst));
+    TimerManager::get_timer_manager().start();
+    getchar();
+    getchar();
+}
+
 int main(int argc, char* argv[])
 {
     int ch = '1';
@@ -55,6 +67,7 @@ int main(int argc, char* argv[])
         printf("2: test deadline_timer \n");
         printf("3: test log \n");
         printf("4: test base \n");
+        printf("5: test timer \n");
         printf("please select your decide: ");
         ch = getchar();
         switch (ch) {
@@ -72,6 +85,9 @@ int main(int argc, char* argv[])
             break;
         case '4':
             TestBase1(argc, argv);
+            break;
+        case '5':
+            TestTimer(argc, argv);
             break;
         default:
             printf("please input right decide~~\n");
